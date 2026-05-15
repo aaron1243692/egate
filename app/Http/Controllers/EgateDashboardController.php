@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class EgateDashboardController extends Controller
 {
@@ -48,20 +49,20 @@ class EgateDashboardController extends Controller
 
 
         $students = collect(range(1, 2))->map(function ($i) {
+
             return [
                 'name' => fake()->lastName() . ', ' . fake()->firstName(),
                 'student_number' => (string) random_int(20260000, 20269999),
                 'grade_level' => collect(['11', '12'])->random(),
                 'department' => collect(['ABM', 'STEM', 'HUMSS', 'TVL'])->random(),
-                'course' => 'Business',
-                'status' => $i === 1 ? 'Log In' : 'Log Out',
-
-                // random face image API
+                'course' => collect(['Business', 'Accounting', 'Tourism', 'BSCS', 'BSN'])->random(),
                 'image' => 'https://randomuser.me/api/portraits/' .
                     (rand(0, 1) ? 'men' : 'women') . '/' . rand(1, 99) . '.jpg',
+
+                // random status
+                'status' => collect(['login', 'logout'])->random(),
             ];
         });
-
 
         return response()->json([
             'status' => 'online',

@@ -99,6 +99,7 @@ class="w-full h-full">
             const phTimeZone = 'Asia/Manila';
             const statusDotEl = document.getElementById('system-status-dot');
             const statusTextEl = document.getElementById('system-status-text');
+            let lastSystemStatusState = null;
 
             const timeFormatter = new Intl.DateTimeFormat('en-PH', {
                 timeZone: phTimeZone,
@@ -122,6 +123,11 @@ class="w-full h-full">
             }
 
             function setSystemStatus(state, label) {
+                if (lastSystemStatusState === state) {
+                    return;
+                }
+
+                lastSystemStatusState = state;
                 statusTextEl.textContent = label;
                 statusDotEl.className = 'w-3 h-3 rounded-full animate-pulse';
 
@@ -144,16 +150,21 @@ class="w-full h-full">
             function fillStudent(prefix, student) {
                 const imageEl = document.getElementById(`${prefix}-image`);
                 const statusEl = document.getElementById(`${prefix}-status`);
-                const status = student?.status || 'Pending...';
+                const rawStatus = String(student?.status || '').trim().toLowerCase();
+                const status = rawStatus === 'login'
+                    ? 'Log In'
+                    : rawStatus === 'logout'
+                        ? 'Log Out'
+                        : (student?.status || 'Pending...');
 
                 imageEl.src = student?.image || 'https://via.placeholder.com/300';
                 imageEl.alt = student?.name || 'Student image';
                 statusEl.textContent = status;
                 statusEl.className = 'px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full border';
 
-                if (status === 'Log In') {
+                if (rawStatus === 'login' || status === 'Log In') {
                     statusEl.classList.add('bg-green-500/20', 'text-green-300', 'border-green-400/30');
-                } else if (status === 'Log Out') {
+                } else if (rawStatus === 'logout' || status === 'Log Out') {
                     statusEl.classList.add('bg-red-500/20', 'text-red-300', 'border-red-400/30');
                 } else {
                     statusEl.classList.add('bg-white/10', 'text-gray-200', 'border-white/20');
@@ -167,8 +178,6 @@ class="w-full h-full">
             }
 
             async function loadStudents() {
-                setSystemStatus('loading', 'Loading student data...');
-
                 try {
                     const response = await fetch('/students');
 
@@ -183,13 +192,13 @@ class="w-full h-full">
                     fillStudent('previous', students[1] || null);
 
                     if (students.length > 0) {
-                        setSystemStatus('online', `System is Online`);
+                        setSystemStatus('online', 'System is Online');
                         return;
                     }
 
                     fillStudent('current', null);
                     fillStudent('previous', null);
-                    setSystemStatus('offline', 'No student data found');
+                    setSystemStatus('offline', 'Failed to load data');
                 } catch (error) {
                     fillStudent('current', null);
                     fillStudent('previous', null);
@@ -200,6 +209,7 @@ class="w-full h-full">
             updatePhilippineClock();
             loadStudents();
             setInterval(updatePhilippineClock, 1000);
+            setInterval(loadStudents, 5000);
         </script>
     </body>
 </html>
