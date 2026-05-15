@@ -23,8 +23,8 @@ class="w-full h-full">
             </div>
 
             <div class="flex items-center gap-2">
-                <span class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></span>
-                <span class="text-lg font-medium text-green-300">System is Online</span>
+                <span id="system-status-dot" class="w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></span>
+                <span id="system-status-text" class="text-lg font-medium text-yellow-300">Loading student data...</span>
             </div>
 
             <div class="text-left xl:text-right gap-1">
@@ -97,6 +97,8 @@ class="w-full h-full">
             const phTimeEl = document.getElementById('ph-time');
             const phDateEl = document.getElementById('ph-date');
             const phTimeZone = 'Asia/Manila';
+            const statusDotEl = document.getElementById('system-status-dot');
+            const statusTextEl = document.getElementById('system-status-text');
 
             const timeFormatter = new Intl.DateTimeFormat('en-PH', {
                 timeZone: phTimeZone,
@@ -119,7 +121,52 @@ class="w-full h-full">
                 phDateEl.textContent = dateFormatter.format(now);
             }
 
+            function setSystemStatus(state, label) {
+                statusTextEl.textContent = label;
+                statusDotEl.className = 'w-3 h-3 rounded-full animate-pulse';
+
+                if (state === 'online') {
+                    statusDotEl.classList.add('bg-green-400');
+                    statusTextEl.className = 'text-lg font-medium text-green-300';
+                    return;
+                }
+
+                if (state === 'offline') {
+                    statusDotEl.classList.add('bg-red-400');
+                    statusTextEl.className = 'text-lg font-medium text-red-300';
+                    return;
+                }
+
+                statusDotEl.classList.add('bg-yellow-400');
+                statusTextEl.className = 'text-lg font-medium text-yellow-300';
+            }
+
+            async function loadStudents() {
+                setSystemStatus('loading', 'Loading student data...');
+
+                try {
+                    const response = await fetch('/students');
+
+                    if (!response.ok) {
+                        throw new Error('Request failed');
+                    }
+
+                    const payload = await response.json();
+                    const students = Array.isArray(payload.students) ? payload.students : [];
+
+                    if (students.length > 0) {
+                        setSystemStatus('online', `System is Online - ${students.length} records loaded`);
+                        return;
+                    }
+
+                    setSystemStatus('offline', 'No student data found');
+                } catch (error) {
+                    setSystemStatus('offline', 'Failed to load data');
+                }
+            }
+
             updatePhilippineClock();
+            loadStudents();
             setInterval(updatePhilippineClock, 1000);
         </script>
     </body>

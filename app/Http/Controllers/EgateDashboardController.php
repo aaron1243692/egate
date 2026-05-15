@@ -2,59 +2,72 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\EgateLog;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class EgateDashboardController extends Controller
 {
     public function __invoke(): View
     {
-        $studentLogs = $this->studentLogs();
-        $selectedLog = $studentLogs->first();
-
-        return view('welcome', [
-            'studentLogs' => $studentLogs,
-            'selectedLog' => $selectedLog,
-        ]);
+        return view('welcome');
     }
 
-    /**
-     * Build the dashboard log payload directly from the database.
-     *
-     * @return Collection<int, array<string, mixed>>
-     */
-    private function studentLogs(): Collection
+    public function getStudents(): JsonResponse
     {
-        if (! Schema::hasTable('egate_logs')) {
-            return collect();
-        }
+        // $response = Http::timeout(10)->get('https://randomuser.me/api/', [
+        //     'results' => 10,
+        // ]);
 
-        return EgateLog::query()
-            ->orderByDesc('logged_at')
-            ->orderByDesc('id')
-            ->limit(15)
-            ->get()
-            ->map(function (EgateLog $log) {
-                return [
-                    'id' => (string) $log->id,
-                    'student_number' => $log->student_number,
-                    'last_name' => $log->last_name,
-                    'first_name' => $log->first_name,
-                    'middle_name' => $log->middle_name,
-                    'middle_initial' => $log->middle_name ? strtoupper(substr($log->middle_name, 0, 1)) : '',
-                    'sex' => $log->sex ?: 'Not set',
-                    'department' => $log->department ?: 'Not set',
-                    'course' => $log->course ?: 'Not set',
-                    'year_level' => $log->year_level ?: 'Not set',
-                    'grade_level' => $log->grade_level ?: 'Not set',
-                    'image' => $log->image_url,
-                    'timestamp' => optional($log->logged_at)->toIso8601String(),
-                    'time_label' => optional($log->logged_at)->format('M d, Y h:i A') ?? 'Unknown time',
-                    'relative_time' => optional($log->logged_at)->diffForHumans() ?? 'Unavailable',
-                ];
-            })
-            ->values();
+        // if ($response->failed()) {
+        //     return response()->json([
+        //         'status' => 'offline',
+        //         'message' => 'Failed to fetch students',
+        //         'students' => [],
+        //     ], 500);
+        // }
+
+        // $students = collect($response->json('results', []))
+        //     ->map(function (array $student, int $index) {
+        //         $name = $student['name'] ?? [];
+        //         $picture = $student['picture'] ?? [];
+
+        //         return [
+        //             'name' => trim(($name['last'] ?? 'Student').', '.($name['first'] ?? 'Unknown')),
+        //             'student_number' => (string) random_int(20260000, 20269999),
+        //             'grade_level' => '11',
+        //             'department' => 'ABM',
+        //             'course' => 'Business',
+        //             'rfid_uid' => 'RFID-'
+        //                 .str_pad((string) ($index + 1), 4, '0', STR_PAD_LEFT)
+        //                 .'-'.Str::upper(Str::random(6)),
+        //             'image' => $picture['large'] ?? 'https://via.placeholder.com/300',
+        //         ];
+        //     })
+        //     ->values();
+
+
+        $students = collect(range(1, 2))->map(function ($i) {
+            return [
+                'name' => fake()->lastName() . ', ' . fake()->firstName(),
+                'student_number' => (string) random_int(20260000, 20269999),
+                'grade_level' => collect(['11', '12'])->random(),
+                'department' => collect(['ABM', 'STEM', 'HUMSS', 'TVL'])->random(),
+                'course' => 'Business',
+                'rfid_uid' => 'RFID-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+
+                // random face image API
+                'image' => 'https://randomuser.me/api/portraits/' .
+                    (rand(0, 1) ? 'men' : 'women') . '/' . rand(1, 99) . '.jpg',
+            ];
+        });
+
+
+        return response()->json([
+            'status' => 'online',
+            'message' => 'Student data loaded from API',
+            'students' => $students,
+        ]);
     }
 }
