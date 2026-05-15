@@ -28,8 +28,9 @@ class="w-full h-full">
             </div>
 
             <div class="text-left xl:text-right gap-1">
-                <p class="text-xl font-semibold">12:00:00 PM</p>
-                <p class="text-md text-gray-400">May 15, 2026</p>
+                <p id="ph-time" class="text-xl font-semibold">--:--:-- --</p>
+                <p id="ph-date" class="text-md text-gray-400">Loading date...</p>
+                <p class="text-xs uppercase tracking-[0.3em] text-cyan-300">PH Time UTC+08:00</p>
             </div>
 
         </header>
@@ -52,14 +53,14 @@ class="w-full h-full">
                         class="w-[300px] h-[300px] object-cover rounded-lg border border-green-400/30 shadow-md" />
 
                     <div class="flex flex-col gap-1 text-lg text-gray-200">
-                        <span class="px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full bg-green-500/20 text-green-300 border border-green-400/30">
-                            Log In
+                        <span class="px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full bg-blue-500/20 text-green-300 border border-green-400/30">
+                            Pending...
                         </span>
-                        <p><span class="text-gray-400">Name:</span> Doe, John A.</p>
-                        <p><span class="text-gray-400">ID No:</span> 2026-0001</p>
-                        <p><span class="text-gray-400">Grade Level:</span> 12</p>
-                        <p><span class="text-gray-400">Department:</span> STEM</p>
-                        <p><span class="text-gray-400">Course:</span> ICT</p>
+                        <p><span class="text-gray-400">Name: </span>Pending...</p>
+                        <p><span class="text-gray-400">ID No: </span>Pending...</p>
+                        <p><span class="text-gray-400">Grade Level: </span>Pending...</p>
+                        <p><span class="text-gray-400">Department: </span>Pending...</p>
+                        <p><span class="text-gray-400">Course: </span>Pending...</p>
                     </div>
                 </div>
             </div>
@@ -78,19 +79,48 @@ class="w-full h-full">
                         class="w-[300px] h-[300px] object-cover rounded-lg border border-blue-400/30 shadow-md" />
 
                     <div class="flex flex-col gap-1 text-lg text-gray-200">
-                        <span class="px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full bg-red-500/20 text-red-300 border border-red-400/30">
-                            LOGOUT
+                        <span class="px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30">
+                            Pending...
                         </span>
-                        <p><span class="text-gray-400">Name:</span> Smith, Jane B.</p>
-                        <p><span class="text-gray-400">ID No:</span> 2026-0002</p>
-                        <p><span class="text-gray-400">Grade Level:</span> 11</p>
-                        <p><span class="text-gray-400">Department:</span> ABM</p>
-                        <p><span class="text-gray-400">Course:</span> Business</p>
+                        <p><span class="text-gray-400">Name: </span>Pending...</p>
+                        <p><span class="text-gray-400">ID No: </span>Pending...</p>
+                        <p><span class="text-gray-400">Grade Level: </span>Pending...</p>
+                        <p><span class="text-gray-400">Department: </span>Pending...</p>
+                        <p><span class="text-gray-400">Course: </span>Pending...</p>
                     </div>
                 </div>
             </div>
 
         </div>
 
+        <script>
+            const phTimeEl = document.getElementById('ph-time');
+            const phDateEl = document.getElementById('ph-date');
+            const phTimeZone = 'Asia/Manila';
+
+            const timeFormatter = new Intl.DateTimeFormat('en-PH', {
+                timeZone: phTimeZone,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true,
+            });
+
+            const dateFormatter = new Intl.DateTimeFormat('en-PH', {
+                timeZone: phTimeZone,
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+            });
+
+            function updatePhilippineClock() {
+                const now = new Date();
+                phTimeEl.textContent = timeFormatter.format(now);
+                phDateEl.textContent = dateFormatter.format(now);
+            }
+
+            updatePhilippineClock();
+            setInterval(updatePhilippineClock, 1000);
+        </script>
     </body>
 </html>
