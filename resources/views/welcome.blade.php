@@ -39,7 +39,7 @@ class="w-full h-full">
         <div class="w-full flex-1 grid grid-cols-1 lg:grid-cols-2 gap-3">
 
             <!-- CURRENT -->
-            <div class="relative bg-gradient-to-br from-green-500/10 to-white/5 border border-green-400/20 rounded-xl p-4 flex flex-col gap-4 shadow-lg">
+            <div class="relative bg-gradient-to-br from-green-500/10 to-white/5 border rounded-xl p-4 flex flex-col gap-4 shadow-lg">
 
                 <!-- glow accent -->
                 <!-- <div class="absolute top-0 left-0 w-full h-1 bg-green-400 rounded-t-xl"></div> -->
@@ -49,24 +49,24 @@ class="w-full h-full">
                 </h2>
 
                 <div class="flex gap-4 items-center">
-                    <img src="https://via.placeholder.com/300"
+                    <img id="current-image" src="https://via.placeholder.com/300"
                         class="w-[300px] h-[300px] object-cover rounded-lg border border-green-400/30 shadow-md" />
 
                     <div class="flex flex-col gap-1 text-lg text-gray-200">
-                        <span class="px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full bg-blue-500/20 text-green-300 border border-green-400/30">
+                        <span id="current-status" class="px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full bg-white/10 text-gray-200 border border-white/20">
                             Pending...
                         </span>
-                        <p><span class="text-gray-400">Name: </span>Pending...</p>
-                        <p><span class="text-gray-400">ID No: </span>Pending...</p>
-                        <p><span class="text-gray-400">Grade Level: </span>Pending...</p>
-                        <p><span class="text-gray-400">Department: </span>Pending...</p>
-                        <p><span class="text-gray-400">Course: </span>Pending...</p>
+                        <p><span class="text-gray-400">Name: </span><span id="current-name">Pending...</span></p>
+                        <p><span class="text-gray-400">ID No: </span><span id="current-id">Pending...</span></p>
+                        <p><span class="text-gray-400">Grade Level: </span><span id="current-grade">Pending...</span></p>
+                        <p><span class="text-gray-400">Department: </span><span id="current-department">Pending...</span></p>
+                        <p><span class="text-gray-400">Course: </span><span id="current-course">Pending...</span></p>
                     </div>
                 </div>
             </div>
 
             <!-- PREVIOUS -->
-            <div class="relative bg-gradient-to-br from-blue-500/10 to-white/5 rounded-xl p-4 flex flex-col gap-4 shadow-lg">
+            <div class="relative bg-gradient-to-br from-blue-500/10 to-white/5 border border-blue-400/20 rounded-xl p-4 flex flex-col gap-4 shadow-lg">
 
                 <!-- <div class="absolute top-0 left-0 w-full h-1 bg-blue-400 rounded-t-xl"></div> -->
 
@@ -75,18 +75,18 @@ class="w-full h-full">
                 </h2>
 
                 <div class="flex gap-4 items-center">
-                    <img src="https://via.placeholder.com/300"
+                    <img id="previous-image" src="https://via.placeholder.com/300"
                         class="w-[300px] h-[300px] object-cover rounded-lg border border-blue-400/30 shadow-md" />
 
                     <div class="flex flex-col gap-1 text-lg text-gray-200">
-                        <span class="px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30">
+                        <span id="previous-status" class="px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full bg-white/10 text-gray-200 border border-white/20">
                             Pending...
                         </span>
-                        <p><span class="text-gray-400">Name: </span>Pending...</p>
-                        <p><span class="text-gray-400">ID No: </span>Pending...</p>
-                        <p><span class="text-gray-400">Grade Level: </span>Pending...</p>
-                        <p><span class="text-gray-400">Department: </span>Pending...</p>
-                        <p><span class="text-gray-400">Course: </span>Pending...</p>
+                        <p><span class="text-gray-400">Name: </span><span id="previous-name">Pending...</span></p>
+                        <p><span class="text-gray-400">ID No: </span><span id="previous-id">Pending...</span></p>
+                        <p><span class="text-gray-400">Grade Level: </span><span id="previous-grade">Pending...</span></p>
+                        <p><span class="text-gray-400">Department: </span><span id="previous-department">Pending...</span></p>
+                        <p><span class="text-gray-400">Course: </span><span id="previous-course">Pending...</span></p>
                     </div>
                 </div>
             </div>
@@ -141,6 +141,31 @@ class="w-full h-full">
                 statusTextEl.className = 'text-lg font-medium text-yellow-300';
             }
 
+            function fillStudent(prefix, student) {
+                const imageEl = document.getElementById(`${prefix}-image`);
+                const statusEl = document.getElementById(`${prefix}-status`);
+                const status = student?.status || 'Pending...';
+
+                imageEl.src = student?.image || 'https://via.placeholder.com/300';
+                imageEl.alt = student?.name || 'Student image';
+                statusEl.textContent = status;
+                statusEl.className = 'px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full border';
+
+                if (status === 'Log In') {
+                    statusEl.classList.add('bg-green-500/20', 'text-green-300', 'border-green-400/30');
+                } else if (status === 'Log Out') {
+                    statusEl.classList.add('bg-red-500/20', 'text-red-300', 'border-red-400/30');
+                } else {
+                    statusEl.classList.add('bg-white/10', 'text-gray-200', 'border-white/20');
+                }
+
+                document.getElementById(`${prefix}-name`).textContent = student?.name || 'Pending...';
+                document.getElementById(`${prefix}-id`).textContent = student?.student_number || 'Pending...';
+                document.getElementById(`${prefix}-grade`).textContent = student?.grade_level || 'Pending...';
+                document.getElementById(`${prefix}-department`).textContent = student?.department || 'Pending...';
+                document.getElementById(`${prefix}-course`).textContent = student?.course || 'Pending...';
+            }
+
             async function loadStudents() {
                 setSystemStatus('loading', 'Loading student data...');
 
@@ -154,13 +179,20 @@ class="w-full h-full">
                     const payload = await response.json();
                     const students = Array.isArray(payload.students) ? payload.students : [];
 
+                    fillStudent('current', students[0] || null);
+                    fillStudent('previous', students[1] || null);
+
                     if (students.length > 0) {
-                        setSystemStatus('online', `System is Online - ${students.length} records loaded`);
+                        setSystemStatus('online', `System is Online`);
                         return;
                     }
 
+                    fillStudent('current', null);
+                    fillStudent('previous', null);
                     setSystemStatus('offline', 'No student data found');
                 } catch (error) {
+                    fillStudent('current', null);
+                    fillStudent('previous', null);
                     setSystemStatus('offline', 'Failed to load data');
                 }
             }

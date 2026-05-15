@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 
 class EgateDashboardController extends Controller
 {
@@ -55,7 +54,7 @@ class EgateDashboardController extends Controller
                 'grade_level' => collect(['11', '12'])->random(),
                 'department' => collect(['ABM', 'STEM', 'HUMSS', 'TVL'])->random(),
                 'course' => 'Business',
-                'rfid_uid' => 'RFID-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                'status' => $i === 1 ? 'Log In' : 'Log Out',
 
                 // random face image API
                 'image' => 'https://randomuser.me/api/portraits/' .
