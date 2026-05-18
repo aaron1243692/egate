@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('egate_logs', function (Blueprint $table) {
+        Schema::create('egate_data', function (Blueprint $table) {
             $table->id();
             $table->string('student_number')->index();
             $table->string('last_name');
@@ -39,6 +39,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('egate_logs');
+        Schema::dropIfExists('egate_data');
     }
 };

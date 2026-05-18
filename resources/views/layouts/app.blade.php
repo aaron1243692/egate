@@ -1,4 +1,3 @@
-
 @extends('layouts.clean')
 
 @section('clean')

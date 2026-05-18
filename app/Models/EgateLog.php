@@ -9,6 +9,8 @@ class EgateLog extends Model
 {
     use HasFactory;
 
+    protected $table = 'egate_data';
+
     /**
      * The attributes that are mass assignable.
      *

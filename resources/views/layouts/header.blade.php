@@ -1,27 +1,21 @@
-<header class="m-0 p-1
-flex flex-col justify-center items-center
-bg-blue-500">
+<header class="w-full p-2 gap-0 bg-blue-600 sticky top-0
+flex flex-row justify-center items-center">
+    <h5 class="text-white border-2 border-transparent rounded-full py-1 px-3
+    hover:border-black/40 hover:bg-white/20 hover:scale-105 transition duration-200
+    " style="cursor: pointer;">OSMIS-eGATE</h5>
 
-    <div class="w-full gap-3
-    flex flex-row items-center">
-        <h3 class="font-bold text-white px-3 py-1 rounded-full
-        border-1 border-black/70">EGATE</h3>
-
-        <button class="tab font-semibold text-white px-3 py-1
-        hover:bg-white/60"
-        style="border-radius: 1.5rem;"
-        >Setup</button>
-
-        <button class="tab font-semibold text-white px-3 py-1
-        hover:bg-white/60"
-        style="border-radius: 1.5rem;"
-        >Transaction</button>
-
-        <button class="tab font-semibold text-white px-3 py-1
-        hover:bg-white/60"
-        style="border-radius: 1.5rem;"
-        >Report</button>
-
-    </div>
+    <nav class="gap-1
+    flex flex-1 justify-start items-center">
+        <a href="{{ route('admin.data') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
+        >Data</a>
+        <a href="{{ route('admin.logs') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
+        >Logs</a>
+        <a href="{{ route('admin.permissions') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
+        >Permissions</a>
+        <a href="{{ route('admin.roles') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
+        >Roles</a>
+        <a href="{{ route('admin.users') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
+        >Users</a>
+    </nav>
 
 </header>

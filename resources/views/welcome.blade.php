@@ -18,7 +18,7 @@ class="w-full h-full">
         <header class="w-full bg-white/90 backdrop-blur-md border border-slate-200 rounded-xl py-2 px-3 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3">
 
             <div>
-                <h1 class="text-l font-bold tracking-wide text-stone-900">eGate Monitoring System</h1>
+                <h1 class="text-l font-bold tracking-wide text-stone-900">OSMIS-eGATE</h1>
             </div>
 
             <div class="flex items-center gap-2">
@@ -68,25 +68,43 @@ class="w-full h-full">
 
                     <!-- Label with fixed width on desktop, auto on mobile -->
                     <label
-                        for="student_id"
-                        class="sm:min-w-[120px] text-xs font-bold uppercase tracking-wider text-slate-500 sm:text-right"
-                    >
-                        Student No.
+                    for="student_id"
+                    class="sm:min-w-[120px] text-xs font-bold uppercase tracking-wider text-slate-500 sm:text-right"
+                    >Student No.
                     </label>
 
                     <!-- Input container expanding to fill remaining row space -->
                     <input
-                        autofocus
-                        type="text"
-                        name="student_id"
-                        id="student_id"
-                        placeholder="Enter student number"
-                        class="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800
-                            placeholder-slate-400 outline-none shadow-sm transition duration-200
-                            focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                    autofocus
+                    type="text"
+                    name="student_id"
+                    id="student_id"
+                    placeholder="Enter student number"
+                    class="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800
+                        placeholder-slate-400 outline-none shadow-sm transition duration-200
+                        focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                    >
+
+                    <input
+                    type="text"
+                    name="rfid"
+                    id="rfid"
+                    tabindex="-1"
+                    autocomplete="off"
+                    aria-hidden="true"
+                    class="absolute h-0 w-0 opacity-0 pointer-events-none"
+                    >
+
+                    <input
+                    type="hidden"
+                    name="status"
+                    id="status"
+                    value="3"
                     >
 
                 </div>
+
+                <p id="submit-feedback" class="text-sm text-slate-500">Ready to accept student ID or RFID scan.</p>
 
             </div>
 
@@ -126,7 +144,15 @@ class="w-full h-full">
             const statusDotEl = document.getElementById('system-status-dot');
             const statusTextEl = document.getElementById('system-status-text');
             const placeholderImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f1f5f9'/%3E%3Ccircle cx='150' cy='112' r='46' fill='%23cbd5e1'/%3E%3Cpath d='M72 244c16-42 52-68 78-68s62 26 78 68' fill='%23cbd5e1'/%3E%3C/svg%3E";
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+            const studentIdInput = document.getElementById('student_id');
+            const rfidInput = document.getElementById('rfid');
+            const statusInput = document.getElementById('status');
+            const submitFeedbackEl = document.getElementById('submit-feedback');
             let lastSignature = null;
+            let rfidBuffer = '';
+            let lastKeyAt = 0;
+            let scanTimer = null;
 
             const timeFormatter = new Intl.DateTimeFormat('en-PH', {
                 timeZone: phTimeZone,
@@ -167,6 +193,28 @@ class="w-full h-full">
 
                 statusDotEl.classList.add('bg-amber-500');
                 statusTextEl.className = 'text-lg font-medium text-amber-700';
+            }
+
+            function setSubmitFeedback(message, tone = 'idle') {
+                submitFeedbackEl.textContent = message;
+                submitFeedbackEl.className = 'text-sm';
+
+                if (tone === 'success') {
+                    submitFeedbackEl.classList.add('text-emerald-700');
+                    return;
+                }
+
+                if (tone === 'error') {
+                    submitFeedbackEl.classList.add('text-rose-700');
+                    return;
+                }
+
+                if (tone === 'sending') {
+                    submitFeedbackEl.classList.add('text-sky-700');
+                    return;
+                }
+
+                submitFeedbackEl.classList.add('text-slate-500');
             }
 
             function fillPending(prefix) {
@@ -270,8 +318,131 @@ class="w-full h-full">
                 }
             }
 
+            async function submitGateEntry(payload) {
+                setSubmitFeedback('Submitting entry...', 'sending');
+
+                try {
+                    const response = await fetch('/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                        },
+                        body: JSON.stringify({
+                            student_id: payload.student_id || null,
+                            rfid: payload.rfid || null,
+                            status: Number(statusInput.value || 3),
+                        }),
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        setSubmitFeedback(result.message || 'Failed to submit entry.', 'error');
+                        return;
+                    }
+
+                    studentIdInput.value = '';
+                    rfidInput.value = '';
+                    rfidBuffer = '';
+                    setSubmitFeedback('Entry submitted successfully.', 'success');
+                    checkUpdates();
+                    focusRfidListener();
+                } catch (error) {
+                    setSubmitFeedback('Unable to submit entry right now.', 'error');
+                }
+            }
+
+            function focusRfidListener() {
+                if (document.activeElement !== studentIdInput) {
+                    rfidInput.focus();
+                }
+            }
+
+            function finalizeRfidScan() {
+                const value = rfidBuffer.trim();
+                rfidBuffer = '';
+
+                if (value.length < 6) {
+                    rfidInput.value = '';
+                    return;
+                }
+
+                rfidInput.value = value;
+                studentIdInput.value = '';
+                submitGateEntry({
+                    student_id: null,
+                    rfid: value,
+                });
+            }
+
+            function listenForRfidInput() {
+                focusRfidListener();
+
+                studentIdInput.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+
+                        const value = studentIdInput.value.trim();
+                        if (value === '') {
+                            setSubmitFeedback('Enter a student ID first.', 'error');
+                            return;
+                        }
+
+                        rfidInput.value = '';
+                        submitGateEntry({
+                            student_id: value,
+                            rfid: null,
+                        });
+                    }
+                });
+
+                studentIdInput.addEventListener('blur', () => {
+                    window.setTimeout(focusRfidListener, 0);
+                });
+
+                window.addEventListener('click', () => {
+                    window.setTimeout(focusRfidListener, 0);
+                });
+
+                window.addEventListener('keydown', (event) => {
+                    if (document.activeElement === studentIdInput) {
+                        return;
+                    }
+
+                    if (event.key === 'Shift' || event.key === 'Control' || event.key === 'Alt' || event.key === 'Meta') {
+                        return;
+                    }
+
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        clearTimeout(scanTimer);
+                        finalizeRfidScan();
+                        return;
+                    }
+
+                    if (event.key.length !== 1) {
+                        return;
+                    }
+
+                    const now = Date.now();
+                    if (now - lastKeyAt > 120) {
+                        rfidBuffer = '';
+                    }
+
+                    lastKeyAt = now;
+                    rfidBuffer += event.key;
+                    rfidInput.value = rfidBuffer;
+
+                    clearTimeout(scanTimer);
+                    scanTimer = window.setTimeout(finalizeRfidScan, 160);
+                });
+            }
+
             updatePhilippineClock();
             checkUpdates();
+            listenForRfidInput();
             setInterval(updatePhilippineClock, 1000);
             setInterval(checkUpdates, 5000);
         </script>

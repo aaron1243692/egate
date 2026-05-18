@@ -15,13 +15,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call([
+            PermissionRoleSeeder::class,
+            EgateLogSeeder::class,
+        ]);
 
-        User::query()->updateOrCreate(
+        $user = User::query()->updateOrCreate(
             ['email' => 'test@example.com'],
-            ['name' => 'Test User', 'password' => bcrypt('password')]
+            [
+                'username' => 'admin',
+                'password' => bcrypt('password'),
+            ]
         );
-
-        $this->call(EgateLogSeeder::class);
+        $user->assignRole('admin');
     }
 }
