@@ -12,14 +12,13 @@ class="w-full h-full">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="min-h-screen bg-gradient-to-br from-[#f5f0e6] via-[#eee7db] to-[#e6dece] text-stone-800 flex flex-col p-2 gap-2">
+    <body class="min-h-screen bg-gradient-to-br from-white via-slate-50 to-slate-100 text-stone-800 flex flex-col p-2 gap-2 overflow-hidden">
 
         <!-- HEADER -->
-        <header class="w-full bg-[#f7f1e7]/90 backdrop-blur-md border border-[#d9cfbe] rounded-xl py-2 px-3 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3">
+        <header class="w-full bg-white/90 backdrop-blur-md border border-slate-200 rounded-xl py-2 px-3 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3">
 
             <div>
                 <h1 class="text-l font-bold tracking-wide text-stone-900">eGate Monitoring System</h1>
-                <p class="text-md text-stone-600">Student Entry Tracking Dashboard</p>
             </div>
 
             <div class="flex items-center gap-2">
@@ -29,8 +28,7 @@ class="w-full h-full">
 
             <div class="text-left xl:text-right gap-1">
                 <p id="ph-time" class="text-xl font-semibold text-stone-900">--:--:-- --</p>
-                <p id="ph-date" class="text-md text-stone-500">Loading date...</p>
-                <p class="text-xs uppercase tracking-[0.3em] text-sky-700">PH Time UTC+08:00</p>
+                <p id="ph-date" class="text-md text-black/80">Loading date...</p>
             </div>
 
         </header>
@@ -39,47 +37,74 @@ class="w-full h-full">
         <div class="w-full flex-1 grid grid-cols-1 lg:grid-cols-2 gap-3">
 
             <!-- CURRENT -->
-            <div class="relative bg-gradient-to-br from-[#f3ede1] to-[#ebe4d6] border border-[#d9cfbe] rounded-xl p-4 flex flex-col gap-4 shadow-lg">
+            <div class="relative bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col gap-4 shadow-lg">
 
                 <!-- glow accent -->
                 <!-- <div class="absolute top-0 left-0 w-full h-1 bg-green-400 rounded-t-xl"></div> -->
 
-                <h2 class="text-sm font-semibold text-emerald-800 border-b border-[#d9cfbe] pb-2">
+                <h2 class="text-sm font-semibold text-emerald-800 border-b border-slate-200 pb-2">
                     CURRENT ENTRY
                 </h2>
 
                 <div class="flex gap-4 items-center">
-                    <img id="current-image" src="https://via.placeholder.com/300"
-                        class="w-[300px] h-[300px] object-cover rounded-lg border border-[#cdbfaa] shadow-md" />
+                    <img id="current-image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f1f5f9'/%3E%3Ccircle cx='150' cy='112' r='46' fill='%23cbd5e1'/%3E%3Cpath d='M72 244c16-42 52-68 78-68s62 26 78 68' fill='%23cbd5e1'/%3E%3C/svg%3E"
+                        class="w-[300px] h-[300px] object-cover rounded-lg border border-slate-200 shadow-md" />
 
-                    <div class="flex flex-col gap-1 text-lg text-stone-700">
-                        <span id="current-status" class="px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full bg-[#e7dece] text-stone-700 border border-[#d4c7b3]">
+                    <div class="flex flex-col gap-0 text-md text-stone-700">
+                        <span id="current-status" class="px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full bg-slate-100 text-stone-700 border border-slate-200">
                             Pending...
                         </span>
                         <p><span class="text-stone-500">Name: </span><span id="current-name" class="text-stone-900">Pending...</span></p>
                         <p><span class="text-stone-500">ID No: </span><span id="current-id" class="text-stone-800">Pending...</span></p>
                         <p><span class="text-stone-500">Grade Level: </span><span id="current-grade" class="text-stone-800">Pending...</span></p>
                         <p><span class="text-stone-500">Department: </span><span id="current-department" class="text-stone-800">Pending...</span></p>
+                        <p><span class="text-stone-500">Course: </span><span id="current-course" class="text-stone-800">Pending...</span></p>
                         <p><span class="text-stone-500">Time: </span><span id="current-course" class="text-stone-800">Pending...</span></p>
                     </div>
+
                 </div>
+
+                <div class="w-full flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+
+                    <!-- Label with fixed width on desktop, auto on mobile -->
+                    <label
+                        for="student_id"
+                        class="sm:min-w-[120px] text-xs font-bold uppercase tracking-wider text-slate-500 sm:text-right"
+                    >
+                        Student No.
+                    </label>
+
+                    <!-- Input container expanding to fill remaining row space -->
+                    <input
+                        autofocus
+                        type="text"
+                        name="student_id"
+                        id="student_id"
+                        placeholder="Enter student number"
+                        class="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800
+                            placeholder-slate-400 outline-none shadow-sm transition duration-200
+                            focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                    >
+
+                </div>
+
             </div>
 
             <!-- PREVIOUS -->
-            <div class="relative bg-gradient-to-br from-[#f3ede1] to-[#ebe4d6] border border-[#d9cfbe] rounded-xl p-4 flex flex-col gap-4 shadow-lg">
+            <div class="relative bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col gap-4 shadow-lg">
 
                 <!-- <div class="absolute top-0 left-0 w-full h-1 bg-blue-400 rounded-t-xl"></div> -->
 
-                <h2 class="text-sm font-semibold text-sky-800 border-b border-[#d9cfbe] pb-2">
+                <h2 class="text-sm font-semibold text-sky-800 border-b border-slate-200 pb-2">
                     PREVIOUS ENTRY
                 </h2>
 
                 <div class="flex gap-4 items-center">
-                    <img id="previous-image" src="https://via.placeholder.com/300"
-                        class="w-[300px] h-[300px] object-cover rounded-lg border border-[#cdbfaa] shadow-md" />
+                    <img id="previous-image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f1f5f9'/%3E%3Ccircle cx='150' cy='112' r='46' fill='%23cbd5e1'/%3E%3Cpath d='M72 244c16-42 52-68 78-68s62 26 78 68' fill='%23cbd5e1'/%3E%3C/svg%3E"
+                        class="w-[300px] h-[300px] object-cover rounded-lg border border-slate-200 shadow-md" />
 
-                    <div class="flex flex-col gap-0 text-lg text-stone-700">
-                        <span id="previous-status" class="px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full bg-[#e7dece] text-stone-700 border border-[#d4c7b3]">
+                    <div class="flex flex-col gap-0 text-md text-stone-700">
+                        <span id="previous-status" class="px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full bg-slate-100 text-stone-700 border border-slate-200">
                             Pending...
                         </span>
                         <p><span class="text-stone-500">Name: </span><span id="previous-name" class="text-stone-900">Pending...</span></p>
@@ -100,7 +125,8 @@ class="w-full h-full">
             const phTimeZone = 'Asia/Manila';
             const statusDotEl = document.getElementById('system-status-dot');
             const statusTextEl = document.getElementById('system-status-text');
-            let lastSystemStatusState = null;
+            const placeholderImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f1f5f9'/%3E%3Ccircle cx='150' cy='112' r='46' fill='%23cbd5e1'/%3E%3Cpath d='M72 244c16-42 52-68 78-68s62 26 78 68' fill='%23cbd5e1'/%3E%3C/svg%3E";
+            let lastSignature = null;
 
             const timeFormatter = new Intl.DateTimeFormat('en-PH', {
                 timeZone: phTimeZone,
@@ -124,11 +150,6 @@ class="w-full h-full">
             }
 
             function setSystemStatus(state, label) {
-                if (lastSystemStatusState === state) {
-                    return;
-                }
-
-                lastSystemStatusState = state;
                 statusTextEl.textContent = label;
                 statusDotEl.className = 'w-3 h-3 rounded-full animate-pulse';
 
@@ -148,69 +169,112 @@ class="w-full h-full">
                 statusTextEl.className = 'text-lg font-medium text-amber-700';
             }
 
+            function fillPending(prefix) {
+                const imageEl = document.getElementById(`${prefix}-image`);
+                const statusEl = document.getElementById(`${prefix}-status`);
+                imageEl.src = placeholderImage;
+                imageEl.alt = 'Pending student image';
+                statusEl.textContent = 'Pending...';
+                statusEl.className = 'px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full border bg-slate-100 text-stone-700 border-slate-200';
+
+                document.getElementById(`${prefix}-name`).textContent = 'Pending...';
+                document.getElementById(`${prefix}-id`).textContent = 'Pending...';
+                document.getElementById(`${prefix}-grade`).textContent = 'Pending...';
+                document.getElementById(`${prefix}-department`).textContent = 'Pending...';
+                document.getElementById(`${prefix}-course`).textContent = 'Pending...';
+            }
+
             function fillStudent(prefix, student) {
                 const imageEl = document.getElementById(`${prefix}-image`);
                 const statusEl = document.getElementById(`${prefix}-status`);
-                const rawStatus = String(student?.status || '').trim().toLowerCase();
-                const status = rawStatus === 'login'
-                    ? 'Log In'
-                    : rawStatus === 'logout'
-                        ? 'Log Out'
-                        : (student?.status || 'Pending...');
 
-                imageEl.src = student?.image || 'https://via.placeholder.com/300';
-                imageEl.alt = student?.name || 'Student image';
-                statusEl.textContent = status;
-                statusEl.className = 'px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full border';
-
-                if (rawStatus === 'login' || status === 'Log In') {
-                    statusEl.classList.add('bg-emerald-100', 'text-emerald-800', 'border-emerald-300');
-                } else if (rawStatus === 'logout' || status === 'Log Out') {
-                    statusEl.classList.add('bg-rose-100', 'text-rose-800', 'border-rose-300');
-                } else {
-                    statusEl.classList.add('bg-[#e7dece]', 'text-stone-700', 'border-[#d4c7b3]');
+                if (!student) {
+                    fillPending(prefix);
+                    return;
                 }
 
-                document.getElementById(`${prefix}-name`).textContent = student?.name || 'Pending...';
-                document.getElementById(`${prefix}-id`).textContent = student?.student_number || 'Pending...';
-                document.getElementById(`${prefix}-grade`).textContent = student?.grade_level || 'Pending...';
-                document.getElementById(`${prefix}-department`).textContent = student?.department || 'Pending...';
-                document.getElementById(`${prefix}-course`).textContent = student?.course || 'Pending...';
+                imageEl.src = student.image || student.photo || student.avatar || student.picture || student.profile_photo_url || placeholderImage;
+                imageEl.alt = `${student.student_name || student.name || 'Student'} image`;
+                imageEl.onerror = () => {
+                    imageEl.onerror = null;
+                    imageEl.src = placeholderImage;
+                };
+
+                const status = String(student.status || student.remarks || student.state || student.migration_status || 'Pending...').trim();
+                const normalizedStatus = status.toLowerCase() === 'login' || status.toLowerCase() === 'log in' || status.toLowerCase() === 'time in' || status.toLowerCase() === 'in'
+                    ? 'Log In'
+                    : status.toLowerCase() === 'logout' || status.toLowerCase() === 'log out' || status.toLowerCase() === 'time out' || status.toLowerCase() === 'out'
+                        ? 'Log Out'
+                        : status;
+
+                statusEl.textContent = normalizedStatus;
+                statusEl.className = 'px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full border';
+
+                if (normalizedStatus === 'Log In') {
+                    statusEl.classList.add('bg-emerald-100', 'text-emerald-800', 'border-emerald-300');
+                } else if (normalizedStatus === 'Log Out') {
+                    statusEl.classList.add('bg-rose-100', 'text-rose-800', 'border-rose-300');
+                } else {
+                    statusEl.classList.add('bg-slate-100', 'text-stone-700', 'border-slate-200');
+                }
+
+                document.getElementById(`${prefix}-name`).textContent = student.student_name || student.name || 'Pending...';
+                document.getElementById(`${prefix}-id`).textContent = student.student_id || student.student_number || student.lrn || 'Pending...';
+                document.getElementById(`${prefix}-grade`).textContent = student.year_level || student.grade_level || 'Pending...';
+                document.getElementById(`${prefix}-department`).textContent = student.department || 'Pending...';
+                document.getElementById(`${prefix}-course`).textContent = student.course_name || student.course || 'Pending...';
             }
 
-            async function loadStudents() {
+            function renderStudents(students) {
+                const currentStudent = students[0] || null;
+                const previousStudent = students[1] || null;
+
+                fillStudent('current', currentStudent);
+                fillStudent('previous', previousStudent);
+
+                if (currentStudent || previousStudent) {
+                    setSystemStatus('online', `Success to Load Records`);
+                    return;
+                }
+
+                setSystemStatus('offline', 'No student data found');
+            }
+
+            async function checkUpdates() {
                 try {
-                    const response = await fetch('/students');
+                    const response = await fetch('/get-students', {
+                        headers: {
+                            'Accept': 'application/json',
+                        },
+                    });
 
                     if (!response.ok) {
                         throw new Error('Request failed');
                     }
 
                     const payload = await response.json();
-                    const students = Array.isArray(payload.students) ? payload.students : [];
+                    const students = Array.isArray(payload) ? payload : [];
+                    const signature = JSON.stringify(students);
 
-                    fillStudent('current', students[0] || null);
-                    fillStudent('previous', students[1] || null);
-
-                    if (students.length > 0) {
-                        setSystemStatus('online', 'System is Online');
+                    if (signature !== lastSignature) {
+                        lastSignature = signature;
+                        renderStudents(students);
                         return;
                     }
 
-                    fillStudent('current', null);
-                    fillStudent('previous', null);
-                    setSystemStatus('offline', 'Failed to load data');
+                    setSystemStatus(students.length > 0 ? 'online' : 'offline', students.length > 0 ? 'System is Online' : 'No student data found');
                 } catch (error) {
-                    fillStudent('current', null);
-                    fillStudent('previous', null);
+                    fillPending('current');
+                    fillPending('previous');
                     setSystemStatus('offline', 'Failed to load data');
                 }
             }
 
             updatePhilippineClock();
-            loadStudents();
+            checkUpdates();
             setInterval(updatePhilippineClock, 1000);
-            setInterval(loadStudents, 5000);
+            setInterval(checkUpdates, 5000);
         </script>
+
     </body>
 </html>
