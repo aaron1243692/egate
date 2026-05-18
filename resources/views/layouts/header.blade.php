@@ -10,11 +10,9 @@ flex flex-row justify-center items-center">
         >Data</a>
         <a href="{{ route('admin.logs') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
         >Logs</a>
-        <a href="{{ route('admin.permissions') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
-        >Permissions</a>
         <a href="{{ route('admin.roles') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
         >Roles</a>
-        <a href="{{ route('admin.users') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
+        <a href="{{ route('admin.users.index') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
         >Users</a>
     </nav>
 

@@ -2,6 +2,11 @@
 
 use App\Http\Controllers\EgateDashboardController;
 use App\Http\Controllers\EgateLogSyncController;
+use App\Http\Controllers\DataController;
+use App\Http\Controllers\LogController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\SinginController;
@@ -28,24 +33,46 @@ Route::middleware(['auth'])->group(function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
-    Route::get('admin/data', function () {
-        return view('admin.data');
-    })->name('admin.data');
+    Route::prefix('admin/data')->controller(DataController::class)->name('admin.data')->group(function () {
+        Route::get('/', 'index');
+        Route::get('/fetch', 'fetchData')->name('.fetch');
+        Route::get('/{id}', 'show')->name('.show');
+    });
 
-    Route::get('admin/logs', function () {
-        return view('admin.logs');
-    })->name('admin.logs');
+    Route::prefix('admin/logs')->controller(LogController::class)->name('admin.logs')->group(function () {
+        Route::get('/', 'index');
+        Route::get('/fetch', 'fetchLogs')->name('.fetch');
+    });
 
-    Route::get('admin/permissions', function () {
-        return view('admin.permissions');
-    })->name('admin.permissions');
+    Route::prefix('admin/permissions')->controller(PermissionController::class)->name('admin.permissions')->group(function () {
+        Route::get('/', 'index');
+        Route::get('/fetch', 'fetchPermissions')->name('.fetch');
+        Route::post('/', 'store')->name('.store');
+        Route::get('/{id}/edit', 'edit')->name('.edit');
+        Route::put('/{id}', 'update')->name('.update');
+        Route::delete('/{id}', 'destroy')->name('.destroy');
+    });
 
-    Route::get('admin/roles', function () {
-        return view('admin.roles');
-    })->name('admin.roles');
+    Route::prefix('admin/roles')->controller(RoleController::class)->name('admin.roles')->group(function () {
+        Route::get('/', 'index');
+        Route::get('/fetch', 'fetchRoles')->name('.fetch');
+        Route::post('/', 'store')->name('.store');
+        Route::get('/{id}/edit', 'edit')->name('.edit');
+        Route::put('/{id}', 'update')->name('.update');
+        Route::delete('/{id}', 'destroy')->name('.destroy');
+        Route::get('/{id}/permissions', 'getPermissionTree')->name('.permissions');
+        Route::put('/{id}/permissions', 'updatePermissions')->name('.permissions.update');
+    });
 
-    Route::get('admin/users', function () {
-        return view('admin.users');
-    })->name('admin.users');
+    Route::prefix('admin/users')->name('admin.users.')->controller(UserController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/fetch', 'fetchUsers')->name('fetch');
+        Route::get('/roles', 'getRoles')->name('roles');
+        Route::get('/{id}/edit', 'edit')->name('edit');
+        Route::post('/', 'store')->name('store');
+        Route::put('/{id}', 'update')->name('update');
+        Route::put('/{id}/password', 'updatePassword')->name('password');
+        Route::delete('/{id}', 'destroy')->name('destroy');
+    });
 
 });
