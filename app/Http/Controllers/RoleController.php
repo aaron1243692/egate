@@ -7,16 +7,19 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Spatie\Permission\PermissionRegistrar;
 
 class RoleController extends Controller
 {
     public function index()
     {
+        abort_unless(auth()->user()?->can('roles.view'), 403);
         return view('admin.roles');
     }
 
     public function fetchRoles(Request $request): JsonResponse
     {
+        abort_unless(auth()->user()?->can('roles.view'), 403);
         $search = trim((string) $request->get('search', ''));
 
         $roles = DB::table('roles')
@@ -31,6 +34,7 @@ class RoleController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        abort_unless(auth()->user()?->can('roles.create'), 403);
         try {
             $validated = $request->validate([
                 'name' => ['required', 'string', 'max:255'],
@@ -72,6 +76,7 @@ class RoleController extends Controller
 
     public function edit(int $id): JsonResponse
     {
+        abort_unless(auth()->user()?->can('roles.update'), 403);
         $role = DB::table('roles')->where('id', $id)->first();
 
         if (! $role) {
@@ -89,6 +94,7 @@ class RoleController extends Controller
 
     public function update(Request $request, int $id): JsonResponse
     {
+        abort_unless(auth()->user()?->can('roles.update'), 403);
         try {
             $validated = $request->validate([
                 'name' => ['required', 'string', 'max:255'],
@@ -143,6 +149,7 @@ class RoleController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
+        abort_unless(auth()->user()?->can('roles.delete'), 403);
         try {
             $role = DB::table('roles')->where('id', $id)->first();
 
@@ -173,6 +180,7 @@ class RoleController extends Controller
 
     public function getPermissionTree(int $id): JsonResponse
     {
+        abort_unless(auth()->user()?->can('roles.update'), 403);
         $role = DB::table('roles')->where('id', $id)->first();
 
         if (! $role) {
@@ -222,6 +230,7 @@ class RoleController extends Controller
 
     public function updatePermissions(Request $request, int $id): JsonResponse
     {
+        abort_unless(auth()->user()?->can('roles.update'), 403);
         try {
             $role = DB::table('roles')->where('id', $id)->first();
 
@@ -254,6 +263,8 @@ class RoleController extends Controller
                     );
                 }
             });
+
+            app(PermissionRegistrar::class)->forgetCachedPermissions();
 
             return response()->json([
                 'success' => true,

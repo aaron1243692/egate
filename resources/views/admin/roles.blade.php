@@ -18,13 +18,13 @@
                     >
                 </div>
 
-                <button
+                @can('roles.create')<button
                     type="button"
                     id="open-add-role-modal"
                     class="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
                 >
                     Add Role
-                </button>
+                </button>@endcan
             </div>
 
             <div class="overflow-x-auto">
@@ -151,6 +151,9 @@
 
 <script>
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    const canCreateRoles = @json(auth()->user()?->can('roles.create'));
+    const canUpdateRoles = @json(auth()->user()?->can('roles.update'));
+    const canDeleteRoles = @json(auth()->user()?->can('roles.delete'));
     const routes = {
         fetch: @json(route('admin.roles.fetch')),
         store: @json(route('admin.roles.store')),
@@ -180,6 +183,7 @@
     const permissionsCardList = document.getElementById('permissions-card-list');
     const deleteModalText = document.getElementById('delete-modal-text');
     const confirmDeleteRoleButton = document.getElementById('confirm-delete-role');
+    const openAddRoleModalButton = document.getElementById('open-add-role-modal');
 
     let currentPage = 1;
     let roleToDelete = null;
@@ -262,6 +266,38 @@
             return;
         }
 
+        const buildActionButtons = (role) => {
+            const buttons = [];
+
+            if (canUpdateRoles) {
+                buttons.push(`
+                    <button type="button" data-action="edit" data-id="${role.id}" class="transition duration-200 hover:scale-110">
+                        <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="edit role">
+                    </button>
+                `);
+
+                buttons.push(`
+                    <button type="button" data-action="permissions" data-id="${role.id}" data-name="${escapeHtml(role.name)}" class="transition duration-200 hover:scale-110">
+                        <img src="{{ asset('icons/crown.png') }}" class="w-7 h-7" alt="modify permissions">
+                    </button>
+                `);
+            }
+
+            if (canDeleteRoles) {
+                buttons.push(`
+                    <button type="button" data-action="delete" data-id="${role.id}" data-name="${escapeHtml(role.name)}" class="transition duration-200 hover:scale-110">
+                        <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete role">
+                    </button>
+                `);
+            }
+
+            if (buttons.length === 0) {
+                return '<span class="text-sm text-slate-400">No actions</span>';
+            }
+
+            return buttons.join('');
+        };
+
         tableBody.innerHTML = roles.map((role, index) => `
             <tr class="hover:bg-gray-50 transition">
                 <td class="px-4 py-3">${from + index}</td>
@@ -269,15 +305,7 @@
                 <td class="px-4 py-3">${escapeHtml(role.name)}</td>
                 <td class="px-4 py-3">
                     <div class="flex flex-row justify-center items-center gap-4">
-                        <button type="button" data-action="edit" data-id="${role.id}" class="transition duration-200 hover:scale-110">
-                            <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="edit role">
-                        </button>
-                        <button type="button" data-action="permissions" data-id="${role.id}" data-name="${escapeHtml(role.name)}" class="transition duration-200 hover:scale-110">
-                            <img src="{{ asset('icons/crown.png') }}" class="w-7 h-7" alt="modify permissions">
-                        </button>
-                        <button type="button" data-action="delete" data-id="${role.id}" data-name="${escapeHtml(role.name)}" class="transition duration-200 hover:scale-110">
-                            <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete role">
-                        </button>
+                        ${buildActionButtons(role)}
                     </div>
                 </td>
             </tr>
@@ -455,9 +483,11 @@
         return payload;
     }
 
-    document.getElementById('open-add-role-modal').addEventListener('click', () => {
-        openAddRoleModal();
-    });
+    if (openAddRoleModalButton) {
+        openAddRoleModalButton.addEventListener('click', () => {
+            openAddRoleModal();
+        });
+    }
 
     searchInput.addEventListener('input', () => {
         clearTimeout(searchTimer);

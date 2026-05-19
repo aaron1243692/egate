@@ -12,11 +12,9 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of users
-     */
     public function index()
     {
+        abort_unless(auth()->user()?->can('users.view'), 403);
         return view('admin.users');
     }
 
@@ -25,6 +23,7 @@ class UserController extends Controller
      */
     public function fetchUsers(Request $request): JsonResponse
     {
+        abort_unless(auth()->user()?->can('users.view'), 403);
         $search = $request->get('search', '');
 
         $users = User::query()
@@ -47,6 +46,7 @@ class UserController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        abort_unless(auth()->user()?->can('users.create'), 403);
         try {
             $validated = $request->validate([
                 'username' => 'required|string|max:255|unique:users,username',
@@ -88,6 +88,7 @@ class UserController extends Controller
      */
     public function edit($id): JsonResponse
     {
+        abort_unless(auth()->user()?->can('users.update'), 403);
         try {
             $user = User::with('roles')->findOrFail($id);
 
@@ -108,6 +109,7 @@ class UserController extends Controller
      */
     public function update(Request $request, $id): JsonResponse
     {
+        abort_unless(auth()->user()?->can('users.update'), 403);
         try {
             $user = User::findOrFail($id);
 
@@ -149,6 +151,7 @@ class UserController extends Controller
      */
     public function updatePassword(Request $request, $id): JsonResponse
     {
+        abort_unless(auth()->user()?->can('users.update.pass'), 403);
         try {
             $user = User::findOrFail($id);
 
@@ -184,6 +187,7 @@ class UserController extends Controller
      */
     public function destroy($id): JsonResponse
     {
+        abort_unless(auth()->user()?->can('users.delete'), 403);
         try {
             $user = User::findOrFail($id);
 
@@ -215,6 +219,7 @@ class UserController extends Controller
      */
     public function getRoles(): JsonResponse
     {
+        abort_unless(auth()->user()?->can('users.view'), 403);
         try {
             $roles = Role::query()->orderBy('name')->get();
 
@@ -233,6 +238,7 @@ class UserController extends Controller
 
     private function syncUserRoleByName(int $userId, string $roleName): void
     {
+        abort_unless(auth()->user()?->can('users.view'), 403);
         $roleId = Role::query()
             ->where('name', $roleName)
             ->value('id');
@@ -257,6 +263,7 @@ class UserController extends Controller
 
     private function userHasRoleName(int $userId, string $roleName): bool
     {
+        abort_unless(auth()->user()?->can('users.view'), 403);
         return DB::table('model_has_roles')
             ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
             ->where('model_has_roles.model_type', User::class)
@@ -267,6 +274,7 @@ class UserController extends Controller
 
     private function countUsersByRoleName(string $roleName): int
     {
+        abort_unless(auth()->user()?->can('users.view'), 403);
         return DB::table('model_has_roles')
             ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
             ->where('model_has_roles.model_type', User::class)

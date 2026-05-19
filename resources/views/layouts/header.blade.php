@@ -11,16 +11,22 @@ flex flex-row justify-center items-center">
 
     <nav class="gap-1
     flex flex-1 justify-start items-center">
+        @can('data.view')
         <a href="{{ route('admin.data') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
         >Data</a>
+        @endcan
+        @can('logs.view')
         <a href="{{ route('admin.logs') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
         >Logs</a>
+        @endcan
+        @can('roles.view')
         <a href="{{ route('admin.roles') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
         >Roles</a>
-        <a href="{{ route('admin.users.index') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
-        >Users</a>
-        <a href="{{ route('admin.settings') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
-        >Setting</a>
+        @endcan
+        @can('users.view')
+            <a href="{{ route('admin.users.index') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
+            >Users</a>
+        @endcan
     </nav>
 
 </header>

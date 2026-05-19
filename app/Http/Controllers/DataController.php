@@ -10,6 +10,7 @@ class DataController extends Controller
 {
     public function index()
     {
+        abort_unless(auth()->user()?->can('data.view'), 403);
         return view('admin.data', [
             'departments' => EgateLog::query()
                 ->whereNotNull('department')
@@ -37,6 +38,7 @@ class DataController extends Controller
 
     public function fetchData(Request $request): JsonResponse
     {
+        abort_unless(auth()->user()?->can('data.view'), 403);
         $search = trim((string) $request->get('search', ''));
         $department = trim((string) $request->get('department', ''));
         $course = trim((string) $request->get('course', ''));
@@ -66,6 +68,7 @@ class DataController extends Controller
 
     public function show(int $id): JsonResponse
     {
+        abort_unless(auth()->user()?->can('data.view'), 403);
         $record = EgateLog::query()->find($id);
 
         if (! $record) {

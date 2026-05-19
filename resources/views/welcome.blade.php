@@ -107,7 +107,7 @@ class="w-full h-full">
                     type="hidden"
                     name="status"
                     id="status"
-                    value="2"
+                    value="1"
                     >
                     @endif
 
@@ -310,7 +310,7 @@ class="w-full h-full">
                     imageEl.src = placeholderImage;
                 };
 
-                const rawStatus = String(student.status ?? student.login ?? student.remarks ?? student.state ?? student.migration_status ?? '2').trim();
+                const rawStatus = String(student.status ?? student.login ?? student.remarks ?? student.state ?? student.migration_status ?? '0').trim();
                 const normalizedStatus = rawStatus === '1' || rawStatus.toLowerCase() === 'login' || rawStatus.toLowerCase() === 'log in' || rawStatus.toLowerCase() === 'time in' || rawStatus.toLowerCase() === 'in'
                     ? 'Log In'
                     : rawStatus === '0' || rawStatus.toLowerCase() === 'logout' || rawStatus.toLowerCase() === 'log out' || rawStatus.toLowerCase() === 'time out' || rawStatus.toLowerCase() === 'out'
@@ -409,18 +409,26 @@ class="w-full h-full">
 
                     const response = await fetch('{{ route("gate-entries.store") }}', {
                         method: 'POST',
+                        credentials: 'same-origin',
                         headers: {
                             'Accept': 'application/json',
                             'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest',
                         },
                         body: formDataFromPayload(payload),
                     });
 
-                    const result = await response.json();
+                    const contentType = response.headers.get('content-type') || '';
+                    const result = contentType.includes('application/json')
+                        ? await response.json()
+                        : { message: await response.text() };
 
                     if (!response.ok) {
-                        setSubmitFeedback(result.message || 'Failed to submit entry.', 'error');
-                        showMessageModal(result.message || 'Failed to submit entry.', 'Entry Failed');
+                        const errorMessage = result.message && !result.message.includes('<html')
+                            ? result.message
+                            : 'Failed to submit entry.';
+                        setSubmitFeedback(errorMessage, 'error');
+                        showMessageModal(errorMessage, 'Entry Failed');
                         focusManualEntry();
                         return;
                     }
@@ -447,9 +455,10 @@ class="w-full h-full">
 
             function formDataFromPayload(payload) {
                 const formData = new FormData();
+                formData.append('_token', csrfToken);
                 formData.append('student_id', payload.student_id || '');
                 formData.append('rfid', payload.rfid || '');
-                formData.append('status', '2');
+                formData.append('status', '1');
 
                 return formData;
             }

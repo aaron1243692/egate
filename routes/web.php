@@ -18,9 +18,7 @@ Route::get('/get-students', [EgateDashboardController::class, 'getStudents'])->n
 Route::post('/gate-entries', [GateEntryController::class, 'store'])->name('gate-entries.store');
 Route::get('/admin/login', [EgateDashboardController::class, 'showLogin'])->name('admin.login');
 Route::post('/admin/login', [EgateDashboardController::class, 'submitLogin'])->name('admin.login.submit');
-// Route::get('/admin/dashboard', [EgateDashboardController::class, 'adminDashboard'])
-//     ->middleware(['auth', 'role:admin'])
-//     ->name('admin.dashboard');
+
 Route::match(['get', 'post'], '/sync-egate-logs', EgateLogSyncController::class)->name('egate-logs.sync');
 
 Route::get('/signin', [EgateDashboardController::class, 'showLogin'])->name('signin');
@@ -37,15 +35,15 @@ Route::middleware(['auth'])->group(function () {
     })->name('admin.dashboard');
 
     Route::prefix('admin/data')->controller(DataController::class)->name('admin.data')->group(function () {
-        Route::get('/', 'index');
-        Route::get('/fetch', 'fetchData')->name('.fetch');
-        Route::get('/{id}', 'show')->name('.show');
-    });
+        Route::get('/', 'index')->middleware('permission:data.view');
+        Route::get('/fetch', 'fetchData')->name('.fetch')->middleware('permission:data.view');
+        Route::get('/{id}', 'show')->name('.show')->middleware('permission:data.view');
+    })->middleware('permission:data.view');
 
     Route::prefix('admin/logs')->controller(LogController::class)->name('admin.logs')->group(function () {
-        Route::get('/', 'index');
-        Route::get('/fetch', 'fetchLogs')->name('.fetch');
-    });
+        Route::get('/', 'index')->middleware('permission:logs.view');
+        Route::get('/fetch', 'fetchLogs')->name('.fetch')->middleware('permission:logs.view');
+    })->middleware('permission:logs.view');
 
     Route::prefix('admin/permissions')->controller(PermissionController::class)->name('admin.permissions')->group(function () {
         Route::get('/', 'index');
@@ -57,28 +55,25 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::prefix('admin/roles')->controller(RoleController::class)->name('admin.roles')->group(function () {
-        Route::get('/', 'index');
-        Route::get('/fetch', 'fetchRoles')->name('.fetch');
-        Route::post('/', 'store')->name('.store');
-        Route::get('/{id}/edit', 'edit')->name('.edit');
-        Route::put('/{id}', 'update')->name('.update');
-        Route::delete('/{id}', 'destroy')->name('.destroy');
-        Route::get('/{id}/permissions', 'getPermissionTree')->name('.permissions');
-        Route::put('/{id}/permissions', 'updatePermissions')->name('.permissions.update');
-    });
+        Route::get('/', 'index')->middleware('permission:roles.view');
+        Route::get('/fetch', 'fetchRoles')->name('.fetch')->middleware('permission:roles.view');
+        Route::post('/', 'store')->name('.store')->middleware('permission:roles.create');
+        Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('permission:roles.update');
+        Route::put('/{id}', 'update')->name('.update')->middleware('permission:roles.update');
+        Route::delete('/{id}', 'destroy')->name('.destroy')->middleware('permission:roles.delete');
+        Route::get('/{id}/permissions', 'getPermissionTree')->name('.permissions')->middleware('permission:roles.update');
+        Route::put('/{id}/permissions', 'updatePermissions')->name('.permissions.update')->middleware('permission:roles.update');
+    })->middleware('permission:roles.view');
 
     Route::prefix('admin/users')->name('admin.users.')->controller(UserController::class)->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/fetch', 'fetchUsers')->name('fetch');
-        Route::get('/roles', 'getRoles')->name('roles');
-        Route::get('/{id}/edit', 'edit')->name('edit');
-        Route::post('/', 'store')->name('store');
-        Route::put('/{id}', 'update')->name('update');
-        Route::put('/{id}/password', 'updatePassword')->name('password');
-        Route::delete('/{id}', 'destroy')->name('destroy');
-    });
-
-    Route::get('admin/settings', [SettingController::class, 'index'])->name('admin.settings');
-    Route::put('admin/settings/{id}', [SettingController::class, 'update'])->name('admin.settings.update');
+        Route::get('/', 'index')->name('index')->middleware('permission:users.view');
+        Route::get('/fetch', 'fetchUsers')->name('fetch')->middleware('permission:users.view');
+        Route::get('/roles', 'getRoles')->name('roles')->middleware('permission:users.view');
+        Route::get('/{id}/edit', 'edit')->name('edit')->middleware('permission:users.update');
+        Route::post('/', 'store')->name('store')->middleware('permission:users.create');
+        Route::put('/{id}', 'update')->name('update')->middleware('permission:users.update');
+        Route::put('/{id}/password', 'updatePassword')->name('password')->middleware('permission:users.update.pass');
+        Route::delete('/{id}', 'destroy')->name('destroy')->middleware('permission:users.delete');
+    })->middleware('permission:users.view');
 
 });

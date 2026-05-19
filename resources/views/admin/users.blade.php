@@ -18,13 +18,13 @@
                     >
                 </div>
 
-                <button
+                @can('users.create')<button
                     type="button"
                     id="open-add-user-modal"
                     class="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
                 >
                     Add User
-                </button>
+                </button>@endcan
             </div>
 
             <div class="overflow-x-auto">
@@ -207,6 +207,10 @@
 
 <script>
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    const canCreateUsers = @json(auth()->user()?->can('users.create'));
+    const canUpdateUsers = @json(auth()->user()?->can('users.update'));
+    const canUpdateUserPasswords = @json(auth()->user()?->can('users.update.pass'));
+    const canDeleteUsers = @json(auth()->user()?->can('users.delete'));
     const routes = {
         fetch: @json(route('admin.users.fetch')),
         roles: @json(route('admin.users.roles')),
@@ -237,6 +241,7 @@
     const passwordConfirmationGroup = document.getElementById('password-confirmation-group');
     const confirmDeleteButton = document.getElementById('confirm-delete-user');
     const deleteModalText = document.getElementById('delete-modal-text');
+    const openAddUserModalButton = document.getElementById('open-add-user-modal');
 
     let rolesLoaded = false;
     let searchTimer = null;
@@ -339,6 +344,40 @@
             return;
         }
 
+        const buildActionButtons = (user) => {
+            const buttons = [];
+
+            if (canUpdateUsers) {
+                buttons.push(`
+                    <button type="button" class="transition duration-200 hover:scale-110" data-action="edit" data-id="${user.id}">
+                        <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="edit user">
+                    </button>
+                `);
+            }
+
+            if (canUpdateUserPasswords) {
+                buttons.push(`
+                    <button type="button" class="transition duration-200 hover:scale-110" data-action="password" data-id="${user.id}" data-username="${escapeHtml(user.username)}">
+                        <img src="{{ asset('icons/key.png') }}" class="w-7 h-7" alt="change password">
+                    </button>
+                `);
+            }
+
+            if (canDeleteUsers) {
+                buttons.push(`
+                    <button type="button" class="transition duration-200 hover:scale-110" data-action="delete" data-id="${user.id}" data-username="${escapeHtml(user.username)}">
+                        <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete user">
+                    </button>
+                `);
+            }
+
+            if (buttons.length === 0) {
+                return '<span class="text-sm text-slate-400">No actions</span>';
+            }
+
+            return buttons.join('');
+        };
+
         tableBody.innerHTML = users.map((user, index) => `
             <tr class="hover:bg-gray-50 transition">
                 <td class="px-4 py-3">${from + index}</td>
@@ -348,15 +387,7 @@
                 <td class="px-4 py-3">${escapeHtml(roleNames(user))}</td>
                 <td class="px-4 py-3">
                     <div class="flex flex-row justify-center items-center gap-4">
-                        <button type="button" class="transition duration-200 hover:scale-110" data-action="edit" data-id="${user.id}">
-                            <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="edit user">
-                        </button>
-                        <button type="button" class="transition duration-200 hover:scale-110" data-action="password" data-id="${user.id}" data-username="${escapeHtml(user.username)}">
-                            <img src="{{ asset('icons/key.png') }}" class="w-7 h-7" alt="change password">
-                        </button>
-                        <button type="button" class="transition duration-200 hover:scale-110" data-action="delete" data-id="${user.id}" data-username="${escapeHtml(user.username)}">
-                            <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete user">
-                        </button>
+                        ${buildActionButtons(user)}
                     </div>
                 </td>
             </tr>
@@ -533,13 +564,15 @@
         return payload;
     }
 
-    document.getElementById('open-add-user-modal').addEventListener('click', async () => {
-        try {
-            await openAddUserModal();
-        } catch (error) {
-            showMessage(error.message, 'error');
-        }
-    });
+    if (openAddUserModalButton) {
+        openAddUserModalButton.addEventListener('click', async () => {
+            try {
+                await openAddUserModal();
+            } catch (error) {
+                showMessage(error.message, 'error');
+            }
+        });
+    }
 
     searchInput.addEventListener('input', () => {
         clearTimeout(searchTimer);

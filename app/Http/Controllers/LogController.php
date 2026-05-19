@@ -10,11 +10,13 @@ class LogController extends Controller
 {
     public function index()
     {
+        abort_unless(auth()->user()?->can('logs.view'), 403);
         return view('admin.logs');
     }
 
     public function fetchLogs(Request $request): JsonResponse
     {
+        abort_unless(auth()->user()?->can('logs.view'), 403);
         $search = trim((string) $request->get('search', ''));
 
         $logs = DB::table('egate_logs')
