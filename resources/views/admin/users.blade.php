@@ -2,63 +2,63 @@
 @section('title', 'users')
 @section('content')
 
-<main class="w-full p-3 gap-3 flex flex-1 flex-col">
-    <h3 class="text-xl font-semibold text-slate-800">User Accounts</h3>
+<main class="w-full p-2 gap-2 flex flex-1 flex-col overflow-hidden">
+    <h3 class="text-lg font-semibold text-slate-800">User Accounts</h3>
 
-    <section class="w-full flex flex-1 justify-center p-4">
-        <div class="w-full bg-white rounded-lg shadow-md overflow-hidden border border-slate-200">
-            <div class="w-full px-4 py-4 border-b border-slate-200 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <section class="w-full flex flex-1 justify-center p-2 overflow-hidden">
+        <div class="w-full bg-white rounded-md shadow-sm overflow-hidden border border-slate-200 flex flex-col min-h-0">
+            <div class="w-full px-3 py-3 border-b border-slate-200 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <div class="w-full md:max-w-sm">
                     <label for="search-users" class="sr-only">Search users</label>
                     <input
                         id="search-users"
                         type="text"
                         placeholder="Search username or email"
-                        class="w-full rounded-full border border-slate-300 px-4 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                        class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     >
                 </div>
 
                 @can('users.create')<button
                     type="button"
                     id="open-add-user-modal"
-                    class="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
+                    class="rounded-full bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
                 >
                     Add User
                 </button>@endcan
             </div>
 
-            <div class="overflow-x-auto">
+            <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
                 <table class="w-full text-left">
-                    <thead class="bg-blue-600 text-white">
+                    <thead class="sticky top-0 z-10 bg-blue-600 text-white">
                         <tr>
-                            <th class="px-4 py-3">No.</th>
-                            <th class="px-4 py-3">ID</th>
-                            <th class="px-4 py-3">Username</th>
-                            <th class="px-4 py-3">Email</th>
-                            <th class="px-4 py-3">Role</th>
-                            <th class="px-4 py-3 text-center">Actions</th>
+                            <th class="px-3 py-2.5">No.</th>
+                            <th class="px-3 py-2.5">ID</th>
+                            <th class="px-3 py-2.5">Username</th>
+                            <th class="px-3 py-2.5">Email</th>
+                            <th class="px-3 py-2.5">Role</th>
+                            <th class="px-3 py-2.5 text-center">Actions</th>
                         </tr>
                     </thead>
 
-                    <tbody id="users-table-body" class="divide-y divide-slate-200">
+                    <tbody id="users-table-body" class="divide-y divide-black">
                         <tr>
-                            <td colspan="6" class="px-4 py-8 text-center text-slate-500">Loading users...</td>
+                            <td colspan="6" class="px-3 py-5 text-center text-slate-500">Loading users...</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <div class="px-4 py-4 border-t border-slate-200 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div class="px-3 py-2.5 border-t border-slate-200 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <p id="table-summary" class="text-sm text-slate-600">Preparing user list...</p>
-                <div id="pagination" class="flex flex-wrap items-center justify-end gap-2"></div>
+                <div id="pagination" class="flex flex-wrap items-center justify-end gap-1.5"></div>
             </div>
         </div>
     </section>
 </main>
 
 <div id="user-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
-        <form id="user-form" class="flex flex-col items-center gap-3">
+    <div class="w-full max-w-md rounded-xl bg-white p-4 shadow-2xl">
+        <form id="user-form" class="flex flex-col items-center gap-2">
             <input type="hidden" id="user-id">
             <div class="w-full flex items-center justify-between">
                 <h4 id="user-modal-title" class="text-lg font-bold text-gray-900">Add User</h4>
@@ -95,14 +95,14 @@
             <div class="w-full flex justify-center gap-2 pt-2">
 
                 <button type="button" data-close-modal="user-modal"
-                class="rounded-full bg-gray-900 px-4 py-2 text-sm font-medium text-white
+                class="rounded-full bg-gray-900 px-4 py-1.5 text-sm font-medium text-white
                 transition-all duration-150 hover:bg-gray-800 active:scale-[0.98]">
 
                     Cancel
                 </button>
 
                 <button type="submit" id="user-submit-button"
-                class="rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white
+                class="rounded-full bg-blue-500 px-4 py-1.5 text-sm font-semibold text-white
                 transition-colors duration-200 hover:bg-blue-600 hover:scale-105">
 
                     Save User
@@ -114,8 +114,8 @@
 </div>
 
 <div id="password-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
-        <form id="password-form" class="flex flex-col items-center gap-3">
+    <div class="w-full max-w-md rounded-xl bg-white p-4 shadow-2xl">
+        <form id="password-form" class="flex flex-col items-center gap-2">
             <input type="hidden" id="password-user-id">
             <div class="w-full flex items-center justify-between">
                 <h4 class="text-lg font-bold text-gray-900">Change Password</h4>
@@ -135,14 +135,14 @@
             <div class="w-full grid grid-cols-2 gap-2 pt-2 place-items-center">
 
                 <button type="button" data-close-modal="password-modal"
-                class="w-full rounded-full bg-gray-900 px-4 py-2 text-sm font-medium text-white
+                class="w-full rounded-full bg-gray-900 px-4 py-1.5 text-sm font-medium text-white
                 transition-all duration-150 hover:bg-gray-800 active:scale-[0.98]">
 
                     Cancel
                 </button>
 
                 <button type="submit"
-                class="w-full rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white
+                class="w-full rounded-full bg-blue-500 px-4 py-1.5 text-sm font-semibold text-white
                 transition-colors duration-200 hover:bg-blue-600 hover:scale-105">
 
                     Update Password
@@ -154,7 +154,7 @@
 </div>
 
 <div id="delete-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl flex flex-col items-center text-center">
+    <div class="w-full max-w-sm rounded-xl bg-white p-4 shadow-2xl flex flex-col items-center text-center">
         <div class="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-500">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
@@ -185,7 +185,7 @@
 </div>
 
 <div id="message-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div id="message-modal-panel" class="w-full max-w-sm scale-95 rounded-2xl bg-white p-6 text-center opacity-0 shadow-2xl transition duration-200">
+    <div id="message-modal-panel" class="w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200">
         <div id="message-modal-icon" class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-500">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 21a9 9 0 100-18 9 9 0 000 18z"></path>
@@ -271,7 +271,7 @@
         };
         const activeTone = tones[tone] || tones.info;
 
-        messageModalPanel.className = 'w-full max-w-sm scale-95 rounded-2xl bg-white p-6 text-center opacity-0 shadow-2xl transition duration-200';
+        messageModalPanel.className = 'w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200';
         messageModalIcon.className = `mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full ${activeTone.icon}`;
         messageModalTitle.textContent = activeTone.title;
         messageModalText.className = 'text-sm text-gray-500 leading-relaxed';
@@ -338,7 +338,7 @@
         if (!users.length) {
             tableBody.innerHTML = `
                 <tr>
-                    <td colspan="6" class="px-4 py-8 text-center text-slate-500">No users found.</td>
+                    <td colspan="6" class="px-3 py-5 text-center text-slate-500">No users found.</td>
                 </tr>
             `;
             return;
@@ -380,13 +380,13 @@
 
         tableBody.innerHTML = users.map((user, index) => `
             <tr class="hover:bg-gray-50 transition">
-                <td class="px-4 py-3">${from + index}</td>
-                <td class="px-4 py-3">${user.id}</td>
-                <td class="px-4 py-3">${escapeHtml(user.username)}</td>
-                <td class="px-4 py-3">${escapeHtml(user.email)}</td>
-                <td class="px-4 py-3">${escapeHtml(roleNames(user))}</td>
-                <td class="px-4 py-3">
-                    <div class="flex flex-row justify-center items-center gap-4">
+                <td class="px-3 py-2.5">${from + index}</td>
+                <td class="px-3 py-2.5">${user.id}</td>
+                <td class="px-3 py-2.5">${escapeHtml(user.username)}</td>
+                <td class="px-3 py-2.5">${escapeHtml(user.email)}</td>
+                <td class="px-3 py-2.5">${escapeHtml(roleNames(user))}</td>
+                <td class="px-3 py-2.5">
+                    <div class="flex flex-row justify-center items-center gap-2.5">
                         ${buildActionButtons(user)}
                     </div>
                 </td>
@@ -453,7 +453,7 @@
         currentPage = page;
         tableBody.innerHTML = `
             <tr>
-                <td colspan="6" class="px-4 py-8 text-center text-slate-500">Loading users...</td>
+                <td colspan="6" class="px-3 py-5 text-center text-slate-500">Loading users...</td>
             </tr>
         `;
 
@@ -479,7 +479,7 @@
         } catch (error) {
             tableBody.innerHTML = `
                 <tr>
-                    <td colspan="6" class="px-4 py-8 text-center text-rose-600">Unable to load users right now.</td>
+                    <td colspan="6" class="px-3 py-5 text-center text-rose-600">Unable to load users right now.</td>
                 </tr>
             `;
             tableSummary.textContent = 'User list unavailable';

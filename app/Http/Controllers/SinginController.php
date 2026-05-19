@@ -10,13 +10,6 @@ class SinginController extends Controller
 {
     public function submit(Request $request): JsonResponse
     {
-        if (! SettingController::isEnabled(1)) {
-            return response()->json([
-                'message' => 'Manual login is currently disabled.',
-                'status' => 0,
-            ], 403);
-        }
-
         $validated = $request->validate([
             'login' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string'],

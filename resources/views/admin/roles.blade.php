@@ -2,61 +2,61 @@
 @section('title', 'Roles')
 @section('content')
 
-<main class="w-full p-3 gap-3 flex flex-1 flex-col">
-    <h3 class="text-xl font-semibold text-slate-800">Roles</h3>
+<main class="w-full p-2 gap-2 flex flex-1 flex-col overflow-hidden">
+    <h3 class="text-lg font-semibold text-slate-800">Roles</h3>
 
-    <section class="w-full flex flex-1 justify-center p-4">
-        <div class="w-full bg-white rounded-lg shadow-md overflow-hidden border border-slate-200">
-            <div class="w-full px-4 py-4 border-b border-slate-200 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <section class="w-full flex flex-1 justify-center p-2 overflow-hidden">
+        <div class="w-full bg-white rounded-md shadow-sm overflow-hidden border border-slate-200 flex flex-col min-h-0">
+            <div class="w-full px-3 py-3 border-b border-slate-200 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <div class="w-full md:max-w-sm">
                     <label for="search-roles" class="sr-only">Search roles</label>
                     <input
                         id="search-roles"
                         type="text"
                         placeholder="Search role name"
-                        class="w-full rounded-full border border-slate-300 px-4 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                        class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     >
                 </div>
 
                 @can('roles.create')<button
                     type="button"
                     id="open-add-role-modal"
-                    class="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
+                    class="rounded-full bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
                 >
                     Add Role
                 </button>@endcan
             </div>
 
-            <div class="overflow-x-auto">
+            <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
                 <table class="w-full text-left">
-                    <thead class="bg-blue-600 text-white">
+                    <thead class="sticky top-0 z-10 bg-blue-600 text-white">
                         <tr>
-                            <th class="px-4 py-3">No.</th>
-                            <th class="px-4 py-3">ID</th>
-                            <th class="px-4 py-3">Name</th>
-                            <th class="px-4 py-3 text-center">Action</th>
+                            <th class="px-3 py-2.5">No.</th>
+                            <th class="px-3 py-2.5">ID</th>
+                            <th class="px-3 py-2.5">Name</th>
+                            <th class="px-3 py-2.5 text-center">Action</th>
                         </tr>
                     </thead>
 
-                    <tbody id="roles-table-body" class="divide-y divide-slate-200">
+                    <tbody id="roles-table-body" class="divide-y divide-black">
                         <tr>
-                            <td colspan="4" class="px-4 py-8 text-center text-slate-500">Loading roles...</td>
+                            <td colspan="4" class="px-3 py-5 text-center text-slate-500">Loading roles...</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <div class="px-4 py-4 border-t border-slate-200 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div class="px-3 py-2.5 border-t border-slate-200 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <p id="table-summary" class="text-sm text-slate-600">Preparing role list...</p>
-                <div id="pagination" class="flex flex-wrap items-center justify-end gap-2"></div>
+                <div id="pagination" class="flex flex-wrap items-center justify-end gap-1.5"></div>
             </div>
         </div>
     </section>
 </main>
 
 <div id="role-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
-        <form id="role-form" class="flex flex-col items-center gap-3">
+    <div class="w-full max-w-md rounded-xl bg-white p-4 shadow-2xl">
+        <form id="role-form" class="flex flex-col items-center gap-2">
             <input type="hidden" id="role-id">
 
             <div class="w-full flex items-center justify-between">
@@ -70,11 +70,11 @@
             </div>
 
             <div class="w-full flex justify-center gap-2 pt-2">
-                <button type="button" data-close-modal="role-modal" class="rounded-full bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-all duration-150 hover:bg-gray-800 active:scale-[0.98]">
+                <button type="button" data-close-modal="role-modal" class="rounded-full bg-gray-900 px-4 py-1.5 text-sm font-medium text-white transition-all duration-150 hover:bg-gray-800 active:scale-[0.98]">
                     Cancel
                 </button>
 
-                <button type="submit" id="role-submit-button" class="rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-blue-600 hover:scale-105">
+                <button type="submit" id="role-submit-button" class="rounded-full bg-blue-500 px-4 py-1.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-blue-600 hover:scale-105">
                     Save Role
                 </button>
             </div>
@@ -83,8 +83,8 @@
 </div>
 
 <div id="permissions-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-4xl rounded-2xl bg-white p-6 shadow-2xl">
-        <form id="permissions-form" class="flex flex-col gap-4">
+    <div class="w-full max-w-4xl rounded-xl bg-white p-4 shadow-2xl">
+        <form id="permissions-form" class="flex flex-col gap-3">
             <input type="hidden" id="permissions-role-id">
 
             <div class="w-full flex items-center justify-between">
@@ -92,16 +92,16 @@
                 <button type="button" data-close-modal="permissions-modal" class="rounded-full px-2 py-1 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-700">X</button>
             </div>
 
-            <div id="permissions-card-list" class="grid gap-4 md:grid-cols-2">
-                <div class="rounded-2xl border border-slate-200 p-4 text-sm text-slate-500">Loading permissions...</div>
+            <div id="permissions-card-list" class="grid gap-3 md:grid-cols-2">
+                <div class="rounded-xl border border-slate-200 p-3 text-sm text-slate-500">Loading permissions...</div>
             </div>
 
             <div class="w-full flex justify-center gap-2 pt-2">
-                <button type="button" data-close-modal="permissions-modal" class="rounded-full bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-all duration-150 hover:bg-gray-800 active:scale-[0.98]">
+                <button type="button" data-close-modal="permissions-modal" class="rounded-full bg-gray-900 px-4 py-1.5 text-sm font-medium text-white transition-all duration-150 hover:bg-gray-800 active:scale-[0.98]">
                     Cancel
                 </button>
 
-                <button type="submit" class="rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-blue-600 hover:scale-105">
+                <button type="submit" class="rounded-full bg-blue-500 px-4 py-1.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-blue-600 hover:scale-105">
                     Save Permissions
                 </button>
             </div>
@@ -110,7 +110,7 @@
 </div>
 
 <div id="delete-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl flex flex-col items-center text-center">
+    <div class="w-full max-w-sm rounded-xl bg-white p-4 shadow-2xl flex flex-col items-center text-center">
         <div class="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-500">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
@@ -133,7 +133,7 @@
 </div>
 
 <div id="message-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div id="message-modal-panel" class="w-full max-w-sm scale-95 rounded-2xl bg-white p-6 text-center opacity-0 shadow-2xl transition duration-200">
+    <div id="message-modal-panel" class="w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200">
         <div id="message-modal-icon" class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-500">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 21a9 9 0 100-18 9 9 0 000 18z"></path>
@@ -260,7 +260,7 @@
         if (!roles.length) {
             tableBody.innerHTML = `
                 <tr>
-                    <td colspan="4" class="px-4 py-8 text-center text-slate-500">No roles found.</td>
+                    <td colspan="4" class="px-3 py-5 text-center text-slate-500">No roles found.</td>
                 </tr>
             `;
             return;
@@ -300,11 +300,11 @@
 
         tableBody.innerHTML = roles.map((role, index) => `
             <tr class="hover:bg-gray-50 transition">
-                <td class="px-4 py-3">${from + index}</td>
-                <td class="px-4 py-3">${role.id}</td>
-                <td class="px-4 py-3">${escapeHtml(role.name)}</td>
-                <td class="px-4 py-3">
-                    <div class="flex flex-row justify-center items-center gap-4">
+                <td class="px-3 py-2.5">${from + index}</td>
+                <td class="px-3 py-2.5">${role.id}</td>
+                <td class="px-3 py-2.5">${escapeHtml(role.name)}</td>
+                <td class="px-3 py-2.5">
+                    <div class="flex flex-row justify-center items-center gap-2.5">
                         ${buildActionButtons(role)}
                     </div>
                 </td>
@@ -346,7 +346,7 @@
         currentPage = page;
         tableBody.innerHTML = `
             <tr>
-                <td colspan="4" class="px-4 py-8 text-center text-slate-500">Loading roles...</td>
+                <td colspan="4" class="px-3 py-5 text-center text-slate-500">Loading roles...</td>
             </tr>
         `;
 
@@ -370,7 +370,7 @@
         } catch (error) {
             tableBody.innerHTML = `
                 <tr>
-                    <td colspan="4" class="px-4 py-8 text-center text-rose-600">Unable to load roles right now.</td>
+                    <td colspan="4" class="px-3 py-5 text-center text-rose-600">Unable to load roles right now.</td>
                 </tr>
             `;
             tableSummary.textContent = 'Role list unavailable';
@@ -387,17 +387,17 @@
 
     function renderPermissionCards(parents) {
         if (!parents.length) {
-            permissionsCardList.innerHTML = '<div class="rounded-2xl border border-slate-200 p-4 text-sm text-slate-500">No permissions available.</div>';
+            permissionsCardList.innerHTML = '<div class="rounded-xl border border-slate-200 p-3 text-sm text-slate-500">No permissions available.</div>';
             return;
         }
 
         permissionsCardList.innerHTML = parents.map((parent) => `
-            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
                 <label class="flex items-center gap-3 text-base font-semibold text-slate-800">
                     <input type="checkbox" class="permission-parent h-4 w-4 accent-blue-600" value="${parent.id}" ${parent.checked ? 'checked' : ''}>
                     <span>${escapeHtml(parent.name)}</span>
                 </label>
-                <div class="mt-4 flex flex-col gap-3 pl-2">
+                <div class="mt-3 flex flex-col gap-2 pl-2">
                     ${(parent.children || []).length
                         ? parent.children.map((child) => `
                             <label class="flex items-center gap-3 text-sm text-slate-700">
@@ -440,7 +440,7 @@
         hideMessage();
         permissionsRoleIdInput.value = roleId;
         permissionsModalTitle.textContent = `Modify Permissions: ${roleName}`;
-        permissionsCardList.innerHTML = '<div class="rounded-2xl border border-slate-200 p-4 text-sm text-slate-500">Loading permissions...</div>';
+        permissionsCardList.innerHTML = '<div class="rounded-xl border border-slate-200 p-3 text-sm text-slate-500">Loading permissions...</div>';
         openModal(permissionsModal);
 
         const response = await fetch(`${routes.editBase}/${roleId}/permissions`, {
@@ -558,7 +558,7 @@
     permissionsForm.addEventListener('change', (event) => {
         const parentCheckbox = event.target.closest('.permission-parent');
         if (parentCheckbox) {
-            const card = parentCheckbox.closest('.rounded-2xl');
+            const card = parentCheckbox.closest('.rounded-xl');
             card?.querySelectorAll('.permission-child').forEach((checkbox) => {
                 checkbox.checked = parentCheckbox.checked;
             });
@@ -570,7 +570,7 @@
             return;
         }
 
-        const card = childCheckbox.closest('.rounded-2xl');
+        const card = childCheckbox.closest('.rounded-xl');
         const parent = card?.querySelector('.permission-parent');
         const children = [...(card?.querySelectorAll('.permission-child') || [])];
         if (parent) {

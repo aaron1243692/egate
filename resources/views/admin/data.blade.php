@@ -2,26 +2,26 @@
 @section('title', 'Data')
 @section('content')
 
-<main class="w-full p-3 gap-3 flex flex-1 flex-col overflow-hidden">
-    <h3 class="text-xl font-semibold text-slate-800">Student Data</h3>
+<main class="w-full p-2 gap-2 flex flex-1 flex-col overflow-hidden">
+    <h3 class="text-lg font-semibold text-slate-800">Student Data</h3>
 
-    <section class="w-full flex flex-1 justify-center p-4 overflow-hidden">
-        <div class="w-full bg-white rounded-lg shadow-md overflow-hidden border border-slate-200 flex flex-col min-h-0">
-            <div class="w-full px-4 py-4 border-b border-slate-200 flex flex-col gap-3">
+    <section class="w-full flex flex-1 justify-center p-2 overflow-hidden">
+        <div class="w-full bg-white rounded-md shadow-sm overflow-hidden border border-slate-200 flex flex-col min-h-0">
+            <div class="w-full px-3 py-3 border-b border-slate-200 flex flex-col gap-2">
                 <div class="w-full md:max-w-sm">
                     <label for="search-data" class="sr-only">Search student data</label>
                     <input
                         id="search-data"
                         type="text"
                         placeholder="Search name, ID, department, course"
-                        class="w-full rounded-full border border-slate-300 px-4 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                        class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     >
                 </div>
 
-                <div class="grid gap-3 md:grid-cols-3">
+                <div class="grid gap-2 md:grid-cols-3">
                     <div class="flex flex-col gap-1">
                         <label for="filter-department" class="text-sm font-medium text-slate-700">Department</label>
-                        <select id="filter-department" class="w-full rounded-full border border-slate-300 px-4 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100 bg-white">
+                        <select id="filter-department" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
                             <option value="">All departments</option>
                             @foreach ($departments as $department)
                                 <option value="{{ $department }}">{{ $department }}</option>
@@ -31,7 +31,7 @@
 
                     <div class="flex flex-col gap-1">
                         <label for="filter-course" class="text-sm font-medium text-slate-700">Course</label>
-                        <select id="filter-course" class="w-full rounded-full border border-slate-300 px-4 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100 bg-white">
+                        <select id="filter-course" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
                             <option value="">All courses</option>
                             @foreach ($courses as $course)
                                 <option value="{{ $course }}">{{ $course }}</option>
@@ -41,7 +41,7 @@
 
                     <div class="flex flex-col gap-1">
                         <label for="filter-year-level" class="text-sm font-medium text-slate-700">Year Level</label>
-                        <select id="filter-year-level" class="w-full rounded-full border border-slate-300 px-4 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100 bg-white">
+                        <select id="filter-year-level" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
                             <option value="">All year levels</option>
                             @foreach ($yearLevels as $yearLevel)
                                 <option value="{{ $yearLevel }}">{{ $yearLevel }}</option>
@@ -51,44 +51,44 @@
                 </div>
             </div>
 
-            <div class="flex-1 min-h-0 overflow-auto">
+            <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
                 <table class="w-full text-left">
-                    <thead class="bg-blue-600 text-white">
+                    <thead class="sticky top-0 z-10 bg-blue-600 text-white">
                         <tr>
-                            <th class="px-4 py-3">No.</th>
-                            <th class="px-4 py-3">ID</th>
-                            <th class="px-4 py-3">Name</th>
-                            <th class="px-4 py-3">Department</th>
-                            <th class="px-4 py-3">Course</th>
-                            <th class="px-4 py-3 text-center">Action</th>
+                            <th class="px-3 py-2.5">No.</th>
+                            <th class="px-3 py-2.5">ID</th>
+                            <th class="px-3 py-2.5">Name</th>
+                            <th class="px-3 py-2.5">Department</th>
+                            <th class="px-3 py-2.5">Course</th>
+                            <th class="px-3 py-2.5 text-center">Action</th>
                         </tr>
                     </thead>
 
-                    <tbody id="data-table-body" class="divide-y divide-slate-200">
+                    <tbody id="data-table-body" class="divide-y divide-black">
                         <tr>
-                            <td colspan="6" class="px-4 py-8 text-center text-slate-500">Loading data...</td>
+                            <td colspan="6" class="px-3 py-5 text-center text-slate-500">Loading data...</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <div class="px-4 py-4 border-t border-slate-200 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div class="px-3 py-2.5 border-t border-slate-200 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <p id="table-summary" class="text-sm text-slate-600">Preparing data list...</p>
-                <div id="pagination" class="flex flex-wrap items-center justify-end gap-2"></div>
+                <div id="pagination" class="flex flex-wrap items-center justify-end gap-1.5"></div>
             </div>
         </div>
     </section>
 </main>
 
 <div id="details-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-2xl max-h-[90vh] rounded-2xl bg-white shadow-2xl flex flex-col overflow-hidden">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+    <div class="w-full max-w-2xl max-h-[90vh] rounded-xl bg-white shadow-2xl flex flex-col overflow-hidden">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200">
             <h4 class="text-lg font-bold text-gray-900">Student Details</h4>
             <button type="button" data-close-modal="details-modal" class="rounded-full px-2 py-1 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-700">X</button>
         </div>
 
-        <div class="overflow-y-auto px-6 py-4">
-            <form class="grid gap-4 md:grid-cols-2">
+        <div class="overflow-y-auto px-4 py-3">
+            <form class="grid gap-3 md:grid-cols-2">
                 <div class="flex flex-col gap-1">
                 <label>Student ID</label>
                 <input id="detail-student-number" type="text" readonly class="w-full rounded-full border-1 border-black/70 px-3 py-2 outline-none bg-slate-50">
@@ -156,8 +156,8 @@
             </form>
         </div>
 
-        <div class="px-6 py-4 border-t border-slate-200 flex justify-center">
-            <button type="button" data-close-modal="details-modal" class="rounded-full bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-all duration-150 hover:bg-gray-800 active:scale-[0.98]">
+        <div class="px-4 py-3 border-t border-slate-200 flex justify-center">
+            <button type="button" data-close-modal="details-modal" class="rounded-full bg-gray-900 px-4 py-1.5 text-sm font-medium text-white transition-all duration-150 hover:bg-gray-800 active:scale-[0.98]">
                 Close
             </button>
         </div>
@@ -206,7 +206,7 @@
         if (!records.length) {
             dataTableBody.innerHTML = `
                 <tr>
-                    <td colspan="6" class="px-4 py-8 text-center text-slate-500">No records found.</td>
+                    <td colspan="6" class="px-3 py-5 text-center text-slate-500">No records found.</td>
                 </tr>
             `;
             return;
@@ -214,12 +214,12 @@
 
         dataTableBody.innerHTML = records.map((record, index) => `
             <tr class="hover:bg-gray-50 transition">
-                <td class="px-4 py-3">${from + index}</td>
-                <td class="px-4 py-3">${escapeHtml(record.student_number)}</td>
-                <td class="px-4 py-3">${escapeHtml(formatNameCell(record))}</td>
-                <td class="px-4 py-3">${escapeHtml(record.department || 'N/A')}</td>
-                <td class="px-4 py-3">${escapeHtml(record.course || 'N/A')}</td>
-                <td class="px-4 py-3 text-center">
+                <td class="px-3 py-2.5">${from + index}</td>
+                <td class="px-3 py-2.5">${escapeHtml(record.student_number)}</td>
+                <td class="px-3 py-2.5">${escapeHtml(formatNameCell(record))}</td>
+                <td class="px-3 py-2.5">${escapeHtml(record.department || 'N/A')}</td>
+                <td class="px-3 py-2.5">${escapeHtml(record.course || 'N/A')}</td>
+                <td class="px-3 py-2.5 text-center">
                     <button type="button" data-action="view" data-id="${record.id}" class="transition duration-200 hover:scale-110">
                         <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="view data">
                     </button>
@@ -262,7 +262,7 @@
         dataCurrentPage = page;
         dataTableBody.innerHTML = `
             <tr>
-                <td colspan="6" class="px-4 py-8 text-center text-slate-500">Loading data...</td>
+                <td colspan="6" class="px-3 py-5 text-center text-slate-500">Loading data...</td>
             </tr>
         `;
 
@@ -295,7 +295,7 @@
         } catch (error) {
             dataTableBody.innerHTML = `
                 <tr>
-                    <td colspan="6" class="px-4 py-8 text-center text-rose-600">Unable to load data right now.</td>
+                    <td colspan="6" class="px-3 py-5 text-center text-rose-600">Unable to load data right now.</td>
                 </tr>
             `;
             dataTableSummary.textContent = 'Data list unavailable';

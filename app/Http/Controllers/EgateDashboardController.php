@@ -21,9 +21,7 @@ class EgateDashboardController extends Controller
 
     public function showLogin(): View
     {
-        return view('login', [
-            'manualLoginEnabled' => SettingController::isEnabled(1),
-        ]);
+        return view('login');
     }
 
     public function adminDashboard(): View
@@ -90,10 +88,6 @@ class EgateDashboardController extends Controller
 
     public function submitLogin(Request $request): RedirectResponse
     {
-        if (! SettingController::isEnabled(1)) {
-            return back()->with('login_error', 'Manual login is currently disabled.');
-        }
-
         $validated = $request->validate([
             'login' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string'],

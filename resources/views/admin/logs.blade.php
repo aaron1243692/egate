@@ -2,53 +2,53 @@
 @section('title', 'Logs')
 @section('content')
 
-<main class="w-full p-3 gap-3 flex flex-1 flex-col">
-    <h3 class="text-xl font-semibold text-slate-800">Logs</h3>
+<main class="w-full p-2 gap-2 flex flex-1 flex-col overflow-hidden">
+    <h3 class="text-lg font-semibold text-slate-800">Logs</h3>
 
-    <section class="w-full flex flex-1 justify-center p-4">
-        <div class="w-full bg-white rounded-lg shadow-md overflow-hidden border border-slate-200">
-            <div class="w-full px-4 py-4 border-b border-slate-200 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <section class="w-full flex flex-1 justify-center p-2 overflow-hidden">
+        <div class="w-full bg-white rounded-md shadow-sm overflow-hidden border border-slate-200 flex flex-col min-h-0">
+            <div class="w-full px-3 py-3 border-b border-slate-200 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <div class="w-full md:max-w-md flex gap-2">
                     <label for="search-logs" class="sr-only">Search logs</label>
                     <input
                         id="search-logs"
                         type="text"
                         placeholder="Search by student ID or name"
-                        class="w-full rounded-full border border-slate-300 px-4 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                        class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     >
                     <button
                         type="button"
                         id="search-logs-button"
-                        class="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
+                        class="rounded-full bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
                     >
                         Search
                     </button>
                 </div>
             </div>
 
-            <div class="overflow-x-auto">
+            <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
                 <table class="w-full text-left">
-                    <thead class="bg-blue-600 text-white">
+                    <thead class="sticky top-0 z-10 bg-blue-600 text-white">
                         <tr>
-                            <th class="px-4 py-3">No.</th>
-                            <th class="px-4 py-3">ID</th>
-                            <th class="px-4 py-3">Name</th>
-                            <th class="px-4 py-3">Status</th>
-                            <th class="px-4 py-3">DateTime</th>
+                            <th class="px-3 py-2.5">No.</th>
+                            <th class="px-3 py-2.5">ID</th>
+                            <th class="px-3 py-2.5">Name</th>
+                            <th class="px-3 py-2.5">Status</th>
+                            <th class="px-3 py-2.5">DateTime</th>
                         </tr>
                     </thead>
 
-                    <tbody id="logs-table-body" class="divide-y divide-slate-200">
+                    <tbody id="logs-table-body" class="divide-y divide-black">
                         <tr>
-                            <td colspan="5" class="px-4 py-8 text-center text-slate-500">Loading logs...</td>
+                            <td colspan="5" class="px-3 py-5 text-center text-slate-500">Loading logs...</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <div class="px-4 py-4 border-t border-slate-200 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div class="px-3 py-2.5 border-t border-slate-200 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <p id="table-summary" class="text-sm text-slate-600">Preparing log list...</p>
-                <div id="pagination" class="flex flex-wrap items-center justify-end gap-2"></div>
+                <div id="pagination" class="flex flex-wrap items-center justify-end gap-1.5"></div>
             </div>
         </div>
     </section>
@@ -93,7 +93,7 @@
         if (!logs.length) {
             logsTableBody.innerHTML = `
                 <tr>
-                    <td colspan="5" class="px-4 py-8 text-center text-slate-500">No logs found.</td>
+                    <td colspan="5" class="px-3 py-5 text-center text-slate-500">No logs found.</td>
                 </tr>
             `;
             return;
@@ -101,11 +101,11 @@
 
         logsTableBody.innerHTML = logs.map((log, index) => `
             <tr class="hover:bg-gray-50 transition">
-                <td class="px-4 py-3">${from + index}</td>
-                <td class="px-4 py-3">${escapeHtml(log.student_id)}</td>
-                <td class="px-4 py-3">${escapeHtml(log.name)}</td>
-                <td class="px-4 py-3">${escapeHtml(log.status)}</td>
-                <td class="px-4 py-3">${escapeHtml(formatTime(log.time))}</td>
+                <td class="px-3 py-2.5">${from + index}</td>
+                <td class="px-3 py-2.5">${escapeHtml(log.student_id)}</td>
+                <td class="px-3 py-2.5">${escapeHtml(log.name)}</td>
+                <td class="px-3 py-2.5">${escapeHtml(log.status)}</td>
+                <td class="px-3 py-2.5">${escapeHtml(formatTime(log.time))}</td>
             </tr>
         `).join('');
     }
@@ -145,7 +145,7 @@
         logsCurrentPage = page;
         logsTableBody.innerHTML = `
             <tr>
-                <td colspan="5" class="px-4 py-8 text-center text-slate-500">Loading logs...</td>
+                <td colspan="5" class="px-3 py-5 text-center text-slate-500">Loading logs...</td>
             </tr>
         `;
 
@@ -171,7 +171,7 @@
         } catch (error) {
             logsTableBody.innerHTML = `
                 <tr>
-                    <td colspan="5" class="px-4 py-8 text-center text-rose-600">Unable to load logs right now.</td>
+                    <td colspan="5" class="px-3 py-5 text-center text-rose-600">Unable to load logs right now.</td>
                 </tr>
             `;
             logsTableSummary.textContent = 'Log list unavailable';
