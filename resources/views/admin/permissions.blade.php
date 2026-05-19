@@ -262,7 +262,7 @@
         }
 
         tableBody.innerHTML = permissions.map((permission, index) => `
-            <tr class="hover:bg-gray-50 transition">
+            <tr class="border-b border-black hover:bg-gray-50 transition">
                 <td class="px-3 py-2.5">${from + index}</td>
                 <td class="px-3 py-2.5">${permission.id}</td>
                 <td class="px-3 py-2.5">${escapeHtml(permission.name)}</td>

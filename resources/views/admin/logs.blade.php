@@ -100,7 +100,7 @@
         }
 
         logsTableBody.innerHTML = logs.map((log, index) => `
-            <tr class="hover:bg-gray-50 transition">
+            <tr class="border-b border-black hover:bg-gray-50 transition">
                 <td class="px-3 py-2.5">${from + index}</td>
                 <td class="px-3 py-2.5">${escapeHtml(log.student_id)}</td>
                 <td class="px-3 py-2.5">${escapeHtml(log.name)}</td>

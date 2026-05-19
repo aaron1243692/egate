@@ -379,7 +379,7 @@
         };
 
         tableBody.innerHTML = users.map((user, index) => `
-            <tr class="hover:bg-gray-50 transition">
+            <tr class="border-b border-black hover:bg-gray-50 transition">
                 <td class="px-3 py-2.5">${from + index}</td>
                 <td class="px-3 py-2.5">${user.id}</td>
                 <td class="px-3 py-2.5">${escapeHtml(user.username)}</td>

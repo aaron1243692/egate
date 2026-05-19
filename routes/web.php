@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\EgateDashboardController;
+use App\Http\Controllers\EgateLoginController;
+use App\Http\Controllers\EgateLogoutController;
+
 use App\Http\Controllers\EgateLogSyncController;
 use App\Http\Controllers\GateEntryController;
 use App\Http\Controllers\SettingController;
@@ -13,20 +16,17 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\SinginController;
 
-Route::get('/', EgateDashboardController::class)->name('welcome');
 Route::get('/get-students', [EgateDashboardController::class, 'getStudents'])->name('get-students') ;
 Route::post('/gate-entries', [GateEntryController::class, 'store'])->name('gate-entries.store');
 Route::get('/admin/login', [EgateDashboardController::class, 'showLogin'])->name('admin.login');
 Route::post('/admin/login', [EgateDashboardController::class, 'submitLogin'])->name('admin.login.submit');
-
 Route::match(['get', 'post'], '/sync-egate-logs', EgateLogSyncController::class)->name('egate-logs.sync');
-
 Route::get('/signin', [EgateDashboardController::class, 'showLogin'])->name('signin');
-
 Route::redirect('/login', '/signin')->name('login');
 
-
-Route::post('/signin', [SinginController::class, 'submit'])->name('signin.submit');
+Route::get('/', EgateDashboardController::class)->name('welcome');
+Route::get('/in', EgateLoginController::class)->name('in');
+Route::get('/out', EgateLogoutController::class)->name('out');
 
 Route::middleware(['auth'])->group(function () {
 
