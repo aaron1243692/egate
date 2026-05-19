@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('egate_logs', function (Blueprint $table) {
             $table->id();
             $table->string('student_id')->notnull();
-            $table->integer('status')->default(3);
-            $table->timestamps();
+            $table->integer('status')->default(2);
+            $table->dateTime('created_at')->nullable();
+            $table->dateTime('updated_at')->nullable();
         });
     }
 

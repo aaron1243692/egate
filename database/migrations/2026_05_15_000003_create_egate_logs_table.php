@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('egate_data', function (Blueprint $table) {
             $table->id();
             $table->string('student_number')->index();
+            $table->unsignedBigInteger('lrn')->nullable()->index();
             $table->string('last_name');
             $table->string('first_name');
             $table->string('middle_name')->nullable();
@@ -24,7 +25,7 @@ return new class extends Migration
             $table->string('grade_level', 50)->nullable();
             $table->string('status', 10)->default('IN')->index();
             $table->string('image')->nullable();
-            $table->timestamp('logged_at')->index();
+            $table->dateTime('logged_at')->index();
             $table->string('gate_name')->nullable();
             $table->string('ip_address', 45)->nullable();
             $table->text('remarks')->nullable();

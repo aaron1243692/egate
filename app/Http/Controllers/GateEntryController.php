@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\EgateEntryLog;
 use App\Models\EgateLog as EgateData;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +25,7 @@ class GateEntryController extends Controller
         $validated = $request->validate([
             'student_id' => ['nullable', 'string', 'max:255'],
             'rfid' => ['nullable', 'string', 'max:255'],
+            'status' => ['nullable', 'integer'],
         ]);
 
         $manualInput = trim((string) ($validated['student_id'] ?? ''));
@@ -52,7 +54,6 @@ class GateEntryController extends Controller
         $student = EgateData::query()
             ->where('student_number', $lookup)
             ->orWhere('lrn', $lookup)
-            ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(COALESCE(remarks, '{}'), '$.lrn')) = ?", [$lookup])
             ->first();
 
         if (! $student) {
@@ -61,28 +62,21 @@ class GateEntryController extends Controller
             ], 404);
         }
 
-        $latestLog = EgateEntryLog::query()
-            ->where(function ($query) use ($student) {
-                $query
-                    ->where('egate_data_id', $student->id)
-                    ->orWhere('student_id', $student->student_number);
-            })
-            ->latest('id')
-            ->first();
+        $status = (int) ($validated['status'] ?? 2);
+        $loggedAt = CarbonImmutable::now(config('app.timezone'))->format('Y-m-d H:i:s');
 
-        $status = $latestLog?->status === 1 ? 0 : 1;
-        $statusLabel = $status === 1 ? 'IN' : 'OUT';
-
-        $log = DB::transaction(function () use ($student, $status, $statusLabel, $request) {
+        $log = DB::transaction(function () use ($student, $status, $request, $loggedAt) {
             $entryLog = EgateEntryLog::query()->create([
                 'egate_data_id' => $student->id,
                 'student_id' => $student->student_number,
                 'status' => $status,
+                'created_at' => $loggedAt,
+                'updated_at' => $loggedAt,
             ]);
 
             $student->forceFill([
-                'status' => $statusLabel,
-                'logged_at' => now(),
+                'status' => (string) $status,
+                'logged_at' => $loggedAt,
                 'gate_name' => 'Welcome Gate',
                 'ip_address' => $request->ip(),
             ])->save();
@@ -96,7 +90,11 @@ class GateEntryController extends Controller
             'egate_data_id' => $student->id,
             'student_id' => $student->student_number,
             'status' => $status,
-            'status_label' => $status === 1 ? 'Login' : 'Logout',
+            'status_label' => match ($status) {
+                1 => 'Log In',
+                0 => 'Log Out',
+                default => 'N/A',
+            },
         ]);
     }
 }

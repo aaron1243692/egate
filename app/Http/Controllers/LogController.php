@@ -71,8 +71,9 @@ class LogController extends Controller
     private function resolveStatusLabel(int $status): string
     {
         return match ($status) {
-            0 => 'Logout',
-            1 => 'Login',
+            0 => 'Log Out',
+            1 => 'Log In',
+            2 => 'N/A',
             default => 'N/A',
         };
     }

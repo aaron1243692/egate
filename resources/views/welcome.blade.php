@@ -17,8 +17,14 @@ class="w-full h-full">
         <!-- HEADER -->
         <header class="w-full bg-white/90 backdrop-blur-md border border-slate-200 rounded-xl py-2 px-3 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3">
 
-            <div>
-                <h1 class="text-l font-bold tracking-wide text-stone-900">OSMIS-eGATE</h1>
+            <div class="flex items-center gap-1">
+                <img src="{{ asset('images/olpcc-logo.png') }}"
+                    alt="Logo"
+                    class="w-20 h-20 rounded-full object-cover">
+
+                <h1 class="text-lg font-bold tracking-wide text-stone-900">
+                    OSMIS-eGATE
+                </h1>
             </div>
 
             <div class="flex items-center gap-2">
@@ -69,7 +75,7 @@ class="w-full h-full">
                     <label
                     for="student_id"
                     class="sm:min-w-[120px] text-xs font-bold uppercase tracking-wider text-slate-500 sm:text-right"
-                    >Student No.
+                    >Student.
                     </label>
 
                     <input
@@ -101,17 +107,20 @@ class="w-full h-full">
                     type="hidden"
                     name="status"
                     id="status"
-                    value="3"
+                    value="2"
                     >
                     @endif
 
                 </div>
 
-                @if ($manualEntryEnabled || $rfidLoginEnabled)
-                <p id="submit-feedback" class="text-sm text-slate-500">Ready to accept student ID or RFID scan.</p>
-                @else
-                <p id="submit-feedback" class="text-sm text-amber-700">Manual login and RFID login are currently disabled.</p>
-                @endif
+                <p id="submit-feedback" class="text-sm text-slate-500">
+                    @if ($manualEntryEnabled)
+                    @elseif($rfidLoginEnabled)
+                    Ready to accept RFID scan.
+                    @else
+                    Manual login and RFID login are currently disabled.
+                    @endif
+                </p>
             </div>
 
             <!-- PREVIOUS -->
@@ -143,10 +152,27 @@ class="w-full h-full">
 
         </div>
 
+        <div id="message-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+            <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <h3 id="message-modal-title" class="text-lg font-bold text-stone-900">Notice</h3>
+                        <p id="message-modal-text" class="mt-2 text-sm leading-relaxed text-stone-600"></p>
+                    </div>
+                    <button type="button" id="close-message-modal" class="rounded-full px-2 py-1 text-sm text-stone-500 transition hover:bg-stone-100 hover:text-stone-700">X</button>
+                </div>
+                <button type="button" id="message-modal-button" class="mt-6 w-full rounded-xl bg-stone-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-stone-800">
+                    Close
+                </button>
+            </div>
+        </div>
+
         <script>
             const phTimeEl = document.getElementById('ph-time');
             const phDateEl = document.getElementById('ph-date');
-            const phTimeZone = 'Asia/Manila';
+            const serverNowIso = @json(now()->toIso8601String());
+            const serverNowMs = Date.parse(serverNowIso);
+            const clockStartedAt = window.performance.now();
             const statusDotEl = document.getElementById('system-status-dot');
             const statusTextEl = document.getElementById('system-status-text');
             const placeholderImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f1f5f9'/%3E%3Ccircle cx='150' cy='112' r='46' fill='%23cbd5e1'/%3E%3Cpath d='M72 244c16-42 52-68 78-68s62 26 78 68' fill='%23cbd5e1'/%3E%3C/svg%3E";
@@ -154,6 +180,11 @@ class="w-full h-full">
             const studentIdInput = document.getElementById('student_id');
             const rfidInput = document.getElementById('rfid');
             const submitFeedbackEl = document.getElementById('submit-feedback');
+            const messageModal = document.getElementById('message-modal');
+            const messageModalTitle = document.getElementById('message-modal-title');
+            const messageModalText = document.getElementById('message-modal-text');
+            const closeMessageModal = document.getElementById('close-message-modal');
+            const messageModalButton = document.getElementById('message-modal-button');
             const manualEntryEnabled = @json($manualEntryEnabled);
             const rfidLoginEnabled = @json($rfidLoginEnabled);
             let lastSignature = null;
@@ -162,7 +193,6 @@ class="w-full h-full">
             let scanTimer = null;
 
             const timeFormatter = new Intl.DateTimeFormat('en-PH', {
-                timeZone: phTimeZone,
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit',
@@ -170,14 +200,14 @@ class="w-full h-full">
             });
 
             const dateFormatter = new Intl.DateTimeFormat('en-PH', {
-                timeZone: phTimeZone,
                 month: 'long',
                 day: 'numeric',
                 year: 'numeric',
             });
 
             function updatePhilippineClock() {
-                const now = new Date();
+                const elapsedMs = window.performance.now() - clockStartedAt;
+                const now = new Date(serverNowMs + elapsedMs);
                 phTimeEl.textContent = timeFormatter.format(now);
                 phDateEl.textContent = dateFormatter.format(now);
             }
@@ -203,6 +233,10 @@ class="w-full h-full">
             }
 
             function setSubmitFeedback(message, tone = 'idle') {
+                if (!submitFeedbackEl) {
+                    return;
+                }
+
                 submitFeedbackEl.textContent = message;
                 submitFeedbackEl.className = 'text-sm';
 
@@ -222,6 +256,26 @@ class="w-full h-full">
                 }
 
                 submitFeedbackEl.classList.add('text-slate-500');
+            }
+
+            function showMessageModal(message, title = 'Notice') {
+                if (!messageModal || !messageModalTitle || !messageModalText) {
+                    return;
+                }
+
+                messageModalTitle.textContent = title;
+                messageModalText.textContent = message;
+                messageModal.classList.remove('hidden');
+                messageModal.classList.add('flex');
+            }
+
+            function hideMessageModal() {
+                if (!messageModal) {
+                    return;
+                }
+
+                messageModal.classList.add('hidden');
+                messageModal.classList.remove('flex');
             }
 
             function fillPending(prefix) {
@@ -256,12 +310,12 @@ class="w-full h-full">
                     imageEl.src = placeholderImage;
                 };
 
-                const status = String(student.status || student.remarks || student.state || student.migration_status || 'Pending...').trim();
-                const normalizedStatus = status.toLowerCase() === 'login' || status.toLowerCase() === 'log in' || status.toLowerCase() === 'time in' || status.toLowerCase() === 'in'
+                const rawStatus = String(student.status ?? student.login ?? student.remarks ?? student.state ?? student.migration_status ?? '2').trim();
+                const normalizedStatus = rawStatus === '1' || rawStatus.toLowerCase() === 'login' || rawStatus.toLowerCase() === 'log in' || rawStatus.toLowerCase() === 'time in' || rawStatus.toLowerCase() === 'in'
                     ? 'Log In'
-                    : status.toLowerCase() === 'logout' || status.toLowerCase() === 'log out' || status.toLowerCase() === 'time out' || status.toLowerCase() === 'out'
+                    : rawStatus === '0' || rawStatus.toLowerCase() === 'logout' || rawStatus.toLowerCase() === 'log out' || rawStatus.toLowerCase() === 'time out' || rawStatus.toLowerCase() === 'out'
                         ? 'Log Out'
-                        : status;
+                        : 'N/A';
 
                 statusEl.textContent = normalizedStatus;
                 statusEl.className = 'px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full border';
@@ -293,13 +347,8 @@ class="w-full h-full">
                 }
 
                 return date.toLocaleString('en-PH', {
-                    timeZone: phTimeZone,
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit',
-                    second: '2-digit',
                     hour12: true,
                 });
             }
@@ -371,17 +420,28 @@ class="w-full h-full">
 
                     if (!response.ok) {
                         setSubmitFeedback(result.message || 'Failed to submit entry.', 'error');
+                        showMessageModal(result.message || 'Failed to submit entry.', 'Entry Failed');
+                        focusManualEntry();
                         return;
                     }
 
-                    studentIdInput.value = '';
-                    rfidInput.value = '';
+                    if (studentIdInput) {
+                        studentIdInput.value = '';
+                    }
+
+                    if (rfidInput) {
+                        rfidInput.value = '';
+                    }
+
                     rfidBuffer = '';
                     setSubmitFeedback('Entry submitted successfully.', 'success');
                     checkUpdates();
+                    focusManualEntry();
                     focusRfidListener();
                 } catch (error) {
                     setSubmitFeedback('Unable to submit entry right now.', 'error');
+                    showMessageModal('Unable to submit entry right now.', 'Entry Failed');
+                    focusManualEntry();
                 }
             }
 
@@ -389,18 +449,25 @@ class="w-full h-full">
                 const formData = new FormData();
                 formData.append('student_id', payload.student_id || '');
                 formData.append('rfid', payload.rfid || '');
+                formData.append('status', '2');
 
                 return formData;
             }
 
-            function focusRfidListener() {
-                if (!rfidLoginEnabled || !rfidInput) {
+            function focusManualEntry() {
+                if (!manualEntryEnabled || !studentIdInput) {
                     return;
                 }
 
-                if (!manualEntryEnabled || document.activeElement !== studentIdInput) {
-                    rfidInput.focus();
+                studentIdInput.focus();
+            }
+
+            function focusRfidListener() {
+                if (!rfidLoginEnabled || !rfidInput || manualEntryEnabled) {
+                    return;
                 }
+
+                rfidInput.focus();
             }
 
             function finalizeRfidScan() {
@@ -457,14 +524,7 @@ class="w-full h-full">
                         }
                     });
 
-                    studentIdInput.addEventListener('blur', () => {
-                        window.setTimeout(focusRfidListener, 0);
-                    });
                 }
-
-                window.addEventListener('click', () => {
-                    window.setTimeout(focusRfidListener, 0);
-                });
 
                 window.addEventListener('keydown', (event) => {
                     if (manualEntryEnabled && document.activeElement === studentIdInput) {
@@ -506,9 +566,27 @@ class="w-full h-full">
 
             updatePhilippineClock();
             checkUpdates();
+            focusManualEntry();
             listenForRfidInput();
             setInterval(updatePhilippineClock, 1000);
             setInterval(checkUpdates, 5000);
+
+            closeMessageModal?.addEventListener('click', () => {
+                hideMessageModal();
+                focusManualEntry();
+            });
+
+            messageModalButton?.addEventListener('click', () => {
+                hideMessageModal();
+                focusManualEntry();
+            });
+
+            messageModal?.addEventListener('click', (event) => {
+                if (event.target === messageModal) {
+                    hideMessageModal();
+                    focusManualEntry();
+                }
+            });
         </script>
 
     </body>
