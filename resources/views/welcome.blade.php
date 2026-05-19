@@ -59,21 +59,19 @@ class="w-full h-full">
                         <p><span class="text-stone-500">Grade Level: </span><span id="current-grade" class="text-stone-800">Pending...</span></p>
                         <p><span class="text-stone-500">Department: </span><span id="current-department" class="text-stone-800">Pending...</span></p>
                         <p><span class="text-stone-500">Course: </span><span id="current-course" class="text-stone-800">Pending...</span></p>
-                        <p><span class="text-stone-500">Time: </span><span id="current-course" class="text-stone-800">Pending...</span></p>
+                        <p><span class="text-stone-500">Time: </span><span id="current-time" class="text-stone-800">Pending...</span></p>
                     </div>
 
                 </div>
 
                 <div class="w-full flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-
-                    <!-- Label with fixed width on desktop, auto on mobile -->
+                    @if ($manualEntryEnabled)
                     <label
                     for="student_id"
                     class="sm:min-w-[120px] text-xs font-bold uppercase tracking-wider text-slate-500 sm:text-right"
                     >Student No.
                     </label>
 
-                    <!-- Input container expanding to fill remaining row space -->
                     <input
                     autofocus
                     type="text"
@@ -84,7 +82,9 @@ class="w-full h-full">
                         placeholder-slate-400 outline-none shadow-sm transition duration-200
                         focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
                     >
+                    @endif
 
+                    @if ($rfidLoginEnabled)
                     <input
                     type="text"
                     name="rfid"
@@ -94,18 +94,24 @@ class="w-full h-full">
                     aria-hidden="true"
                     class="absolute h-0 w-0 opacity-0 pointer-events-none"
                     >
+                    @endif
 
+                    @if ($manualEntryEnabled || $rfidLoginEnabled)
                     <input
                     type="hidden"
                     name="status"
                     id="status"
                     value="3"
                     >
+                    @endif
 
                 </div>
 
+                @if ($manualEntryEnabled || $rfidLoginEnabled)
                 <p id="submit-feedback" class="text-sm text-slate-500">Ready to accept student ID or RFID scan.</p>
-
+                @else
+                <p id="submit-feedback" class="text-sm text-amber-700">Manual login and RFID login are currently disabled.</p>
+                @endif
             </div>
 
             <!-- PREVIOUS -->
@@ -130,7 +136,7 @@ class="w-full h-full">
                         <p><span class="text-stone-500">Grade Level: </span><span id="previous-grade" class="text-stone-800">Pending...</span></p>
                         <p><span class="text-stone-500">Department: </span><span id="previous-department" class="text-stone-800">Pending...</span></p>
                         <p><span class="text-stone-500">Course: </span><span id="previous-course" class="text-stone-800">Pending...</span></p>
-                        <p><span class="text-stone-500">Time: </span><span id="previous-course" class="text-stone-800">Pending...</span></p>
+                        <p><span class="text-stone-500">Time: </span><span id="previous-time" class="text-stone-800">Pending...</span></p>
                     </div>
                 </div>
             </div>
@@ -147,8 +153,9 @@ class="w-full h-full">
             const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
             const studentIdInput = document.getElementById('student_id');
             const rfidInput = document.getElementById('rfid');
-            const statusInput = document.getElementById('status');
             const submitFeedbackEl = document.getElementById('submit-feedback');
+            const manualEntryEnabled = @json($manualEntryEnabled);
+            const rfidLoginEnabled = @json($rfidLoginEnabled);
             let lastSignature = null;
             let rfidBuffer = '';
             let lastKeyAt = 0;
@@ -230,6 +237,7 @@ class="w-full h-full">
                 document.getElementById(`${prefix}-grade`).textContent = 'Pending...';
                 document.getElementById(`${prefix}-department`).textContent = 'Pending...';
                 document.getElementById(`${prefix}-course`).textContent = 'Pending...';
+                document.getElementById(`${prefix}-time`).textContent = 'Pending...';
             }
 
             function fillStudent(prefix, student) {
@@ -271,6 +279,29 @@ class="w-full h-full">
                 document.getElementById(`${prefix}-grade`).textContent = student.year_level || student.grade_level || 'Pending...';
                 document.getElementById(`${prefix}-department`).textContent = student.department || 'Pending...';
                 document.getElementById(`${prefix}-course`).textContent = student.course_name || student.course || 'Pending...';
+                document.getElementById(`${prefix}-time`).textContent = formatLogTime(student.logged_at);
+            }
+
+            function formatLogTime(value) {
+                if (!value) {
+                    return 'Pending...';
+                }
+
+                const date = new Date(value);
+                if (Number.isNaN(date.getTime())) {
+                    return value;
+                }
+
+                return date.toLocaleString('en-PH', {
+                    timeZone: phTimeZone,
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true,
+                });
             }
 
             function renderStudents(students) {
@@ -322,18 +353,18 @@ class="w-full h-full">
                 setSubmitFeedback('Submitting entry...', 'sending');
 
                 try {
-                    const response = await fetch('/login', {
+                    if (!manualEntryEnabled && !rfidLoginEnabled) {
+                        setSubmitFeedback('Manual login and RFID login are currently disabled.', 'error');
+                        return;
+                    }
+
+                    const response = await fetch('{{ route("gate-entries.store") }}', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
                             'Accept': 'application/json',
                             'X-CSRF-TOKEN': csrfToken,
                         },
-                        body: JSON.stringify({
-                            student_id: payload.student_id || null,
-                            rfid: payload.rfid || null,
-                            status: Number(statusInput.value || 3),
-                        }),
+                        body: formDataFromPayload(payload),
                     });
 
                     const result = await response.json();
@@ -354,8 +385,20 @@ class="w-full h-full">
                 }
             }
 
+            function formDataFromPayload(payload) {
+                const formData = new FormData();
+                formData.append('student_id', payload.student_id || '');
+                formData.append('rfid', payload.rfid || '');
+
+                return formData;
+            }
+
             function focusRfidListener() {
-                if (document.activeElement !== studentIdInput) {
+                if (!rfidLoginEnabled || !rfidInput) {
+                    return;
+                }
+
+                if (!manualEntryEnabled || document.activeElement !== studentIdInput) {
                     rfidInput.focus();
                 }
             }
@@ -365,12 +408,20 @@ class="w-full h-full">
                 rfidBuffer = '';
 
                 if (value.length < 6) {
-                    rfidInput.value = '';
+                    if (rfidInput) {
+                        rfidInput.value = '';
+                    }
                     return;
                 }
 
-                rfidInput.value = value;
-                studentIdInput.value = '';
+                if (rfidInput) {
+                    rfidInput.value = value;
+                }
+
+                if (studentIdInput) {
+                    studentIdInput.value = '';
+                }
+
                 submitGateEntry({
                     student_id: null,
                     rfid: value,
@@ -378,36 +429,49 @@ class="w-full h-full">
             }
 
             function listenForRfidInput() {
+                if (!manualEntryEnabled && !rfidLoginEnabled) {
+                    return;
+                }
+
                 focusRfidListener();
 
-                studentIdInput.addEventListener('keydown', (event) => {
-                    if (event.key === 'Enter') {
-                        event.preventDefault();
+                if (manualEntryEnabled && studentIdInput) {
+                    studentIdInput.addEventListener('keydown', (event) => {
+                        if (event.key === 'Enter') {
+                            event.preventDefault();
 
-                        const value = studentIdInput.value.trim();
-                        if (value === '') {
-                            setSubmitFeedback('Enter a student ID first.', 'error');
-                            return;
+                            const value = studentIdInput.value.trim();
+                            if (value === '') {
+                                setSubmitFeedback('Enter a student ID first.', 'error');
+                                return;
+                            }
+
+                            if (rfidInput) {
+                                rfidInput.value = '';
+                            }
+
+                            submitGateEntry({
+                                student_id: value,
+                                rfid: null,
+                            });
                         }
+                    });
 
-                        rfidInput.value = '';
-                        submitGateEntry({
-                            student_id: value,
-                            rfid: null,
-                        });
-                    }
-                });
-
-                studentIdInput.addEventListener('blur', () => {
-                    window.setTimeout(focusRfidListener, 0);
-                });
+                    studentIdInput.addEventListener('blur', () => {
+                        window.setTimeout(focusRfidListener, 0);
+                    });
+                }
 
                 window.addEventListener('click', () => {
                     window.setTimeout(focusRfidListener, 0);
                 });
 
                 window.addEventListener('keydown', (event) => {
-                    if (document.activeElement === studentIdInput) {
+                    if (manualEntryEnabled && document.activeElement === studentIdInput) {
+                        return;
+                    }
+
+                    if (!rfidLoginEnabled || !rfidInput) {
                         return;
                     }
 

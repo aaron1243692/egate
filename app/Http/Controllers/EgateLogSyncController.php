@@ -58,6 +58,7 @@ class EgateLogSyncController extends Controller
             [$lastName, $firstName, $middleName] = $this->splitStudentName((string) ($student['student_name'] ?? ''));
 
             $attributes = [
+                'lrn' => $student['lrn'] ?? null,
                 'last_name' => $lastName,
                 'first_name' => $firstName,
                 'middle_name' => $middleName,
@@ -71,7 +72,6 @@ class EgateLogSyncController extends Controller
                 'ip_address' => $request->ip(),
                 'remarks' => json_encode([
                     'profile_id' => $student['profile_id'] ?? null,
-                    'lrn' => $student['lrn'] ?? null,
                     'school_year' => $student['school_year'] ?? null,
                     'birthday' => $student['birthday'] ?? null,
                     'guardian_name' => $student['guardian_name'] ?? null,

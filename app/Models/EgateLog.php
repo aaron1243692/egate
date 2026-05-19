@@ -18,6 +18,7 @@ class EgateLog extends Model
      */
     protected $fillable = [
         'student_number',
+        'lrn',
         'last_name',
         'first_name',
         'middle_name',

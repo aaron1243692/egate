@@ -18,12 +18,18 @@ class LogController extends Controller
         $search = trim((string) $request->get('search', ''));
 
         $logs = DB::table('egate_logs')
-            ->leftJoin('egate_data', 'egate_data.student_number', '=', 'egate_logs.student_id')
+            ->leftJoin('egate_data', function ($join) {
+                $join
+                    ->on('egate_data.id', '=', 'egate_logs.egate_data_id')
+                    ->orOn('egate_data.student_number', '=', 'egate_logs.student_id');
+            })
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($innerQuery) use ($search) {
                     $innerQuery
                         ->where('egate_logs.student_id', 'like', "%{$search}%")
+                        ->orWhere('egate_data.id', 'like', "%{$search}%")
                         ->orWhere('egate_data.student_number', 'like', "%{$search}%")
+                        ->orWhere('egate_data.lrn', 'like', "%{$search}%")
                         ->orWhere('egate_data.first_name', 'like', "%{$search}%")
                         ->orWhere('egate_data.middle_name', 'like', "%{$search}%")
                         ->orWhere('egate_data.last_name', 'like', "%{$search}%");
@@ -32,6 +38,7 @@ class LogController extends Controller
             ->orderByDesc('egate_logs.created_at')
             ->select([
                 'egate_logs.id',
+                'egate_logs.egate_data_id',
                 'egate_logs.student_id',
                 'egate_logs.status',
                 'egate_logs.created_at',

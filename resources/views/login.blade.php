@@ -5,6 +5,14 @@
 @section('clean')
     <main class="w-full h-full
     flex flex-col justify-center items-center">
+        @if (! $manualLoginEnabled)
+        <section class="w-[20rem] rounded-2xl border border-amber-300 bg-amber-50 px-5 py-6 text-center shadow-lg">
+            <h4 class="text-lg font-bold text-amber-900">Manual Login Disabled</h4>
+            <p class="mt-2 text-sm leading-relaxed text-amber-800">
+                This sign-in form is currently disabled from Admin Settings.
+            </p>
+        </section>
+        @else
         <form id="signinForm" action="{{ route('signin.submit') }}" method="POST" class="w-[20rem] rounded-lg shadow-lg py-3 px-4
         flex flex-col items-center gap-3
         border-2 border-black/40">
@@ -32,6 +40,7 @@
             style="border-radius: 1.5rem;">Sign In</button>
 
         </form>
+        @endif
     </main>
 
 
@@ -71,6 +80,7 @@
     const message = document.getElementById('errorMessage');
     const closeModal = document.getElementById('closeModal');
 
+    if (form) {
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
@@ -91,7 +101,7 @@
             const data = await response.json();
 
             if (data.status === 1) {
-                window.location.href = "{{ route('admin.dashboard') }}";
+                window.location.href = data.redirect || "{{ route('admin.dashboard') }}";
                 return;
             }
 
@@ -104,6 +114,7 @@
             modal.classList.remove('hidden');
         }
     });
+    }
 
     closeModal.addEventListener('click', () => {
         modal.classList.add('hidden');

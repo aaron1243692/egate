@@ -14,6 +14,8 @@ flex flex-row justify-center items-center">
         >Roles</a>
         <a href="{{ route('admin.users.index') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
         >Users</a>
+        <a href="{{ route('admin.settings') }}" class="text-white text-decoration-none py-1 px-3 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
+        >Setting</a>
     </nav>
 
 </header>

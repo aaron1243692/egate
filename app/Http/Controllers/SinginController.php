@@ -1,36 +1,55 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
 
-use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SinginController extends Controller
 {
-    public function submit(Request $request)
+    public function submit(Request $request): JsonResponse
     {
-        $user = User::where('email', $request->login)
-            ->orWhere('username', $request->login)
-            ->first();
-
-        if (!$user) {
+        if (! SettingController::isEnabled(1)) {
             return response()->json([
-                'message' => 'User not found',
+                'message' => 'Manual login is currently disabled.',
                 'status' => 0,
-            ]);
+            ], 403);
         }
 
-        if (!Hash::check($request->password, $user->password)) {
+        $validated = $request->validate([
+            'login' => ['required', 'string', 'max:255'],
+            'password' => ['required', 'string'],
+        ]);
+
+        $login = trim((string) $validated['login']);
+        $password = (string) $validated['password'];
+        $field = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        if (! Auth::attempt([$field => $login, 'password' => $password], $request->boolean('remember'))) {
             return response()->json([
-                'message' => 'Wrong password',
+                'message' => 'Incorrect credentials',
                 'status' => 0,
-            ]);
+            ], 422);
+        }
+
+        $request->session()->regenerate();
+
+        if (! Auth::user()?->hasRole('admin')) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return response()->json([
+                'message' => 'Incorrect credentials',
+                'status' => 0,
+            ], 403);
         }
 
         return response()->json([
             'message' => 'Login successful',
             'status' => 1,
+            'redirect' => route('admin.dashboard'),
         ]);
     }
 }
