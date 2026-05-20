@@ -8,21 +8,40 @@
     <section class="w-full flex flex-1 justify-center p-2 overflow-hidden">
         <div class="w-full bg-white rounded-md shadow-sm overflow-hidden border border-slate-200 flex flex-col min-h-0">
             <div class="w-full px-3 py-3 border-b border-slate-200 flex flex-col gap-2">
-                <div class="w-full md:max-w-md flex gap-2">
-                    <label for="search-logs" class="sr-only">Search logs</label>
-                    <input
-                        id="search-logs"
-                        type="text"
-                        placeholder="Search by student ID or name"
-                        class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                    >
-                    <button
-                        type="button"
-                        id="search-logs-button"
-                        class="rounded-full bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
-                    >
-                        Search
-                    </button>
+                <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                    <div class="w-full md:max-w-md flex gap-2">
+                        <label for="search-logs" class="sr-only">Search logs</label>
+                        <input
+                            id="search-logs"
+                            type="text"
+                            placeholder="Search by student ID or name"
+                            class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                        >
+                        <button
+                            type="button"
+                            id="search-logs-button"
+                            class="rounded-full bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
+                        >
+                            Search
+                        </button>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button
+                            type="button"
+                            id="print-logs-button"
+                            class="rounded-full border border-slate-300 px-4 py-1.5 text-sm font-semibold text-slate-700 transition duration-200 hover:bg-slate-50"
+                        >
+                            Print
+                        </button>
+                        <button
+                            type="button"
+                            id="export-logs-button"
+                            class="rounded-full border border-emerald-300 px-4 py-1.5 text-sm font-semibold text-emerald-700 transition duration-200 hover:bg-emerald-50"
+                        >
+                            Export Excel
+                        </button>
+                    </div>
                 </div>
 
                 <div class="grid gap-2 md:grid-cols-3 xl:grid-cols-6">
@@ -194,10 +213,14 @@
     const logsRoutes = {
         fetch: @json(route('admin.logs.fetch')),
         base: @json(url('admin/logs')),
+        print: @json(route('admin.logs.print')),
+        export: @json(route('admin.logs.export')),
     };
 
     const searchLogsInput = document.getElementById('search-logs');
     const searchLogsButton = document.getElementById('search-logs-button');
+    const printLogsButton = document.getElementById('print-logs-button');
+    const exportLogsButton = document.getElementById('export-logs-button');
     const filterStatus = document.getElementById('filter-status');
     const filterDepartment = document.getElementById('filter-department');
     const filterCourse = document.getElementById('filter-course');
@@ -447,6 +470,34 @@
         }
     }
 
+    function buildLogsFilterUrl(baseUrl) {
+        const url = new URL(baseUrl, window.location.origin);
+
+        if (searchLogsInput.value.trim() !== '') {
+            url.searchParams.set('search', searchLogsInput.value.trim());
+        }
+        if (filterStatus.value !== '') {
+            url.searchParams.set('status', filterStatus.value);
+        }
+        if (filterDepartment.value !== '') {
+            url.searchParams.set('department', filterDepartment.value);
+        }
+        if (filterCourse.value !== '') {
+            url.searchParams.set('course', filterCourse.value);
+        }
+        if (filterYearLevel.value !== '') {
+            url.searchParams.set('year_level', filterYearLevel.value);
+        }
+        if (filterDateFrom.value !== '') {
+            url.searchParams.set('date_from', filterDateFrom.value);
+        }
+        if (filterDateTo.value !== '') {
+            url.searchParams.set('date_to', filterDateTo.value);
+        }
+
+        return url;
+    }
+
     async function openEditLogModal(id) {
         hideMessage();
 
@@ -497,6 +548,14 @@
 
     searchLogsButton.addEventListener('click', () => {
         fetchLogs(1);
+    });
+
+    printLogsButton.addEventListener('click', () => {
+        window.open(buildLogsFilterUrl(logsRoutes.print).toString(), '_blank', 'noopener');
+    });
+
+    exportLogsButton.addEventListener('click', () => {
+        window.location.href = buildLogsFilterUrl(logsRoutes.export).toString();
     });
 
     searchLogsInput.addEventListener('keydown', (event) => {

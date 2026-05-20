@@ -19,13 +19,29 @@
                         >
                     </div>
 
-                    <button
-                        type="button"
-                        id="open-add-data-modal"
-                        class="rounded-full bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
-                    >
-                        Add Data
-                    </button>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button
+                            type="button"
+                            id="print-data-button"
+                            class="rounded-full border border-slate-300 px-4 py-1.5 text-sm font-semibold text-slate-700 transition duration-200 hover:bg-slate-50"
+                        >
+                            Print
+                        </button>
+                        <button
+                            type="button"
+                            id="export-data-button"
+                            class="rounded-full border border-emerald-300 px-4 py-1.5 text-sm font-semibold text-emerald-700 transition duration-200 hover:bg-emerald-50"
+                        >
+                            Export Excel
+                        </button>
+                        <button
+                            type="button"
+                            id="open-add-data-modal"
+                            class="rounded-full bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
+                        >
+                            Add Data
+                        </button>
+                    </div>
                 </div>
 
                 <div class="grid gap-2 md:grid-cols-3">
@@ -279,6 +295,8 @@
         fetch: @json(route('admin.data.fetch')),
         store: @json(route('admin.data.store')),
         base: @json(url('admin/data')),
+        print: @json(route('admin.data.print')),
+        export: @json(route('admin.data.export')),
     };
 
     const searchDataInput = document.getElementById('search-data');
@@ -302,6 +320,8 @@
     const dataSubmitButton = document.getElementById('data-submit-button');
     const deleteModalText = document.getElementById('delete-modal-text');
     const openAddDataModalButton = document.getElementById('open-add-data-modal');
+    const printDataButton = document.getElementById('print-data-button');
+    const exportDataButton = document.getElementById('export-data-button');
     const confirmDeleteDataButton = document.getElementById('confirm-delete-data');
 
     let dataCurrentPage = 1;
@@ -497,6 +517,25 @@
         }
     }
 
+    function buildDataFilterUrl(baseUrl) {
+        const url = new URL(baseUrl, window.location.origin);
+
+        if (searchDataInput.value.trim() !== '') {
+            url.searchParams.set('search', searchDataInput.value.trim());
+        }
+        if (filterDepartment.value !== '') {
+            url.searchParams.set('department', filterDepartment.value);
+        }
+        if (filterCourse.value !== '') {
+            url.searchParams.set('course', filterCourse.value);
+        }
+        if (filterYearLevel.value !== '') {
+            url.searchParams.set('year_level', filterYearLevel.value);
+        }
+
+        return url;
+    }
+
     function fillDetails(record) {
         document.getElementById('detail-student-number').value = record.student_number || '';
         document.getElementById('detail-last-name').value = record.last_name || '';
@@ -582,6 +621,14 @@
 
     openAddDataModalButton.addEventListener('click', () => {
         openAddDataModal();
+    });
+
+    printDataButton.addEventListener('click', () => {
+        window.open(buildDataFilterUrl(dataRoutes.print).toString(), '_blank', 'noopener');
+    });
+
+    exportDataButton.addEventListener('click', () => {
+        window.location.href = buildDataFilterUrl(dataRoutes.export).toString();
     });
 
     searchDataInput.addEventListener('input', () => {

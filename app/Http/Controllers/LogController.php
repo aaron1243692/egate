@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use App\Models\EgateEntryLog;
+use Illuminate\Database\Query\Builder;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class LogController extends Controller
 {
@@ -41,50 +43,7 @@ class LogController extends Controller
     public function fetchLogs(Request $request): JsonResponse
     {
         abort_unless(auth()->user()?->can('logs.view'), 403);
-        $search = trim((string) $request->get('search', ''));
-        $status = trim((string) $request->get('status', ''));
-        $department = trim((string) $request->get('department', ''));
-        $course = trim((string) $request->get('course', ''));
-        $yearLevel = trim((string) $request->get('year_level', ''));
-        $dateFrom = trim((string) $request->get('date_from', ''));
-        $dateTo = trim((string) $request->get('date_to', ''));
-
-        $logs = DB::table('egate_logs')
-            ->leftJoin('egate_data', function ($join) {
-                $join
-                    ->on('egate_data.id', '=', 'egate_logs.egate_data_id')
-                    ->orOn('egate_data.student_number', '=', 'egate_logs.student_id');
-            })
-            ->when($search !== '', function ($query) use ($search) {
-                $query->where(function ($innerQuery) use ($search) {
-                    $innerQuery
-                        ->where('egate_logs.student_id', 'like', "%{$search}%")
-                        ->orWhere('egate_data.id', 'like', "%{$search}%")
-                        ->orWhere('egate_data.student_number', 'like', "%{$search}%")
-                        ->orWhere('egate_data.lrn', 'like', "%{$search}%")
-                        ->orWhere('egate_data.first_name', 'like', "%{$search}%")
-                        ->orWhere('egate_data.middle_name', 'like', "%{$search}%")
-                        ->orWhere('egate_data.last_name', 'like', "%{$search}%");
-                });
-            })
-            ->when($status !== '', function ($query) use ($status) {
-                $query->where('egate_logs.status', (int) $status);
-            })
-            ->when($department !== '', function ($query) use ($department) {
-                $query->where('egate_data.department', $department);
-            })
-            ->when($course !== '', function ($query) use ($course) {
-                $query->where('egate_data.course', $course);
-            })
-            ->when($yearLevel !== '', function ($query) use ($yearLevel) {
-                $query->where('egate_data.year_level', $yearLevel);
-            })
-            ->when($dateFrom !== '', function ($query) use ($dateFrom) {
-                $query->whereDate('egate_logs.created_at', '>=', $dateFrom);
-            })
-            ->when($dateTo !== '', function ($query) use ($dateTo) {
-                $query->whereDate('egate_logs.created_at', '<=', $dateTo);
-            })
+        $logs = $this->buildFilteredQuery($request)
             ->orderByDesc('egate_logs.created_at')
             ->select([
                 'egate_logs.id',
@@ -116,6 +75,84 @@ class LogController extends Controller
             });
 
         return response()->json($logs);
+    }
+
+    public function print(Request $request)
+    {
+        abort_unless(auth()->user()?->can('logs.view'), 403);
+
+        $logs = $this->buildFilteredQuery($request)
+            ->orderByDesc('egate_logs.created_at')
+            ->select([
+                'egate_logs.student_id',
+                'egate_logs.status',
+                'egate_logs.created_at',
+                'egate_data.first_name',
+                'egate_data.middle_name',
+                'egate_data.last_name',
+            ])
+            ->get()
+            ->map(function ($log) {
+                $nameParts = array_filter([
+                    $log->first_name,
+                    $log->middle_name,
+                    $log->last_name,
+                ]);
+
+                return [
+                    'student_id' => $log->student_id,
+                    'name' => count($nameParts) ? implode(' ', $nameParts) : $log->student_id,
+                    'status' => $this->resolveStatusLabel((int) $log->status),
+                    'time' => $log->created_at,
+                ];
+            });
+
+        return view('admin.print-logs', [
+            'logs' => $logs,
+            'printedAt' => now(),
+        ]);
+    }
+
+    public function export(Request $request): StreamedResponse
+    {
+        abort_unless(auth()->user()?->can('logs.view'), 403);
+
+        $logs = $this->buildFilteredQuery($request)
+            ->orderByDesc('egate_logs.created_at')
+            ->select([
+                'egate_logs.student_id',
+                'egate_logs.status',
+                'egate_logs.created_at',
+                'egate_data.first_name',
+                'egate_data.middle_name',
+                'egate_data.last_name',
+            ])
+            ->get()
+            ->map(function ($log) {
+                $nameParts = array_filter([
+                    $log->first_name,
+                    $log->middle_name,
+                    $log->last_name,
+                ]);
+
+                return [
+                    'student_id' => $log->student_id,
+                    'name' => count($nameParts) ? implode(' ', $nameParts) : $log->student_id,
+                    'status' => $this->resolveStatusLabel((int) $log->status),
+                    'time' => $log->created_at,
+                ];
+            });
+
+        $filename = 'logs-' . now()->format('Y-m-d_H-i-s') . '.xls';
+        $html = view('admin.export-logs', [
+            'logs' => $logs,
+        ])->render();
+
+        return response()->streamDownload(function () use ($html) {
+            echo $html;
+        }, $filename, [
+            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
+        ]);
     }
 
     public function edit(int $id): JsonResponse
@@ -201,5 +238,53 @@ class LogController extends Controller
             2 => 'N/A',
             default => 'N/A',
         };
+    }
+
+    private function buildFilteredQuery(Request $request): Builder
+    {
+        $search = trim((string) $request->get('search', ''));
+        $status = trim((string) $request->get('status', ''));
+        $department = trim((string) $request->get('department', ''));
+        $course = trim((string) $request->get('course', ''));
+        $yearLevel = trim((string) $request->get('year_level', ''));
+        $dateFrom = trim((string) $request->get('date_from', ''));
+        $dateTo = trim((string) $request->get('date_to', ''));
+
+        return DB::table('egate_logs')
+            ->leftJoin('egate_data', function ($join) {
+                $join
+                    ->on('egate_data.id', '=', 'egate_logs.egate_data_id')
+                    ->orOn('egate_data.student_number', '=', 'egate_logs.student_id');
+            })
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($innerQuery) use ($search) {
+                    $innerQuery
+                        ->where('egate_logs.student_id', 'like', "%{$search}%")
+                        ->orWhere('egate_data.id', 'like', "%{$search}%")
+                        ->orWhere('egate_data.student_number', 'like', "%{$search}%")
+                        ->orWhere('egate_data.lrn', 'like', "%{$search}%")
+                        ->orWhere('egate_data.first_name', 'like', "%{$search}%")
+                        ->orWhere('egate_data.middle_name', 'like', "%{$search}%")
+                        ->orWhere('egate_data.last_name', 'like', "%{$search}%");
+                });
+            })
+            ->when($status !== '', function ($query) use ($status) {
+                $query->where('egate_logs.status', (int) $status);
+            })
+            ->when($department !== '', function ($query) use ($department) {
+                $query->where('egate_data.department', $department);
+            })
+            ->when($course !== '', function ($query) use ($course) {
+                $query->where('egate_data.course', $course);
+            })
+            ->when($yearLevel !== '', function ($query) use ($yearLevel) {
+                $query->where('egate_data.year_level', $yearLevel);
+            })
+            ->when($dateFrom !== '', function ($query) use ($dateFrom) {
+                $query->whereDate('egate_logs.created_at', '>=', $dateFrom);
+            })
+            ->when($dateTo !== '', function ($query) use ($dateTo) {
+                $query->whereDate('egate_logs.created_at', '<=', $dateTo);
+            });
     }
 }

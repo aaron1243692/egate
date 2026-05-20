@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\EgateLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Validation\ValidationException;
 
 class DataController extends Controller
@@ -40,26 +42,7 @@ class DataController extends Controller
     public function fetchData(Request $request): JsonResponse
     {
         abort_unless(auth()->user()?->can('data.view'), 403);
-        $search = trim((string) $request->get('search', ''));
-        $department = trim((string) $request->get('department', ''));
-        $course = trim((string) $request->get('course', ''));
-        $yearLevel = trim((string) $request->get('year_level', ''));
-
-        $records = EgateLog::query()
-            ->when($search !== '', function ($query) use ($search) {
-                $query->where(function ($innerQuery) use ($search) {
-                    $innerQuery
-                        ->where('student_number', 'like', "%{$search}%")
-                        ->orWhere('last_name', 'like', "%{$search}%")
-                        ->orWhere('first_name', 'like', "%{$search}%")
-                        ->orWhere('middle_name', 'like', "%{$search}%")
-                        ->orWhere('department', 'like', "%{$search}%")
-                        ->orWhere('course', 'like', "%{$search}%");
-                });
-            })
-            ->when($department !== '', fn ($query) => $query->where('department', $department))
-            ->when($course !== '', fn ($query) => $query->where('course', $course))
-            ->when($yearLevel !== '', fn ($query) => $query->where('year_level', $yearLevel))
+        $records = $this->buildFilteredQuery($request)
             ->orderBy('last_name')
             ->orderBy('first_name')
             ->paginate(10);
@@ -82,6 +65,42 @@ class DataController extends Controller
         return response()->json([
             'success' => true,
             'record' => $record,
+        ]);
+    }
+
+    public function print(Request $request)
+    {
+        abort_unless(auth()->user()?->can('data.view'), 403);
+
+        $records = $this->buildFilteredQuery($request)
+            ->orderBy('last_name')
+            ->orderBy('first_name')
+            ->get();
+
+        return view('admin.print-data', [
+            'records' => $records,
+            'printedAt' => now(),
+        ]);
+    }
+
+    public function export(Request $request): StreamedResponse
+    {
+        abort_unless(auth()->user()?->can('data.view'), 403);
+
+        $records = $this->buildFilteredQuery($request)
+            ->orderBy('last_name')
+            ->orderBy('first_name')
+            ->get();
+
+        $filename = 'student-data-' . now()->format('Y-m-d_H-i-s') . '.xls';
+        $html = view('admin.export-data', [
+            'records' => $records,
+        ])->render();
+
+        return response()->streamDownload(function () use ($html) {
+            echo $html;
+        }, $filename, [
+            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
         ]);
     }
 
@@ -181,5 +200,29 @@ class DataController extends Controller
             'ip_address' => ['nullable', 'string', 'max:45'],
             'remarks' => ['nullable', 'string'],
         ];
+    }
+
+    private function buildFilteredQuery(Request $request): Builder
+    {
+        $search = trim((string) $request->get('search', ''));
+        $department = trim((string) $request->get('department', ''));
+        $course = trim((string) $request->get('course', ''));
+        $yearLevel = trim((string) $request->get('year_level', ''));
+
+        return EgateLog::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($innerQuery) use ($search) {
+                    $innerQuery
+                        ->where('student_number', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhere('first_name', 'like', "%{$search}%")
+                        ->orWhere('middle_name', 'like', "%{$search}%")
+                        ->orWhere('department', 'like', "%{$search}%")
+                        ->orWhere('course', 'like', "%{$search}%");
+                });
+            })
+            ->when($department !== '', fn ($query) => $query->where('department', $department))
+            ->when($course !== '', fn ($query) => $query->where('course', $course))
+            ->when($yearLevel !== '', fn ($query) => $query->where('year_level', $yearLevel));
     }
 }
