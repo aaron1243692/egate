@@ -466,9 +466,24 @@ class="w-full h-full">
                 });
             }
 
+            function normalizeStudentStatus(student) {
+                const rawStatus = String(student?.status ?? student?.login ?? student?.remarks ?? student?.state ?? student?.migration_status ?? '').trim().toLowerCase();
+
+                if (rawStatus === '1' || rawStatus === 'login' || rawStatus === 'log in' || rawStatus === 'time in' || rawStatus === 'in') {
+                    return '1';
+                }
+
+                if (rawStatus === '0' || rawStatus === 'logout' || rawStatus === 'log out' || rawStatus === 'time out' || rawStatus === 'out') {
+                    return '0';
+                }
+
+                return 'other';
+            }
+
             function renderStudents(students) {
-                const currentStudent = students[0] || null;
-                const previousStudent = students[1] || null;
+                const filteredStudents = students.filter((student) => normalizeStudentStatus(student) === '0');
+                const currentStudent = filteredStudents[0] || null;
+                const previousStudent = filteredStudents[1] || null;
 
                 fillStudent('current', currentStudent);
                 fillStudent('previous', previousStudent);
@@ -483,7 +498,7 @@ class="w-full h-full">
 
             async function checkUpdates() {
                 try {
-                    const response = await fetch('/get-students', {
+                    const response = await fetch('{{ route('get-students.out') }}', {
                         headers: {
                             'Accept': 'application/json',
                         },

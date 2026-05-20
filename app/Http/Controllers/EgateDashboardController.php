@@ -31,7 +31,12 @@ class EgateDashboardController extends Controller
 
     public function getStudents(Request $request): JsonResponse
     {
-        $data = DB::table('egate_logs')
+        return response()->json($this->buildStudentPayload('other'));
+    }
+
+    public function buildStudentPayload(string $statusGroup)
+    {
+        return DB::table('egate_logs')
             ->leftJoin('egate_data', function ($join) {
                 $join
                     ->on('egate_data.id', '=', 'egate_logs.egate_data_id')
@@ -56,7 +61,7 @@ class EgateDashboardController extends Controller
                 'egate_data.image',
                 'egate_data.remarks',
             ])
-            ->take(2)
+            ->take(100)
             ->get()
             ->map(function ($student) {
                 $name = collect([
@@ -64,6 +69,16 @@ class EgateDashboardController extends Controller
                     $student->middle_name,
                     $student->last_name,
                 ])->filter()->implode(' ');
+
+                $rawStatus = is_null($student->log_status)
+                    ? null
+                    : trim((string) $student->log_status);
+
+                $status = match ($rawStatus) {
+                    '1' => '1',
+                    '0' => '0',
+                    default => $rawStatus !== '' ? $rawStatus : 'N/A',
+                };
 
                 return [
                     'id' => $student->id,
@@ -77,13 +92,19 @@ class EgateDashboardController extends Controller
                     'year_level' => $student->year_level,
                     'grade_level' => $student->grade_level,
                     'image' => $student->image,
-                    'status' => (int) $student->log_status === 1 ? 'IN' : 'OUT',
+                    'status' => $status,
                     'logged_at' => $student->created_at,
                 ];
             })
+            ->filter(function ($student) use ($statusGroup) {
+                return match ($statusGroup) {
+                    '1' => $student['status'] === '1',
+                    '0' => $student['status'] === '0',
+                    default => $student['status'] !== '1' && $student['status'] !== '0',
+                };
+            })
+            ->take(2)
             ->values();
-
-        return response()->json($data);
     }
 
     public function submitLogin(Request $request): RedirectResponse

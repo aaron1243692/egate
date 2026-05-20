@@ -28,4 +28,9 @@ class EgateLogoutController extends Controller
     {
         return view('out');
     }
+
+    public function getStudents(Request $request): JsonResponse
+    {
+        return response()->json(app(EgateDashboardController::class)->buildStudentPayload('0'));
+    }
 }

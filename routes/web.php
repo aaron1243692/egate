@@ -16,7 +16,9 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\SinginController;
 
-Route::get('/get-students', [EgateDashboardController::class, 'getStudents'])->name('get-students') ;
+Route::get('/get-students', [EgateDashboardController::class, 'getStudents'])->name('get-students');
+Route::get('/get-students/in', [EgateLoginController::class, 'getStudents'])->name('get-students.in');
+Route::get('/get-students/out', [EgateLogoutController::class, 'getStudents'])->name('get-students.out');
 Route::post('/gate-entries', [GateEntryController::class, 'store'])->name('gate-entries.store');
 Route::get('/admin/login', [EgateDashboardController::class, 'showLogin'])->name('admin.login');
 Route::post('/admin/login', [EgateDashboardController::class, 'submitLogin'])->name('admin.login.submit');

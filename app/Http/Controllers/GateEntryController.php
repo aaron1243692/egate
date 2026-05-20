@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\EgateEntryLog;
 use App\Models\EgateLog as EgateData;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
@@ -65,8 +64,8 @@ class GateEntryController extends Controller
         $status = (int) ($validated['status'] ?? 2);
         $loggedAt = CarbonImmutable::now(config('app.timezone'))->format('Y-m-d H:i:s');
 
-        $log = DB::transaction(function () use ($student, $status, $request, $loggedAt) {
-            $entryLog = EgateEntryLog::query()->create([
+        $logId = DB::transaction(function () use ($student, $status, $request, $loggedAt) {
+            $entryLogId = DB::table('egate_logs')->insertGetId([
                 'egate_data_id' => $student->id,
                 'student_id' => $student->student_number,
                 'status' => $status,
@@ -81,12 +80,12 @@ class GateEntryController extends Controller
                 'ip_address' => $request->ip(),
             ])->save();
 
-            return $entryLog;
+            return $entryLogId;
         });
 
         return response()->json([
             'message' => 'Entry submitted successfully.',
-            'log_id' => $log->id,
+            'log_id' => $logId,
             'egate_data_id' => $student->id,
             'student_id' => $student->student_number,
             'status' => $status,
