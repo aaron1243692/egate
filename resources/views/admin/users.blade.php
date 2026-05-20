@@ -400,6 +400,15 @@
             return;
         }
 
+        const maxVisiblePages = 7;
+        const halfWindow = Math.floor(maxVisiblePages / 2);
+        let startPage = Math.max(1, meta.current_page - halfWindow);
+        let endPage = Math.min(meta.last_page, startPage + maxVisiblePages - 1);
+
+        if ((endPage - startPage + 1) < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
         const buttons = [];
 
         buttons.push(`
@@ -408,7 +417,7 @@
             </button>
         `);
 
-        for (let page = 1; page <= meta.last_page; page += 1) {
+        for (let page = startPage; page <= endPage; page += 1) {
             buttons.push(`
                 <button type="button" class="rounded-full px-3 py-1 text-sm ${page === meta.current_page ? 'bg-blue-600 text-white' : 'border border-slate-300 text-slate-700 hover:bg-slate-50'}" data-page="${page}">
                     ${page}

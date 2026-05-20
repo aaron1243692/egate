@@ -8,14 +8,24 @@
     <section class="w-full flex flex-1 justify-center p-2 overflow-hidden">
         <div class="w-full bg-white rounded-md shadow-sm overflow-hidden border border-slate-200 flex flex-col min-h-0">
             <div class="w-full px-3 py-3 border-b border-slate-200 flex flex-col gap-2">
-                <div class="w-full md:max-w-sm">
-                    <label for="search-data" class="sr-only">Search student data</label>
-                    <input
-                        id="search-data"
-                        type="text"
-                        placeholder="Search name, ID, department, course"
-                        class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                    <div class="w-full md:max-w-sm">
+                        <label for="search-data" class="sr-only">Search student data</label>
+                        <input
+                            id="search-data"
+                            type="text"
+                            placeholder="Search name, ID, department, course"
+                            class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                        >
+                    </div>
+
+                    <button
+                        type="button"
+                        id="open-add-data-modal"
+                        class="rounded-full bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
                     >
+                        Add Data
+                    </button>
                 </div>
 
                 <div class="grid gap-2 md:grid-cols-3">
@@ -80,6 +90,86 @@
     </section>
 </main>
 
+<div id="data-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div class="w-full max-w-4xl max-h-[90vh] rounded-xl bg-white shadow-2xl flex flex-col overflow-hidden">
+        <form id="data-form" class="flex flex-col min-h-0">
+            <input type="hidden" id="data-id">
+
+            <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200">
+                <h4 id="data-modal-title" class="text-lg font-bold text-gray-900">Add Data</h4>
+                <button type="button" data-close-modal="data-modal" class="rounded-full px-2 py-1 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-700">X</button>
+            </div>
+
+            <div class="overflow-y-auto px-4 py-3">
+                <div class="grid gap-3 md:grid-cols-2">
+                    <div class="flex flex-col gap-1">
+                        <label for="form-student-number">Student ID</label>
+                        <input id="form-student-number" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none" required>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="form-lrn">LRN</label>
+                        <input id="form-lrn" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none">
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="form-last-name">Last Name</label>
+                        <input id="form-last-name" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none" required>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="form-first-name">First Name</label>
+                        <input id="form-first-name" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none" required>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="form-middle-name">Middle Name</label>
+                        <input id="form-middle-name" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none">
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="form-sex">Sex</label>
+                        <select id="form-sex" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-white">
+                            <option value="">Select sex</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="form-department">Department</label>
+                        <input id="form-department" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none">
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="form-course">Course</label>
+                        <input id="form-course" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none">
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="form-year-level">Year Level</label>
+                        <input id="form-year-level" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none">
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="form-grade-level">Grade Level</label>
+                        <input id="form-grade-level" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-4 py-3 border-t border-slate-200 flex justify-center gap-2">
+                <button type="button" data-close-modal="data-modal" class="rounded-full bg-gray-900 px-4 py-1.5 text-sm font-medium text-white transition-all duration-150 hover:bg-gray-800 active:scale-[0.98]">
+                    Cancel
+                </button>
+                <button type="submit" id="data-submit-button" class="rounded-full bg-blue-500 px-4 py-1.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-blue-600 hover:scale-105">
+                    Save Data
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div id="details-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
     <div class="w-full max-w-2xl max-h-[90vh] rounded-xl bg-white shadow-2xl flex flex-col overflow-hidden">
         <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200">
@@ -90,68 +180,48 @@
         <div class="overflow-y-auto px-4 py-3">
             <form class="grid gap-3 md:grid-cols-2">
                 <div class="flex flex-col gap-1">
-                <label>Student ID</label>
-                <input id="detail-student-number" type="text" readonly class="w-full rounded-full border-1 border-black/70 px-3 py-2 outline-none bg-slate-50">
+                    <label>Student ID</label>
+                    <input id="detail-student-number" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
                 </div>
 
                 <div class="flex flex-col gap-1">
-                <label>Last Name</label>
-                <input id="detail-last-name" type="text" readonly class="w-full rounded-full border-1 border-black/70 px-3 py-2 outline-none bg-slate-50">
+                    <label>Last Name</label>
+                    <input id="detail-last-name" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
                 </div>
 
                 <div class="flex flex-col gap-1">
-                <label>First Name</label>
-                <input id="detail-first-name" type="text" readonly class="w-full rounded-full border-1 border-black/70 px-3 py-2 outline-none bg-slate-50">
+                    <label>First Name</label>
+                    <input id="detail-first-name" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
                 </div>
 
                 <div class="flex flex-col gap-1">
-                <label>Middle Name</label>
-                <input id="detail-middle-name" type="text" readonly class="w-full rounded-full border-1 border-black/70 px-3 py-2 outline-none bg-slate-50">
+                    <label>Middle Name</label>
+                    <input id="detail-middle-name" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
                 </div>
 
                 <div class="flex flex-col gap-1">
-                <label>Sex</label>
-                <input id="detail-sex" type="text" readonly class="w-full rounded-full border-1 border-black/70 px-3 py-2 outline-none bg-slate-50">
+                    <label>Sex</label>
+                    <input id="detail-sex" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
                 </div>
 
                 <div class="flex flex-col gap-1">
-                <label>Department</label>
-                <input id="detail-department" type="text" readonly class="w-full rounded-full border-1 border-black/70 px-3 py-2 outline-none bg-slate-50">
+                    <label>Department</label>
+                    <input id="detail-department" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
                 </div>
 
                 <div class="flex flex-col gap-1">
-                <label>Course</label>
-                <input id="detail-course" type="text" readonly class="w-full rounded-full border-1 border-black/70 px-3 py-2 outline-none bg-slate-50">
+                    <label>Course</label>
+                    <input id="detail-course" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
                 </div>
 
                 <div class="flex flex-col gap-1">
-                <label>Year Level</label>
-                <input id="detail-year-level" type="text" readonly class="w-full rounded-full border-1 border-black/70 px-3 py-2 outline-none bg-slate-50">
+                    <label>Year Level</label>
+                    <input id="detail-year-level" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
                 </div>
 
                 <div class="flex flex-col gap-1">
-                <label>Grade Level</label>
-                <input id="detail-grade-level" type="text" readonly class="w-full rounded-full border-1 border-black/70 px-3 py-2 outline-none bg-slate-50">
-                </div>
-
-                <div class="flex flex-col gap-1">
-                <label>Status</label>
-                <input id="detail-status" type="text" readonly class="w-full rounded-full border-1 border-black/70 px-3 py-2 outline-none bg-slate-50">
-                </div>
-
-                <div class="flex flex-col gap-1">
-                <label>Logged At</label>
-                <input id="detail-logged-at" type="text" readonly class="w-full rounded-full border-1 border-black/70 px-3 py-2 outline-none bg-slate-50">
-                </div>
-
-                <div class="flex flex-col gap-1">
-                <label>Gate Name</label>
-                <input id="detail-gate-name" type="text" readonly class="w-full rounded-full border-1 border-black/70 px-3 py-2 outline-none bg-slate-50">
-                </div>
-
-                <div class="flex flex-col gap-1 md:col-span-2">
-                <label>Remarks</label>
-                <textarea id="detail-remarks" rows="3" readonly class="w-full rounded-2xl border-1 border-black/70 px-3 py-2 outline-none bg-slate-50 resize-none"></textarea>
+                    <label>Grade Level</label>
+                    <input id="detail-grade-level" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
                 </div>
             </form>
         </div>
@@ -164,9 +234,50 @@
     </div>
 </div>
 
+<div id="delete-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div class="w-full max-w-sm rounded-xl bg-white p-4 shadow-2xl flex flex-col items-center text-center">
+        <div class="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-500">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+        </div>
+        <div class="space-y-2">
+            <h4 class="text-xl font-semibold text-gray-900">Delete Data</h4>
+            <p id="delete-modal-text" class="text-sm text-gray-500 leading-relaxed">Are you sure you want to delete this record?</p>
+        </div>
+        <div class="mt-6 w-full grid grid-cols-2 gap-2 justify-items-center">
+            <button type="button" data-close-modal="delete-modal" class="w-full rounded-full bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition-all duration-150 hover:bg-gray-800 active:scale-[0.98]">
+                Cancel
+            </button>
+            <button type="button" id="confirm-delete-data" class="w-full rounded-full bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition-all duration-150 hover:bg-red-700 active:scale-[0.98]">
+                Delete
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="message-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div id="message-modal-panel" class="w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200">
+        <div id="message-modal-icon" class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-500">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 21a9 9 0 100-18 9 9 0 000 18z"></path>
+            </svg>
+        </div>
+        <div class="space-y-2">
+            <h4 id="message-modal-title" class="text-xl font-semibold text-gray-900">Notice</h4>
+            <p id="message-modal-text" class="text-sm text-gray-500 leading-relaxed"></p>
+        </div>
+        <button type="button" id="close-message-modal" class="mt-6 w-full rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition-all duration-150 hover:bg-gray-800 active:scale-[0.98]">
+            Close
+        </button>
+    </div>
+</div>
+
 <script>
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     const dataRoutes = {
         fetch: @json(route('admin.data.fetch')),
+        store: @json(route('admin.data.store')),
         base: @json(url('admin/data')),
     };
 
@@ -178,9 +289,25 @@
     const dataTableSummary = document.getElementById('table-summary');
     const dataPagination = document.getElementById('pagination');
     const detailsModal = document.getElementById('details-modal');
+    const dataModal = document.getElementById('data-modal');
+    const deleteModal = document.getElementById('delete-modal');
+    const messageModal = document.getElementById('message-modal');
+    const messageModalPanel = document.getElementById('message-modal-panel');
+    const messageModalIcon = document.getElementById('message-modal-icon');
+    const messageModalTitle = document.getElementById('message-modal-title');
+    const messageModalText = document.getElementById('message-modal-text');
+    const dataForm = document.getElementById('data-form');
+    const dataIdInput = document.getElementById('data-id');
+    const dataModalTitle = document.getElementById('data-modal-title');
+    const dataSubmitButton = document.getElementById('data-submit-button');
+    const deleteModalText = document.getElementById('delete-modal-text');
+    const openAddDataModalButton = document.getElementById('open-add-data-modal');
+    const confirmDeleteDataButton = document.getElementById('confirm-delete-data');
 
     let dataCurrentPage = 1;
     let searchTimer = null;
+    let messageHideTimer = null;
+    let dataToDelete = null;
 
     function escapeHtml(value) {
         return String(value ?? '')
@@ -191,8 +318,61 @@
             .replaceAll("'", '&#039;');
     }
 
-    function formatName(record) {
-        return [record.last_name, record.first_name, record.middle_name].filter(Boolean).join(', ').replace(', ,', ',');
+    function openModal(modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeModal(modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function showMessage(message, tone = 'success') {
+        if (messageHideTimer) {
+            window.clearTimeout(messageHideTimer);
+            messageHideTimer = null;
+        }
+
+        const tones = {
+            success: {
+                icon: 'bg-emerald-50 text-emerald-500',
+                title: 'Success',
+            },
+            error: {
+                icon: 'bg-rose-50 text-rose-500',
+                title: 'Error',
+            },
+        };
+
+        const config = tones[tone] || tones.success;
+        messageModalIcon.className = `mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full ${config.icon}`;
+        messageModalTitle.textContent = config.title;
+        messageModalText.textContent = message;
+
+        openModal(messageModal);
+        requestAnimationFrame(() => {
+            messageModalPanel.classList.remove('scale-95', 'opacity-0');
+            messageModalPanel.classList.add('scale-100', 'opacity-100');
+        });
+
+        messageHideTimer = window.setTimeout(() => {
+            hideMessage();
+        }, 2000);
+    }
+
+    function hideMessage() {
+        if (messageHideTimer) {
+            window.clearTimeout(messageHideTimer);
+            messageHideTimer = null;
+        }
+
+        messageModalPanel.classList.remove('scale-100', 'opacity-100');
+        messageModalPanel.classList.add('scale-95', 'opacity-0');
+
+        window.setTimeout(() => {
+            closeModal(messageModal);
+        }, 150);
     }
 
     function formatNameCell(record) {
@@ -219,10 +399,15 @@
                 <td class="px-3 py-2.5">${escapeHtml(formatNameCell(record))}</td>
                 <td class="px-3 py-2.5">${escapeHtml(record.department || 'N/A')}</td>
                 <td class="px-3 py-2.5">${escapeHtml(record.course || 'N/A')}</td>
-                <td class="px-3 py-2.5 text-center">
-                    <button type="button" data-action="view" data-id="${record.id}" class="transition duration-200 hover:scale-110">
-                        <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="view data">
-                    </button>
+                <td class="px-3 py-2.5">
+                    <div class="flex justify-center items-center gap-2">
+                        <button type="button" data-action="edit" data-id="${record.id}" class="transition duration-200 hover:scale-110">
+                            <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="edit data">
+                        </button>
+                        <button type="button" data-action="delete" data-id="${record.id}" data-name="${escapeHtml(formatNameCell(record))}" class="transition duration-200 hover:scale-110">
+                            <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete data">
+                        </button>
+                    </div>
                 </td>
             </tr>
         `).join('');
@@ -234,6 +419,15 @@
             return;
         }
 
+        const maxVisiblePages = 7;
+        const halfWindow = Math.floor(maxVisiblePages / 2);
+        let startPage = Math.max(1, meta.current_page - halfWindow);
+        let endPage = Math.min(meta.last_page, startPage + maxVisiblePages - 1);
+
+        if ((endPage - startPage + 1) < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
         const buttons = [];
         buttons.push(`
             <button type="button" class="rounded-full border px-3 py-1 text-sm ${meta.current_page === 1 ? 'cursor-not-allowed border-slate-200 text-slate-400' : 'border-slate-300 text-slate-700 hover:bg-slate-50'}" data-page="${meta.current_page - 1}" ${meta.current_page === 1 ? 'disabled' : ''}>
@@ -241,7 +435,7 @@
             </button>
         `);
 
-        for (let page = 1; page <= meta.last_page; page += 1) {
+        for (let page = startPage; page <= endPage; page += 1) {
             buttons.push(`
                 <button type="button" class="rounded-full px-3 py-1 text-sm ${page === meta.current_page ? 'bg-blue-600 text-white' : 'border border-slate-300 text-slate-700 hover:bg-slate-50'}" data-page="${page}">
                     ${page}
@@ -299,17 +493,8 @@
                 </tr>
             `;
             dataTableSummary.textContent = 'Data list unavailable';
+            showMessage('Unable to load data right now.', 'error');
         }
-    }
-
-    function openModal(modal) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-    }
-
-    function closeModal(modal) {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
     }
 
     function fillDetails(record) {
@@ -322,25 +507,82 @@
         document.getElementById('detail-course').value = record.course || '';
         document.getElementById('detail-year-level').value = record.year_level || '';
         document.getElementById('detail-grade-level').value = record.grade_level || '';
-        document.getElementById('detail-status').value = record.status || '';
-        document.getElementById('detail-logged-at').value = record.logged_at || '';
-        document.getElementById('detail-gate-name').value = record.gate_name || '';
-        document.getElementById('detail-remarks').value = record.remarks || '';
     }
 
-    async function openDetails(id) {
+    function resetDataForm(isEdit = false) {
+        dataForm.reset();
+        dataIdInput.value = '';
+        dataModalTitle.textContent = isEdit ? 'Edit Data' : 'Add Data';
+        dataSubmitButton.textContent = isEdit ? 'Update Data' : 'Save Data';
+    }
+
+    function fillDataForm(record) {
+        dataIdInput.value = record.id || '';
+        document.getElementById('form-student-number').value = record.student_number || '';
+        document.getElementById('form-lrn').value = record.lrn || '';
+        document.getElementById('form-last-name').value = record.last_name || '';
+        document.getElementById('form-first-name').value = record.first_name || '';
+        document.getElementById('form-middle-name').value = record.middle_name || '';
+        document.getElementById('form-sex').value = record.sex || '';
+        document.getElementById('form-department').value = record.department || '';
+        document.getElementById('form-course').value = record.course || '';
+        document.getElementById('form-year-level').value = record.year_level || '';
+        document.getElementById('form-grade-level').value = record.grade_level || '';
+    }
+
+    function openAddDataModal() {
+        hideMessage();
+        resetDataForm(false);
+        openModal(dataModal);
+    }
+
+    async function openEditDataModal(id) {
+        hideMessage();
+        resetDataForm(true);
+
         const response = await fetch(`${dataRoutes.base}/${id}`, {
             headers: { 'Accept': 'application/json' },
         });
         const payload = await response.json();
 
         if (!response.ok || !payload.success) {
+            showMessage(payload.message || 'Unable to load record details.', 'error');
             return;
         }
 
-        fillDetails(payload.record);
-        openModal(detailsModal);
+        fillDataForm(payload.record);
+        openModal(dataModal);
     }
+
+    function openDeleteModal(id, name) {
+        hideMessage();
+        dataToDelete = id;
+        deleteModalText.textContent = `Are you sure you want to delete ${name}?`;
+        openModal(deleteModal);
+    }
+
+    async function sendRequest(url, method, body) {
+        const response = await fetch(url, {
+            method,
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+            },
+            body,
+        });
+
+        const payload = await response.json();
+
+        if (!response.ok) {
+            throw new Error(payload.message || 'Request failed.');
+        }
+
+        return payload;
+    }
+
+    openAddDataModalButton.addEventListener('click', () => {
+        openAddDataModal();
+    });
 
     searchDataInput.addEventListener('input', () => {
         clearTimeout(searchTimer);
@@ -361,12 +603,76 @@
     });
 
     dataTableBody.addEventListener('click', async (event) => {
-        const button = event.target.closest('[data-action="view"]');
+        const button = event.target.closest('[data-action]');
         if (!button) {
             return;
         }
 
-        await openDetails(button.dataset.id);
+        const { action, id, name } = button.dataset;
+
+        try {
+            if (action === 'edit') {
+                await openEditDataModal(id);
+            }
+
+            if (action === 'delete') {
+                openDeleteModal(id, name);
+            }
+        } catch (error) {
+            showMessage(error.message || 'Action failed.', 'error');
+        }
+    });
+
+    dataForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        hideMessage();
+
+        const recordId = dataIdInput.value;
+        const formData = new FormData();
+        formData.set('student_number', document.getElementById('form-student-number').value);
+        formData.set('lrn', document.getElementById('form-lrn').value);
+        formData.set('last_name', document.getElementById('form-last-name').value);
+        formData.set('first_name', document.getElementById('form-first-name').value);
+        formData.set('middle_name', document.getElementById('form-middle-name').value);
+        formData.set('sex', document.getElementById('form-sex').value);
+        formData.set('department', document.getElementById('form-department').value);
+        formData.set('course', document.getElementById('form-course').value);
+        formData.set('year_level', document.getElementById('form-year-level').value);
+        formData.set('grade_level', document.getElementById('form-grade-level').value);
+
+        if (recordId) {
+            formData.set('_method', 'PUT');
+        }
+
+        try {
+            const payload = await sendRequest(
+                recordId ? `${dataRoutes.base}/${recordId}` : dataRoutes.store,
+                'POST',
+                formData
+            );
+
+            closeModal(dataModal);
+            showMessage(payload.message || 'Student data saved successfully.', 'success');
+            fetchData(dataCurrentPage);
+        } catch (error) {
+            showMessage(error.message, 'error');
+        }
+    });
+
+    confirmDeleteDataButton.addEventListener('click', async () => {
+        hideMessage();
+
+        const formData = new FormData();
+        formData.set('_method', 'DELETE');
+
+        try {
+            const payload = await sendRequest(`${dataRoutes.base}/${dataToDelete}`, 'POST', formData);
+            closeModal(deleteModal);
+            showMessage(payload.message || 'Student data deleted successfully.', 'success');
+            fetchData(1);
+        } catch (error) {
+            showMessage(error.message, 'error');
+        }
     });
 
     document.querySelectorAll('[data-close-modal]').forEach((button) => {
@@ -375,10 +681,21 @@
         });
     });
 
-    detailsModal.addEventListener('click', (event) => {
-        if (event.target === detailsModal) {
-            closeModal(detailsModal);
-        }
+    [detailsModal, dataModal, deleteModal, messageModal].forEach((modal) => {
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                if (modal === messageModal) {
+                    hideMessage();
+                    return;
+                }
+
+                closeModal(modal);
+            }
+        });
+    });
+
+    document.getElementById('close-message-modal').addEventListener('click', () => {
+        hideMessage();
     });
 
     fetchData();

@@ -13,17 +13,6 @@ class="w-full h-full">
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="min-h-screen bg-gradient-to-br from-white via-slate-50 to-slate-100 text-stone-800 flex flex-col p-2 gap-2 overflow-hidden">
-        <div id="fullscreen-lock" class="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/90 px-6">
-            <button
-                type="button"
-                id="fullscreen-lock-button"
-                class="w-full max-w-md rounded-3xl border border-white/15 bg-white/10 px-8 py-10 text-center text-white shadow-2xl backdrop-blur-md"
-            >
-                <h2 class="text-3xl font-bold">Enter Fullscreen</h2>
-                <p class="mt-3 text-sm text-slate-200">Click or press Enter to continue.</p>
-            </button>
-        </div>
-
         <!-- HEADER -->
         <header class="w-full bg-white/90 backdrop-blur-md border border-slate-200 rounded-xl py-2 px-3 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3">
 
@@ -224,8 +213,6 @@ class="w-full h-full">
             const clockStartedAt = window.performance.now();
             const statusDotEl = document.getElementById('system-status-dot');
             const statusTextEl = document.getElementById('system-status-text');
-            const fullscreenLock = document.getElementById('fullscreen-lock');
-            const fullscreenLockButton = document.getElementById('fullscreen-lock-button');
             const placeholderImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f1f5f9'/%3E%3Ccircle cx='150' cy='112' r='46' fill='%23cbd5e1'/%3E%3Cpath d='M72 244c16-42 52-68 78-68s62 26 78 68' fill='%23cbd5e1'/%3E%3C/svg%3E";
             const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
             const studentIdInput = document.getElementById('student_id');
@@ -244,7 +231,6 @@ class="w-full h-full">
             let scanTimer = null;
             let messageModalTimer = null;
             let activeShortcutIndex = 0;
-            let allowManualFullscreenExitUntil = 0;
             const shortcutBaseColors = ['bg-amber-400', 'bg-emerald-600', 'bg-rose-600', 'bg-sky-600'];
             const shortcutHoverColors = ['hover:bg-amber-500', 'hover:bg-emerald-700', 'hover:bg-rose-700', 'hover:bg-sky-700'];
 
@@ -626,6 +612,24 @@ class="w-full h-full">
                 rfidInput.focus();
             }
 
+            function maintainInputFocus() {
+                if (messageModal && !messageModal.classList.contains('hidden')) {
+                    return;
+                }
+
+                if (shortcutModal && !shortcutModal.classList.contains('hidden')) {
+                    return;
+                }
+
+                const targetInput = manualEntryEnabled ? studentIdInput : rfidInput;
+
+                if (!targetInput || document.activeElement === targetInput) {
+                    return;
+                }
+
+                targetInput.focus();
+            }
+
             function finalizeRfidScan() {
                 const value = rfidBuffer.trim();
                 rfidBuffer = '';
@@ -780,6 +784,10 @@ class="w-full h-full">
                 }
 
                 if (/^F\d{1,2}$/i.test(event.key)) {
+                    return event.key.toUpperCase() !== 'F11';
+                }
+
+                if (event.key === 'ContextMenu') {
                     return true;
                 }
 
@@ -802,56 +810,13 @@ class="w-full h-full">
                 return false;
             }
 
-            async function requestPageFullscreen() {
-                if (!document.fullscreenEnabled || document.fullscreenElement) {
-                    return;
-                }
-
-                try {
-                    await document.documentElement.requestFullscreen({ navigationUI: 'hide' });
-                } catch (error) {
-                    // Ignore browser gesture restrictions and keep the page usable.
-                }
-            }
-
-            function updateFullscreenLock() {
-                if (!fullscreenLock) {
-                    return;
-                }
-
-                const isFullscreen = Boolean(document.fullscreenElement);
-                fullscreenLock.classList.toggle('hidden', isFullscreen);
-
-                if (!isFullscreen) {
-                    fullscreenLockButton?.focus();
-                }
-            }
-
             function installFullscreenGuards() {
-                requestPageFullscreen();
-                updateFullscreenLock();
-
-                const retryFullscreen = () => {
-                    requestPageFullscreen();
-                };
-
-                document.addEventListener('pointerdown', retryFullscreen, { passive: true });
-                document.addEventListener('touchstart', retryFullscreen, { passive: true });
-
                 window.addEventListener('keydown', (event) => {
-                    if (event.key === 'Escape') {
-                        allowManualFullscreenExitUntil = Date.now() + 1500;
-                    }
-
                     if (shouldBlockPageShortcut(event)) {
                         event.preventDefault();
                         event.stopPropagation();
                         event.stopImmediatePropagation();
                         return;
-                    }
-
-                    if (!document.fullscreenElement && event.key !== 'Escape') {
-                        requestPageFullscreen();
                     }
                 }, true);
 
@@ -863,36 +828,9 @@ class="w-full h-full">
                     }
                 }, true);
 
-                document.addEventListener('fullscreenchange', () => {
-                    updateFullscreenLock();
-                    if (!document.fullscreenElement && Date.now() > allowManualFullscreenExitUntil) {
-                        requestPageFullscreen();
-                    }
+                window.addEventListener('contextmenu', (event) => {
+                    event.preventDefault();
                 });
-
-                window.addEventListener('focus', () => {
-                    if (!document.fullscreenElement) {
-                        requestPageFullscreen();
-                    }
-                });
-
-                document.addEventListener('visibilitychange', () => {
-                    if (document.visibilityState === 'visible' && !document.fullscreenElement) {
-                        requestPageFullscreen();
-                    }
-                });
-
-                fullscreenLockButton?.addEventListener('click', () => {
-                    requestPageFullscreen();
-                });
-
-                fullscreenLockButton?.addEventListener('keydown', (event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        requestPageFullscreen();
-                    }
-                });
-
             }
 
             updatePhilippineClock();
@@ -902,6 +840,7 @@ class="w-full h-full">
             installFullscreenGuards();
             setInterval(updatePhilippineClock, 1000);
             setInterval(checkUpdates, 5000);
+            setInterval(maintainInputFocus, 2000);
 
             messageModal?.addEventListener('click', (event) => {
                 if (event.target === messageModal) {

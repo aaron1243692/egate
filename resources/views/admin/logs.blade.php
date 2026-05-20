@@ -7,7 +7,7 @@
 
     <section class="w-full flex flex-1 justify-center p-2 overflow-hidden">
         <div class="w-full bg-white rounded-md shadow-sm overflow-hidden border border-slate-200 flex flex-col min-h-0">
-            <div class="w-full px-3 py-3 border-b border-slate-200 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div class="w-full px-3 py-3 border-b border-slate-200 flex flex-col gap-2">
                 <div class="w-full md:max-w-md flex gap-2">
                     <label for="search-logs" class="sr-only">Search logs</label>
                     <input
@@ -24,6 +24,58 @@
                         Search
                     </button>
                 </div>
+
+                <div class="grid gap-2 md:grid-cols-3 xl:grid-cols-6">
+                    <div class="flex flex-col gap-1">
+                        <label for="filter-status" class="text-sm font-medium text-slate-700">Status</label>
+                        <select id="filter-status" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
+                            <option value="">All Status</option>
+                            <option value="1">Log In</option>
+                            <option value="0">Log Out</option>
+                            <option value="2">N/A</option>
+                        </select>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="filter-department" class="text-sm font-medium text-slate-700">Department</label>
+                        <select id="filter-department" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
+                            <option value="">All departments</option>
+                            @foreach ($departments as $department)
+                                <option value="{{ $department }}">{{ $department }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="filter-course" class="text-sm font-medium text-slate-700">Course</label>
+                        <select id="filter-course" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
+                            <option value="">All courses</option>
+                            @foreach ($courses as $course)
+                                <option value="{{ $course }}">{{ $course }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="filter-year-level" class="text-sm font-medium text-slate-700">Year Level</label>
+                        <select id="filter-year-level" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
+                            <option value="">All year levels</option>
+                            @foreach ($yearLevels as $yearLevel)
+                                <option value="{{ $yearLevel }}">{{ $yearLevel }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="filter-date-from" class="text-sm font-medium text-slate-700">From</label>
+                        <input id="filter-date-from" type="date" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="filter-date-to" class="text-sm font-medium text-slate-700">To</label>
+                        <input id="filter-date-to" type="date" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
+                    </div>
+                </div>
             </div>
 
             <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
@@ -35,12 +87,13 @@
                             <th class="px-3 py-2.5">Name</th>
                             <th class="px-3 py-2.5">Status</th>
                             <th class="px-3 py-2.5">DateTime</th>
+                            <th class="px-3 py-2.5 text-center">Action</th>
                         </tr>
                     </thead>
 
                     <tbody id="logs-table-body" class="divide-y divide-black">
                         <tr>
-                            <td colspan="5" class="px-3 py-5 text-center text-slate-500">Loading logs...</td>
+                            <td colspan="6" class="px-3 py-5 text-center text-slate-500">Loading logs...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -54,18 +107,125 @@
     </section>
 </main>
 
+<div id="log-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div class="w-full max-w-lg rounded-xl bg-white shadow-2xl flex flex-col overflow-hidden">
+        <form id="log-form" class="flex flex-col">
+            <input type="hidden" id="log-id">
+
+            <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200">
+                <h4 class="text-lg font-bold text-gray-900">Edit Log</h4>
+                <button type="button" data-close-modal="log-modal" class="rounded-full px-2 py-1 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-700">X</button>
+            </div>
+
+            <div class="px-4 py-3 grid gap-3">
+                <div class="flex flex-col gap-1">
+                    <label for="log-student-id">Student ID</label>
+                    <input id="log-student-id" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none" required>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label for="log-status">Status</label>
+                    <select id="log-status" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-white" required>
+                        <option value="1">Log In</option>
+                        <option value="0">Log Out</option>
+                        <option value="2">N/A</option>
+                    </select>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label for="log-created-at">DateTime</label>
+                    <input id="log-created-at" type="datetime-local" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none" required>
+                </div>
+            </div>
+
+            <div class="px-4 py-3 border-t border-slate-200 flex justify-center gap-2">
+                <button type="button" data-close-modal="log-modal" class="rounded-full bg-gray-900 px-4 py-1.5 text-sm font-medium text-white transition-all duration-150 hover:bg-gray-800 active:scale-[0.98]">
+                    Cancel
+                </button>
+                <button type="submit" class="rounded-full bg-blue-500 px-4 py-1.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-blue-600 hover:scale-105">
+                    Update Log
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="delete-log-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div class="w-full max-w-sm rounded-xl bg-white p-4 shadow-2xl flex flex-col items-center text-center">
+        <div class="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-500">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+        </div>
+        <div class="space-y-2">
+            <h4 class="text-xl font-semibold text-gray-900">Delete Log</h4>
+            <p id="delete-log-modal-text" class="text-sm text-gray-500 leading-relaxed">Are you sure you want to delete this log?</p>
+        </div>
+        <div class="mt-6 w-full grid grid-cols-2 gap-2 justify-items-center">
+            <button type="button" data-close-modal="delete-log-modal" class="w-full rounded-full bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition-all duration-150 hover:bg-gray-800 active:scale-[0.98]">
+                Cancel
+            </button>
+            <button type="button" id="confirm-delete-log" class="w-full rounded-full bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition-all duration-150 hover:bg-red-700 active:scale-[0.98]">
+                Delete
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="message-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div id="message-modal-panel" class="w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200">
+        <div id="message-modal-icon" class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-500">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 21a9 9 0 100-18 9 9 0 000 18z"></path>
+            </svg>
+        </div>
+        <div class="space-y-2">
+            <h4 id="message-modal-title" class="text-xl font-semibold text-gray-900">Notice</h4>
+            <p id="message-modal-text" class="text-sm text-gray-500 leading-relaxed"></p>
+        </div>
+        <button type="button" id="close-message-modal" class="mt-6 w-full rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition-all duration-150 hover:bg-gray-800 active:scale-[0.98]">
+            Close
+        </button>
+    </div>
+</div>
+
 <script>
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     const logsRoutes = {
         fetch: @json(route('admin.logs.fetch')),
+        base: @json(url('admin/logs')),
     };
 
     const searchLogsInput = document.getElementById('search-logs');
     const searchLogsButton = document.getElementById('search-logs-button');
+    const filterStatus = document.getElementById('filter-status');
+    const filterDepartment = document.getElementById('filter-department');
+    const filterCourse = document.getElementById('filter-course');
+    const filterYearLevel = document.getElementById('filter-year-level');
+    const filterDateFrom = document.getElementById('filter-date-from');
+    const filterDateTo = document.getElementById('filter-date-to');
     const logsTableBody = document.getElementById('logs-table-body');
     const logsTableSummary = document.getElementById('table-summary');
     const logsPagination = document.getElementById('pagination');
+    const logModal = document.getElementById('log-modal');
+    const deleteLogModal = document.getElementById('delete-log-modal');
+    const deleteLogModalText = document.getElementById('delete-log-modal-text');
+    const confirmDeleteLogButton = document.getElementById('confirm-delete-log');
+    const logForm = document.getElementById('log-form');
+    const logIdInput = document.getElementById('log-id');
+    const logStudentIdInput = document.getElementById('log-student-id');
+    const logStatusInput = document.getElementById('log-status');
+    const logCreatedAtInput = document.getElementById('log-created-at');
+    const messageModal = document.getElementById('message-modal');
+    const messageModalPanel = document.getElementById('message-modal-panel');
+    const messageModalIcon = document.getElementById('message-modal-icon');
+    const messageModalTitle = document.getElementById('message-modal-title');
+    const messageModalText = document.getElementById('message-modal-text');
 
     let logsCurrentPage = 1;
+    let logsSearchTimer = null;
+    let messageHideTimer = null;
+    let logToDelete = null;
 
     function escapeHtml(value) {
         return String(value ?? '')
@@ -74,6 +234,63 @@
             .replaceAll('>', '&gt;')
             .replaceAll('"', '&quot;')
             .replaceAll("'", '&#039;');
+    }
+
+    function openModal(modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeModal(modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function showMessage(message, tone = 'success') {
+        if (messageHideTimer) {
+            window.clearTimeout(messageHideTimer);
+            messageHideTimer = null;
+        }
+
+        const tones = {
+            success: {
+                icon: 'bg-emerald-50 text-emerald-500',
+                title: 'Success',
+            },
+            error: {
+                icon: 'bg-rose-50 text-rose-500',
+                title: 'Error',
+            },
+        };
+
+        const config = tones[tone] || tones.success;
+        messageModalIcon.className = `mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full ${config.icon}`;
+        messageModalTitle.textContent = config.title;
+        messageModalText.textContent = message;
+
+        openModal(messageModal);
+        requestAnimationFrame(() => {
+            messageModalPanel.classList.remove('scale-95', 'opacity-0');
+            messageModalPanel.classList.add('scale-100', 'opacity-100');
+        });
+
+        messageHideTimer = window.setTimeout(() => {
+            hideMessage();
+        }, 2000);
+    }
+
+    function hideMessage() {
+        if (messageHideTimer) {
+            window.clearTimeout(messageHideTimer);
+            messageHideTimer = null;
+        }
+
+        messageModalPanel.classList.remove('scale-100', 'opacity-100');
+        messageModalPanel.classList.add('scale-95', 'opacity-0');
+
+        window.setTimeout(() => {
+            closeModal(messageModal);
+        }, 150);
     }
 
     function formatTime(value) {
@@ -89,11 +306,25 @@
         return date.toLocaleString();
     }
 
+    function formatDateTimeForInput(value) {
+        if (!value) {
+            return '';
+        }
+
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) {
+            return '';
+        }
+
+        const pad = (number) => String(number).padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    }
+
     function renderLogRows(logs, from) {
         if (!logs.length) {
             logsTableBody.innerHTML = `
                 <tr>
-                    <td colspan="5" class="px-3 py-5 text-center text-slate-500">No logs found.</td>
+                    <td colspan="6" class="px-3 py-5 text-center text-slate-500">No logs found.</td>
                 </tr>
             `;
             return;
@@ -106,6 +337,16 @@
                 <td class="px-3 py-2.5">${escapeHtml(log.name)}</td>
                 <td class="px-3 py-2.5">${escapeHtml(log.status)}</td>
                 <td class="px-3 py-2.5">${escapeHtml(formatTime(log.time))}</td>
+                <td class="px-3 py-2.5">
+                    <div class="flex justify-center items-center gap-2">
+                        <button type="button" data-action="edit" data-id="${log.id}" class="transition duration-200 hover:scale-110">
+                            <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="edit log">
+                        </button>
+                        <button type="button" data-action="delete" data-id="${log.id}" data-name="${escapeHtml(log.student_id)}" class="transition duration-200 hover:scale-110">
+                            <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete log">
+                        </button>
+                    </div>
+                </td>
             </tr>
         `).join('');
     }
@@ -116,6 +357,15 @@
             return;
         }
 
+        const maxVisiblePages = 7;
+        const halfWindow = Math.floor(maxVisiblePages / 2);
+        let startPage = Math.max(1, meta.current_page - halfWindow);
+        let endPage = Math.min(meta.last_page, startPage + maxVisiblePages - 1);
+
+        if ((endPage - startPage + 1) < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
         const buttons = [];
 
         buttons.push(`
@@ -124,7 +374,7 @@
             </button>
         `);
 
-        for (let page = 1; page <= meta.last_page; page += 1) {
+        for (let page = startPage; page <= endPage; page += 1) {
             buttons.push(`
                 <button type="button" class="rounded-full px-3 py-1 text-sm ${page === meta.current_page ? 'bg-blue-600 text-white' : 'border border-slate-300 text-slate-700 hover:bg-slate-50'}" data-page="${page}">
                     ${page}
@@ -145,7 +395,7 @@
         logsCurrentPage = page;
         logsTableBody.innerHTML = `
             <tr>
-                <td colspan="5" class="px-3 py-5 text-center text-slate-500">Loading logs...</td>
+                <td colspan="6" class="px-3 py-5 text-center text-slate-500">Loading logs...</td>
             </tr>
         `;
 
@@ -153,6 +403,24 @@
         url.searchParams.set('page', String(page));
         if (searchLogsInput.value.trim() !== '') {
             url.searchParams.set('search', searchLogsInput.value.trim());
+        }
+        if (filterStatus.value !== '') {
+            url.searchParams.set('status', filterStatus.value);
+        }
+        if (filterDepartment.value !== '') {
+            url.searchParams.set('department', filterDepartment.value);
+        }
+        if (filterCourse.value !== '') {
+            url.searchParams.set('course', filterCourse.value);
+        }
+        if (filterYearLevel.value !== '') {
+            url.searchParams.set('year_level', filterYearLevel.value);
+        }
+        if (filterDateFrom.value !== '') {
+            url.searchParams.set('date_from', filterDateFrom.value);
+        }
+        if (filterDateTo.value !== '') {
+            url.searchParams.set('date_to', filterDateTo.value);
         }
 
         try {
@@ -171,11 +439,60 @@
         } catch (error) {
             logsTableBody.innerHTML = `
                 <tr>
-                    <td colspan="5" class="px-3 py-5 text-center text-rose-600">Unable to load logs right now.</td>
+                    <td colspan="6" class="px-3 py-5 text-center text-rose-600">Unable to load logs right now.</td>
                 </tr>
             `;
             logsTableSummary.textContent = 'Log list unavailable';
+            showMessage('Unable to load logs right now.', 'error');
         }
+    }
+
+    async function openEditLogModal(id) {
+        hideMessage();
+
+        const response = await fetch(`${logsRoutes.base}/${id}/edit`, {
+            headers: {
+                'Accept': 'application/json',
+            },
+        });
+        const payload = await response.json();
+
+        if (!response.ok || !payload.success) {
+            showMessage(payload.message || 'Unable to load log details.', 'error');
+            return;
+        }
+
+        logIdInput.value = payload.log.id;
+        logStudentIdInput.value = payload.log.student_id || '';
+        logStatusInput.value = String(payload.log.status ?? '2');
+        logCreatedAtInput.value = formatDateTimeForInput(payload.log.created_at);
+        openModal(logModal);
+    }
+
+    function openDeleteLogModal(id, studentId) {
+        hideMessage();
+        logToDelete = id;
+        deleteLogModalText.textContent = `Are you sure you want to delete the log for ${studentId}?`;
+        openModal(deleteLogModal);
+    }
+
+    async function sendRequest(url, method, body) {
+        const response = await fetch(url, {
+            method,
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+            },
+            body,
+        });
+
+        const payload = await response.json();
+
+        if (!response.ok) {
+            throw new Error(payload.message || 'Request failed.');
+        }
+
+        return payload;
     }
 
     searchLogsButton.addEventListener('click', () => {
@@ -189,6 +506,22 @@
         }
     });
 
+    searchLogsInput.addEventListener('input', () => {
+        if (logsSearchTimer) {
+            window.clearTimeout(logsSearchTimer);
+        }
+
+        logsSearchTimer = window.setTimeout(() => {
+            fetchLogs(1);
+        }, 300);
+    });
+
+    [filterStatus, filterDepartment, filterCourse, filterYearLevel, filterDateFrom, filterDateTo].forEach((element) => {
+        element.addEventListener('change', () => {
+            fetchLogs(1);
+        });
+    });
+
     logsPagination.addEventListener('click', (event) => {
         const button = event.target.closest('[data-page]');
         if (!button || button.disabled) {
@@ -196,6 +529,86 @@
         }
 
         fetchLogs(Number(button.dataset.page));
+    });
+
+    logsTableBody.addEventListener('click', async (event) => {
+        const button = event.target.closest('[data-action]');
+        if (!button) {
+            return;
+        }
+
+        const { action, id, name } = button.dataset;
+
+        try {
+            if (action === 'edit') {
+                await openEditLogModal(id);
+            }
+
+            if (action === 'delete') {
+                openDeleteLogModal(id, name);
+            }
+        } catch (error) {
+            showMessage(error.message || 'Action failed.', 'error');
+        }
+    });
+
+    logForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        hideMessage();
+
+        const formData = new FormData();
+        formData.set('_method', 'PUT');
+        formData.set('student_id', logStudentIdInput.value);
+        formData.set('status', logStatusInput.value);
+        formData.set('created_at', logCreatedAtInput.value);
+
+        try {
+            const payload = await sendRequest(`${logsRoutes.base}/${logIdInput.value}`, 'POST', formData);
+            closeModal(logModal);
+            showMessage(payload.message || 'Log updated successfully.', 'success');
+            fetchLogs(logsCurrentPage);
+        } catch (error) {
+            showMessage(error.message, 'error');
+        }
+    });
+
+    confirmDeleteLogButton.addEventListener('click', async () => {
+        hideMessage();
+
+        const formData = new FormData();
+        formData.set('_method', 'DELETE');
+
+        try {
+            const payload = await sendRequest(`${logsRoutes.base}/${logToDelete}`, 'POST', formData);
+            closeModal(deleteLogModal);
+            showMessage(payload.message || 'Log deleted successfully.', 'success');
+            fetchLogs(1);
+        } catch (error) {
+            showMessage(error.message, 'error');
+        }
+    });
+
+    document.querySelectorAll('[data-close-modal]').forEach((button) => {
+        button.addEventListener('click', () => {
+            closeModal(document.getElementById(button.dataset.closeModal));
+        });
+    });
+
+    [logModal, deleteLogModal, messageModal].forEach((modal) => {
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                if (modal === messageModal) {
+                    hideMessage();
+                    return;
+                }
+
+                closeModal(modal);
+            }
+        });
+    });
+
+    document.getElementById('close-message-modal').addEventListener('click', () => {
+        hideMessage();
     });
 
     fetchLogs();

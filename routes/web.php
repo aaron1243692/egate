@@ -41,12 +41,18 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('admin/data')->controller(DataController::class)->name('admin.data')->group(function () {
         Route::get('/', 'index')->middleware('permission:data.view');
         Route::get('/fetch', 'fetchData')->name('.fetch')->middleware('permission:data.view');
+        Route::post('/', 'store')->name('.store')->middleware('permission:data.view');
         Route::get('/{id}', 'show')->name('.show')->middleware('permission:data.view');
+        Route::put('/{id}', 'update')->name('.update')->middleware('permission:data.view');
+        Route::delete('/{id}', 'destroy')->name('.destroy')->middleware('permission:data.view');
     })->middleware('permission:data.view');
 
     Route::prefix('admin/logs')->controller(LogController::class)->name('admin.logs')->group(function () {
         Route::get('/', 'index')->middleware('permission:logs.view');
         Route::get('/fetch', 'fetchLogs')->name('.fetch')->middleware('permission:logs.view');
+        Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('permission:logs.view');
+        Route::put('/{id}', 'update')->name('.update')->middleware('permission:logs.view');
+        Route::delete('/{id}', 'destroy')->name('.destroy')->middleware('permission:logs.view');
     })->middleware('permission:logs.view');
 
     Route::prefix('admin/permissions')->controller(PermissionController::class)->name('admin.permissions')->group(function () {
