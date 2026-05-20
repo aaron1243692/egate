@@ -24,7 +24,6 @@
                 <th>Name</th>
                 <th>Department</th>
                 <th>Course</th>
-                <th>Year Level</th>
                 <th>Grade Level</th>
             </tr>
         </thead>
@@ -36,20 +35,45 @@
                     <td>{{ trim(($record->last_name ?? '') . ', ' . ($record->first_name ?? '') . (($record->middle_name ?? '') ? ' ' . $record->middle_name : '')) }}</td>
                     <td>{{ $record->department ?: 'N/A' }}</td>
                     <td>{{ $record->course ?: 'N/A' }}</td>
-                    <td>{{ $record->year_level ?: 'N/A' }}</td>
                     <td>{{ $record->grade_level ?: 'N/A' }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7">No records found.</td>
+                    <td colspan="6">No records found.</td>
                 </tr>
             @endforelse
         </tbody>
     </table>
 
     <script>
+        const returnUrl = @json(url('admin/data'));
+        let printRequested = false;
+        let redirected = false;
+
+        function redirectBackToData() {
+            if (redirected) {
+                return;
+            }
+
+            redirected = true;
+            window.location.replace(returnUrl);
+        }
+
+        window.addEventListener('afterprint', () => {
+            window.setTimeout(redirectBackToData, 100);
+        });
+
+        window.addEventListener('focus', () => {
+            if (printRequested) {
+                window.setTimeout(redirectBackToData, 300);
+            }
+        });
+
         window.addEventListener('load', () => {
-            window.print();
+            window.setTimeout(() => {
+                printRequested = true;
+                window.print();
+            }, 100);
         });
     </script>
 </body>

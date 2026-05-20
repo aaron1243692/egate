@@ -44,7 +44,7 @@ class LogController extends Controller
     {
         abort_unless(auth()->user()?->can('logs.view'), 403);
         $logs = $this->buildFilteredQuery($request)
-            ->orderByDesc('egate_logs.created_at')
+            ->orderBy('egate_logs.created_at', $this->resolveTimeSortDirection($request))
             ->select([
                 'egate_logs.id',
                 'egate_logs.egate_data_id',
@@ -79,10 +79,13 @@ class LogController extends Controller
 
     public function print(Request $request)
     {
-        abort_unless(auth()->user()?->can('logs.view'), 403);
+        abort_unless(auth()->user()?->can('logs.print'), 403);
 
         $logs = $this->buildFilteredQuery($request)
-            ->orderByDesc('egate_logs.created_at')
+            ->when($request->filled('student_id'), function ($query) use ($request) {
+                $query->where('egate_logs.student_id', $request->get('student_id'));
+            })
+            ->orderBy('egate_logs.created_at', $this->resolveTimeSortDirection($request))
             ->select([
                 'egate_logs.student_id',
                 'egate_logs.status',
@@ -115,10 +118,10 @@ class LogController extends Controller
 
     public function export(Request $request): StreamedResponse
     {
-        abort_unless(auth()->user()?->can('logs.view'), 403);
+        abort_unless(auth()->user()?->can('export.logs'), 403);
 
         $logs = $this->buildFilteredQuery($request)
-            ->orderByDesc('egate_logs.created_at')
+            ->orderBy('egate_logs.created_at', $this->resolveTimeSortDirection($request))
             ->select([
                 'egate_logs.student_id',
                 'egate_logs.status',
@@ -157,7 +160,7 @@ class LogController extends Controller
 
     public function edit(int $id): JsonResponse
     {
-        abort_unless(auth()->user()?->can('logs.view'), 403);
+        abort_unless(auth()->user()?->can('logs.update'), 403);
 
         try {
             $log = EgateEntryLog::query()->findOrFail($id);
@@ -176,7 +179,7 @@ class LogController extends Controller
 
     public function update(Request $request, int $id): JsonResponse
     {
-        abort_unless(auth()->user()?->can('logs.view'), 403);
+        abort_unless(auth()->user()?->can('logs.update'), 403);
 
         try {
             $log = EgateEntryLog::query()->findOrFail($id);
@@ -212,7 +215,7 @@ class LogController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        abort_unless(auth()->user()?->can('logs.view'), 403);
+        abort_unless(auth()->user()?->can('logs.delete'), 403);
 
         try {
             $log = EgateEntryLog::query()->findOrFail($id);
@@ -238,6 +241,11 @@ class LogController extends Controller
             2 => 'N/A',
             default => 'N/A',
         };
+    }
+
+    private function resolveTimeSortDirection(Request $request): string
+    {
+        return $request->get('time_sort') === 'asc' ? 'asc' : 'desc';
     }
 
     private function buildFilteredQuery(Request $request): Builder

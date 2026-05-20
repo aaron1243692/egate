@@ -20,20 +20,27 @@
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
+                        @can('data.print')
                         <button
                             type="button"
                             id="print-data-button"
-                            class="rounded-full border border-slate-300 px-4 py-1.5 text-sm font-semibold text-slate-700 transition duration-200 hover:bg-slate-50"
+                            class="rounded-full border border-slate-300 p-1.5 transition duration-200 hover:bg-slate-50 hover:scale-105"
+                            aria-label="Print student data"
                         >
-                            Print
+                            <img src="{{ asset('icons/print.png') }}" class="h-7 w-7" alt="">
                         </button>
+                        @endcan
+                        @can('data.export')
                         <button
                             type="button"
                             id="export-data-button"
-                            class="rounded-full border border-emerald-300 px-4 py-1.5 text-sm font-semibold text-emerald-700 transition duration-200 hover:bg-emerald-50"
+                            class="rounded-full border border-emerald-300 p-1.5 transition duration-200 hover:bg-emerald-50 hover:scale-105"
+                            aria-label="Export student data"
                         >
-                            Export Excel
+                            <img src="{{ asset('icons/export.png') }}" class="h-7 w-7" alt="">
                         </button>
+                        @endcan
+                        @can('data.create')
                         <button
                             type="button"
                             id="open-add-data-modal"
@@ -41,10 +48,19 @@
                         >
                             Add Data
                         </button>
+                        @endcan
                     </div>
                 </div>
 
-                <div class="grid gap-2 md:grid-cols-3">
+                <div class="grid gap-2 md:grid-cols-4">
+                    <div class="flex flex-col gap-1">
+                        <label for="filter-name-sort" class="text-sm font-medium text-slate-700">Name Sort</label>
+                        <select id="filter-name-sort" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
+                            <option value="asc">Ascending</option>
+                            <option value="desc">Descending</option>
+                        </select>
+                    </div>
+
                     <div class="flex flex-col gap-1">
                         <label for="filter-department" class="text-sm font-medium text-slate-700">Department</label>
                         <select id="filter-department" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
@@ -298,8 +314,12 @@
         print: @json(route('admin.data.print')),
         export: @json(route('admin.data.export')),
     };
+    const canPrintData = @json(auth()->user()?->can('data.print'));
+    const canUpdateData = @json(auth()->user()?->can('data.update'));
+    const canDeleteData = @json(auth()->user()?->can('data.delete'));
 
     const searchDataInput = document.getElementById('search-data');
+    const filterNameSort = document.getElementById('filter-name-sort');
     const filterDepartment = document.getElementById('filter-department');
     const filterCourse = document.getElementById('filter-course');
     const filterYearLevel = document.getElementById('filter-year-level');
@@ -412,7 +432,26 @@
             return;
         }
 
-        dataTableBody.innerHTML = records.map((record, index) => `
+        dataTableBody.innerHTML = records.map((record, index) => {
+            const actionButtons = [
+                canPrintData ? `
+                        <button type="button" data-action="print" data-id="${record.id}" class="transition duration-200 hover:scale-110">
+                            <img src="{{ asset('icons/print.png') }}" class="w-7 h-7" alt="print data">
+                        </button>
+                ` : '',
+                canUpdateData ? `
+                        <button type="button" data-action="edit" data-id="${record.id}" class="transition duration-200 hover:scale-110">
+                            <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="edit data">
+                        </button>
+                ` : '',
+                canDeleteData ? `
+                        <button type="button" data-action="delete" data-id="${record.id}" data-name="${escapeHtml(formatNameCell(record))}" class="transition duration-200 hover:scale-110">
+                            <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete data">
+                        </button>
+                ` : '',
+            ].join('');
+
+            return `
             <tr class="border-b border-black hover:bg-gray-50 transition">
                 <td class="px-3 py-2.5">${from + index}</td>
                 <td class="px-3 py-2.5">${escapeHtml(record.student_number)}</td>
@@ -420,17 +459,13 @@
                 <td class="px-3 py-2.5">${escapeHtml(record.department || 'N/A')}</td>
                 <td class="px-3 py-2.5">${escapeHtml(record.course || 'N/A')}</td>
                 <td class="px-3 py-2.5">
-                    <div class="flex justify-center items-center gap-2">
-                        <button type="button" data-action="edit" data-id="${record.id}" class="transition duration-200 hover:scale-110">
-                            <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="edit data">
-                        </button>
-                        <button type="button" data-action="delete" data-id="${record.id}" data-name="${escapeHtml(formatNameCell(record))}" class="transition duration-200 hover:scale-110">
-                            <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete data">
-                        </button>
+                    <div class="flex justify-center items-center gap-4">
+                        ${actionButtons || '<span class="text-sm text-slate-400">N/A</span>'}
                     </div>
                 </td>
             </tr>
-        `).join('');
+        `;
+        }).join('');
     }
 
     function renderPagination(meta) {
@@ -482,6 +517,7 @@
 
         const url = new URL(dataRoutes.fetch, window.location.origin);
         url.searchParams.set('page', String(page));
+        url.searchParams.set('name_sort', filterNameSort.value);
         if (searchDataInput.value.trim() !== '') {
             url.searchParams.set('search', searchDataInput.value.trim());
         }
@@ -520,6 +556,7 @@
     function buildDataFilterUrl(baseUrl) {
         const url = new URL(baseUrl, window.location.origin);
 
+        url.searchParams.set('name_sort', filterNameSort.value);
         if (searchDataInput.value.trim() !== '') {
             url.searchParams.set('search', searchDataInput.value.trim());
         }
@@ -532,6 +569,13 @@
         if (filterYearLevel.value !== '') {
             url.searchParams.set('year_level', filterYearLevel.value);
         }
+
+        return url;
+    }
+
+    function buildSingleDataPrintUrl(id) {
+        const url = buildDataFilterUrl(dataRoutes.print);
+        url.searchParams.set('record_id', id);
 
         return url;
     }
@@ -619,15 +663,15 @@
         return payload;
     }
 
-    openAddDataModalButton.addEventListener('click', () => {
+    openAddDataModalButton?.addEventListener('click', () => {
         openAddDataModal();
     });
 
-    printDataButton.addEventListener('click', () => {
-        window.open(buildDataFilterUrl(dataRoutes.print).toString(), '_blank', 'noopener');
+    printDataButton?.addEventListener('click', () => {
+        window.location.href = buildDataFilterUrl(dataRoutes.print).toString();
     });
 
-    exportDataButton.addEventListener('click', () => {
+    exportDataButton?.addEventListener('click', () => {
         window.location.href = buildDataFilterUrl(dataRoutes.export).toString();
     });
 
@@ -636,7 +680,7 @@
         searchTimer = window.setTimeout(() => fetchData(1), 350);
     });
 
-    [filterDepartment, filterCourse, filterYearLevel].forEach((select) => {
+    [filterNameSort, filterDepartment, filterCourse, filterYearLevel].forEach((select) => {
         select.addEventListener('change', () => fetchData(1));
     });
 
@@ -660,6 +704,10 @@
         try {
             if (action === 'edit') {
                 await openEditDataModal(id);
+            }
+
+            if (action === 'print') {
+                window.location.href = buildSingleDataPrintUrl(id).toString();
             }
 
             if (action === 'delete') {

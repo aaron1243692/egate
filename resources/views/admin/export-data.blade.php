@@ -9,7 +9,6 @@
             <th>Sex</th>
             <th>Department</th>
             <th>Course</th>
-            <th>Year Level</th>
             <th>Grade Level</th>
         </tr>
     </thead>
@@ -24,12 +23,11 @@
                 <td>{{ $record->sex }}</td>
                 <td>{{ $record->department }}</td>
                 <td>{{ $record->course }}</td>
-                <td>{{ $record->year_level }}</td>
                 <td>{{ $record->grade_level }}</td>
             </tr>
         @empty
             <tr>
-                <td colspan="10">No records found.</td>
+                <td colspan="9">No records found.</td>
             </tr>
         @endforelse
     </tbody>

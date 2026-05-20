@@ -44,8 +44,34 @@
     </table>
 
     <script>
+        const returnUrl = @json(url('admin/logs'));
+        let printRequested = false;
+        let redirected = false;
+
+        function redirectBackToLogs() {
+            if (redirected) {
+                return;
+            }
+
+            redirected = true;
+            window.location.replace(returnUrl);
+        }
+
+        window.addEventListener('afterprint', () => {
+            window.setTimeout(redirectBackToLogs, 100);
+        });
+
+        window.addEventListener('focus', () => {
+            if (printRequested) {
+                window.setTimeout(redirectBackToLogs, 300);
+            }
+        });
+
         window.addEventListener('load', () => {
-            window.print();
+            window.setTimeout(() => {
+                printRequested = true;
+                window.print();
+            }, 100);
         });
     </script>
 </body>

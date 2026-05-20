@@ -8,6 +8,7 @@ use App\Http\Controllers\EgateLogSyncController;
 use App\Http\Controllers\GateEntryController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\DataController;
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
@@ -34,29 +35,27 @@ Route::get('/out', EgateLogoutController::class)->name('out');
 
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    Route::get('admin/dashboard', AdminDashboardController::class)->name('admin.dashboard');
 
     Route::prefix('admin/data')->controller(DataController::class)->name('admin.data')->group(function () {
         Route::get('/', 'index')->middleware('permission:data.view');
         Route::get('/fetch', 'fetchData')->name('.fetch')->middleware('permission:data.view');
-        Route::get('/print', 'print')->name('.print')->middleware('permission:data.view');
-        Route::get('/export', 'export')->name('.export')->middleware('permission:data.view');
-        Route::post('/', 'store')->name('.store')->middleware('permission:data.view');
+        Route::get('/print', 'print')->name('.print')->middleware('permission:data.print');
+        Route::get('/export', 'export')->name('.export')->middleware('permission:data.export');
+        Route::post('/', 'store')->name('.store')->middleware('permission:data.create');
         Route::get('/{id}', 'show')->name('.show')->middleware('permission:data.view');
-        Route::put('/{id}', 'update')->name('.update')->middleware('permission:data.view');
-        Route::delete('/{id}', 'destroy')->name('.destroy')->middleware('permission:data.view');
+        Route::put('/{id}', 'update')->name('.update')->middleware('permission:data.update');
+        Route::delete('/{id}', 'destroy')->name('.destroy')->middleware('permission:data.delete');
     })->middleware('permission:data.view');
 
     Route::prefix('admin/logs')->controller(LogController::class)->name('admin.logs')->group(function () {
         Route::get('/', 'index')->middleware('permission:logs.view');
         Route::get('/fetch', 'fetchLogs')->name('.fetch')->middleware('permission:logs.view');
-        Route::get('/print', 'print')->name('.print')->middleware('permission:logs.view');
-        Route::get('/export', 'export')->name('.export')->middleware('permission:logs.view');
-        Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('permission:logs.view');
-        Route::put('/{id}', 'update')->name('.update')->middleware('permission:logs.view');
-        Route::delete('/{id}', 'destroy')->name('.destroy')->middleware('permission:logs.view');
+        Route::get('/print', 'print')->name('.print')->middleware('permission:logs.print');
+        Route::get('/export', 'export')->name('.export')->middleware('permission:export.logs');
+        Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('permission:logs.update');
+        Route::put('/{id}', 'update')->name('.update')->middleware('permission:logs.update');
+        Route::delete('/{id}', 'destroy')->name('.destroy')->middleware('permission:logs.delete');
     })->middleware('permission:logs.view');
 
     Route::prefix('admin/permissions')->controller(PermissionController::class)->name('admin.permissions')->group(function () {

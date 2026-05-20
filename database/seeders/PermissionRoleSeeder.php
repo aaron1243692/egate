@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\PermissionRegistrar;
 
 class PermissionRoleSeeder extends Seeder
 {
@@ -14,23 +15,41 @@ class PermissionRoleSeeder extends Seeder
         $staff = Role::findOrCreate('staff', 'web');
         $guard = Role::findOrCreate('guard', 'web');
 
-        $usersParent = Permission::query()->updateOrCreate(
-            ['code' => 'users', 'guard_name' => 'web'],
-            ['name' => 'Users', 'parent_id' => null]
-        );
+        $parents = collect([
+            'data' => 'Data',
+            'logs' => 'Logs',
+            'roles' => 'Roles',
+            'users' => 'Users',
+        ])->mapWithKeys(function (string $name, string $code) {
+            $permission = Permission::query()->updateOrCreate(
+                ['code' => $code, 'guard_name' => 'web'],
+                ['name' => $name, 'parent_id' => null]
+            );
 
-        $reportsParent = Permission::query()->updateOrCreate(
-            ['code' => 'reports', 'guard_name' => 'web'],
-            ['name' => 'Reports', 'parent_id' => null]
-        );
+            return [$code => $permission];
+        });
 
         $definitions = [
-            ['name' => 'View Users', 'code' => 'users.view', 'parent_id' => $usersParent->id],
-            ['name' => 'Create Users', 'code' => 'users.create', 'parent_id' => $usersParent->id],
-            ['name' => 'Update Users', 'code' => 'users.update', 'parent_id' => $usersParent->id],
-            ['name' => 'Delete Users', 'code' => 'users.delete', 'parent_id' => $usersParent->id],
-            ['name' => 'View Reports', 'code' => 'reports.view', 'parent_id' => $reportsParent->id],
-            ['name' => 'Export Reports', 'code' => 'reports.export', 'parent_id' => $reportsParent->id],
+            ['name' => 'View Data', 'code' => 'data.view', 'parent_id' => $parents['data']->id],
+            ['name' => 'Create Data', 'code' => 'data.create', 'parent_id' => $parents['data']->id],
+            ['name' => 'Update Data', 'code' => 'data.update', 'parent_id' => $parents['data']->id],
+            ['name' => 'Delete Data', 'code' => 'data.delete', 'parent_id' => $parents['data']->id],
+            ['name' => 'Print Data', 'code' => 'data.print', 'parent_id' => $parents['data']->id],
+            ['name' => 'Export Data', 'code' => 'data.export', 'parent_id' => $parents['data']->id],
+            ['name' => 'View Logs', 'code' => 'logs.view', 'parent_id' => $parents['logs']->id],
+            ['name' => 'Update Logs', 'code' => 'logs.update', 'parent_id' => $parents['logs']->id],
+            ['name' => 'Delete Logs', 'code' => 'logs.delete', 'parent_id' => $parents['logs']->id],
+            ['name' => 'Print Logs', 'code' => 'logs.print', 'parent_id' => $parents['logs']->id],
+            ['name' => 'Export Logs', 'code' => 'export.logs', 'parent_id' => $parents['logs']->id],
+            ['name' => 'View Roles', 'code' => 'roles.view', 'parent_id' => $parents['roles']->id],
+            ['name' => 'Create Roles', 'code' => 'roles.create', 'parent_id' => $parents['roles']->id],
+            ['name' => 'Update Roles', 'code' => 'roles.update', 'parent_id' => $parents['roles']->id],
+            ['name' => 'Delete Roles', 'code' => 'roles.delete', 'parent_id' => $parents['roles']->id],
+            ['name' => 'View Users', 'code' => 'users.view', 'parent_id' => $parents['users']->id],
+            ['name' => 'Create Users', 'code' => 'users.create', 'parent_id' => $parents['users']->id],
+            ['name' => 'Update Users', 'code' => 'users.update', 'parent_id' => $parents['users']->id],
+            ['name' => 'Update User Passwords', 'code' => 'users.update.pass', 'parent_id' => $parents['users']->id],
+            ['name' => 'Delete Users', 'code' => 'users.delete', 'parent_id' => $parents['users']->id],
         ];
 
         foreach ($definitions as $definition) {
@@ -46,17 +65,37 @@ class PermissionRoleSeeder extends Seeder
             ->all();
 
         $staffPermissions = Permission::query()
-            ->whereIn('code', ['users', 'users.view', 'users.create', 'users.update', 'reports', 'reports.view'])
+            ->whereIn('code', [
+                'data',
+                'data.create',
+                'data.update',
+                'data.view',
+                'logs',
+                'logs.update',
+                'logs.view',
+                'users',
+                'users.view',
+                'users.create',
+                'users.update',
+            ])
             ->where('guard_name', 'web')
             ->get();
 
         $guardPermissions = Permission::query()
-            ->whereIn('code', ['users', 'users.view'])
+            ->whereIn('code', [
+                'data',
+                'data.view',
+                'logs',
+                'logs.view',
+                'logs.print',
+            ])
             ->where('guard_name', 'web')
             ->get();
 
         $admin->syncPermissions($allPermissions);
         $staff->syncPermissions($staffPermissions);
         $guard->syncPermissions($guardPermissions);
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

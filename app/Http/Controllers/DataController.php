@@ -43,8 +43,8 @@ class DataController extends Controller
     {
         abort_unless(auth()->user()?->can('data.view'), 403);
         $records = $this->buildFilteredQuery($request)
-            ->orderBy('last_name')
-            ->orderBy('first_name')
+            ->orderBy('last_name', $this->resolveNameSortDirection($request))
+            ->orderBy('first_name', $this->resolveNameSortDirection($request))
             ->paginate(10);
 
         return response()->json($records);
@@ -70,11 +70,12 @@ class DataController extends Controller
 
     public function print(Request $request)
     {
-        abort_unless(auth()->user()?->can('data.view'), 403);
+        abort_unless(auth()->user()?->can('data.print'), 403);
 
         $records = $this->buildFilteredQuery($request)
-            ->orderBy('last_name')
-            ->orderBy('first_name')
+            ->when($request->filled('record_id'), fn ($query) => $query->whereKey($request->integer('record_id')))
+            ->orderBy('last_name', $this->resolveNameSortDirection($request))
+            ->orderBy('first_name', $this->resolveNameSortDirection($request))
             ->get();
 
         return view('admin.print-data', [
@@ -85,11 +86,11 @@ class DataController extends Controller
 
     public function export(Request $request): StreamedResponse
     {
-        abort_unless(auth()->user()?->can('data.view'), 403);
+        abort_unless(auth()->user()?->can('data.export'), 403);
 
         $records = $this->buildFilteredQuery($request)
-            ->orderBy('last_name')
-            ->orderBy('first_name')
+            ->orderBy('last_name', $this->resolveNameSortDirection($request))
+            ->orderBy('first_name', $this->resolveNameSortDirection($request))
             ->get();
 
         $filename = 'student-data-' . now()->format('Y-m-d_H-i-s') . '.xls';
@@ -106,7 +107,7 @@ class DataController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        abort_unless(auth()->user()?->can('data.view'), 403);
+        abort_unless(auth()->user()?->can('data.create'), 403);
 
         try {
             $validated = $request->validate($this->rules());
@@ -134,7 +135,7 @@ class DataController extends Controller
 
     public function update(Request $request, int $id): JsonResponse
     {
-        abort_unless(auth()->user()?->can('data.view'), 403);
+        abort_unless(auth()->user()?->can('data.update'), 403);
 
         try {
             $record = EgateLog::query()->findOrFail($id);
@@ -162,7 +163,7 @@ class DataController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        abort_unless(auth()->user()?->can('data.view'), 403);
+        abort_unless(auth()->user()?->can('data.delete'), 403);
 
         try {
             $record = EgateLog::query()->findOrFail($id);
@@ -200,6 +201,11 @@ class DataController extends Controller
             'ip_address' => ['nullable', 'string', 'max:45'],
             'remarks' => ['nullable', 'string'],
         ];
+    }
+
+    private function resolveNameSortDirection(Request $request): string
+    {
+        return $request->get('name_sort') === 'desc' ? 'desc' : 'asc';
     }
 
     private function buildFilteredQuery(Request $request): Builder

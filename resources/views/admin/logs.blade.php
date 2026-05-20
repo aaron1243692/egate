@@ -27,24 +27,38 @@
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
+                        @can('logs.print')
                         <button
                             type="button"
                             id="print-logs-button"
-                            class="rounded-full border border-slate-300 px-4 py-1.5 text-sm font-semibold text-slate-700 transition duration-200 hover:bg-slate-50"
+                            class="rounded-full border border-slate-300 p-1.5 transition duration-200 hover:bg-slate-50 hover:scale-105"
+                            aria-label="Print logs"
                         >
-                            Print
+                            <img src="{{ asset('icons/print.png') }}" class="h-7 w-7" alt="">
                         </button>
+                        @endcan
+                        @can('export.logs')
                         <button
                             type="button"
                             id="export-logs-button"
-                            class="rounded-full border border-emerald-300 px-4 py-1.5 text-sm font-semibold text-emerald-700 transition duration-200 hover:bg-emerald-50"
+                            class="rounded-full border border-emerald-300 p-1.5 transition duration-200 hover:bg-emerald-50 hover:scale-105"
+                            aria-label="Export logs"
                         >
-                            Export Excel
+                            <img src="{{ asset('icons/export.png') }}" class="h-7 w-7" alt="">
                         </button>
+                        @endcan
                     </div>
                 </div>
 
-                <div class="grid gap-2 md:grid-cols-3 xl:grid-cols-6">
+                <div class="grid gap-2 md:grid-cols-3 xl:grid-cols-7">
+                    <div class="flex flex-col gap-1">
+                        <label for="filter-time-sort" class="text-sm font-medium text-slate-700">Time Sort</label>
+                        <select id="filter-time-sort" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
+                            <option value="desc">Descending</option>
+                            <option value="asc">Ascending</option>
+                        </select>
+                    </div>
+
                     <div class="flex flex-col gap-1">
                         <label for="filter-status" class="text-sm font-medium text-slate-700">Status</label>
                         <select id="filter-status" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
@@ -216,11 +230,15 @@
         print: @json(route('admin.logs.print')),
         export: @json(route('admin.logs.export')),
     };
+    const canPrintLogs = @json(auth()->user()?->can('logs.print'));
+    const canUpdateLogs = @json(auth()->user()?->can('logs.update'));
+    const canDeleteLogs = @json(auth()->user()?->can('logs.delete'));
 
     const searchLogsInput = document.getElementById('search-logs');
     const searchLogsButton = document.getElementById('search-logs-button');
     const printLogsButton = document.getElementById('print-logs-button');
     const exportLogsButton = document.getElementById('export-logs-button');
+    const filterTimeSort = document.getElementById('filter-time-sort');
     const filterStatus = document.getElementById('filter-status');
     const filterDepartment = document.getElementById('filter-department');
     const filterCourse = document.getElementById('filter-course');
@@ -353,7 +371,26 @@
             return;
         }
 
-        logsTableBody.innerHTML = logs.map((log, index) => `
+        logsTableBody.innerHTML = logs.map((log, index) => {
+            const actionButtons = [
+                canPrintLogs ? `
+                        <button type="button" data-action="print" data-student-id="${escapeHtml(log.student_id)}" class="transition duration-200 hover:scale-110">
+                            <img src="{{ asset('icons/print.png') }}" class="w-7 h-7" alt="print student logs">
+                        </button>
+                ` : '',
+                canUpdateLogs ? `
+                        <button type="button" data-action="edit" data-id="${log.id}" class="transition duration-200 hover:scale-110">
+                            <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="edit log">
+                        </button>
+                ` : '',
+                canDeleteLogs ? `
+                        <button type="button" data-action="delete" data-id="${log.id}" data-name="${escapeHtml(log.student_id)}" class="transition duration-200 hover:scale-110">
+                            <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete log">
+                        </button>
+                ` : '',
+            ].join('');
+
+            return `
             <tr class="border-b border-black hover:bg-gray-50 transition">
                 <td class="px-3 py-2.5">${from + index}</td>
                 <td class="px-3 py-2.5">${escapeHtml(log.student_id)}</td>
@@ -361,17 +398,13 @@
                 <td class="px-3 py-2.5">${escapeHtml(log.status)}</td>
                 <td class="px-3 py-2.5">${escapeHtml(formatTime(log.time))}</td>
                 <td class="px-3 py-2.5">
-                    <div class="flex justify-center items-center gap-2">
-                        <button type="button" data-action="edit" data-id="${log.id}" class="transition duration-200 hover:scale-110">
-                            <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="edit log">
-                        </button>
-                        <button type="button" data-action="delete" data-id="${log.id}" data-name="${escapeHtml(log.student_id)}" class="transition duration-200 hover:scale-110">
-                            <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete log">
-                        </button>
+                    <div class="flex justify-center items-center gap-4">
+                        ${actionButtons || '<span class="text-sm text-slate-400">N/A</span>'}
                     </div>
                 </td>
             </tr>
-        `).join('');
+        `;
+        }).join('');
     }
 
     function renderLogsPagination(meta) {
@@ -424,6 +457,7 @@
 
         const url = new URL(logsRoutes.fetch, window.location.origin);
         url.searchParams.set('page', String(page));
+        url.searchParams.set('time_sort', filterTimeSort.value);
         if (searchLogsInput.value.trim() !== '') {
             url.searchParams.set('search', searchLogsInput.value.trim());
         }
@@ -473,6 +507,7 @@
     function buildLogsFilterUrl(baseUrl) {
         const url = new URL(baseUrl, window.location.origin);
 
+        url.searchParams.set('time_sort', filterTimeSort.value);
         if (searchLogsInput.value.trim() !== '') {
             url.searchParams.set('search', searchLogsInput.value.trim());
         }
@@ -494,6 +529,13 @@
         if (filterDateTo.value !== '') {
             url.searchParams.set('date_to', filterDateTo.value);
         }
+
+        return url;
+    }
+
+    function buildStudentLogsPrintUrl(studentId) {
+        const url = buildLogsFilterUrl(logsRoutes.print);
+        url.searchParams.set('student_id', studentId);
 
         return url;
     }
@@ -550,11 +592,11 @@
         fetchLogs(1);
     });
 
-    printLogsButton.addEventListener('click', () => {
-        window.open(buildLogsFilterUrl(logsRoutes.print).toString(), '_blank', 'noopener');
+    printLogsButton?.addEventListener('click', () => {
+        window.location.href = buildLogsFilterUrl(logsRoutes.print).toString();
     });
 
-    exportLogsButton.addEventListener('click', () => {
+    exportLogsButton?.addEventListener('click', () => {
         window.location.href = buildLogsFilterUrl(logsRoutes.export).toString();
     });
 
@@ -575,7 +617,7 @@
         }, 300);
     });
 
-    [filterStatus, filterDepartment, filterCourse, filterYearLevel, filterDateFrom, filterDateTo].forEach((element) => {
+    [filterTimeSort, filterStatus, filterDepartment, filterCourse, filterYearLevel, filterDateFrom, filterDateTo].forEach((element) => {
         element.addEventListener('change', () => {
             fetchLogs(1);
         });
@@ -596,11 +638,15 @@
             return;
         }
 
-        const { action, id, name } = button.dataset;
+        const { action, id, name, studentId } = button.dataset;
 
         try {
             if (action === 'edit') {
                 await openEditLogModal(id);
+            }
+
+            if (action === 'print') {
+                window.location.href = buildStudentLogsPrintUrl(studentId).toString();
             }
 
             if (action === 'delete') {
