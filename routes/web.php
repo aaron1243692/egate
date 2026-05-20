@@ -24,6 +24,8 @@ Route::match(['get', 'post'], '/sync-egate-logs', EgateLogSyncController::class)
 Route::get('/signin', [EgateDashboardController::class, 'showLogin'])->name('signin');
 Route::redirect('/login', '/signin')->name('login');
 
+Route::post('/signin', [SinginController::class, 'submit'])->name('signin.submit');
+
 Route::get('/', EgateDashboardController::class)->name('welcome');
 Route::get('/in', EgateLoginController::class)->name('in');
 Route::get('/out', EgateLogoutController::class)->name('out');

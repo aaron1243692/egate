@@ -12,21 +12,29 @@ flex flex-row justify-center items-center">
     <nav class="gap-1
     flex flex-1 justify-start items-center">
         @can('data.view')
-        <a href="{{ route('admin.data') }}" class="text-white text-sm text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
+        <a href="{{ route('admin.data') }}" class="text-white text-md text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
         >Data</a>
         @endcan
         @can('logs.view')
-        <a href="{{ route('admin.logs') }}" class="text-white text-sm text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
+        <a href="{{ route('admin.logs') }}" class="text-white text-md text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
         >Logs</a>
         @endcan
         @can('roles.view')
-        <a href="{{ route('admin.roles') }}" class="text-white text-sm text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
+        <a href="{{ route('admin.roles') }}" class="text-white text-md text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
         >Roles</a>
         @endcan
         @can('users.view')
-            <a href="{{ route('admin.users.index') }}" class="text-white text-sm text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
+            <a href="{{ route('admin.users.index') }}" class="text-white text-md text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
             >Users</a>
         @endcan
     </nav>
+
+    <a href="{{ route('login') }}"
+    class="mr-3 text-decoration-none px-3 py-1 text-sm font-medium text-white bg-white/10 border
+    border-white/20 transition duration-300 hover:bg-black/30
+    hover:border-black hover:text-white hover:scale-107"
+    style="border-radius: 1.5rem;">
+    Sign Out
+    </a>
 
 </header>
