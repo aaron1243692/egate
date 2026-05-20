@@ -154,16 +154,46 @@ class="w-full h-full">
 
         <div id="message-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
             <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
-                <div class="flex items-start justify-between gap-3">
+                <div>
                     <div>
                         <h3 id="message-modal-title" class="text-lg font-bold text-stone-900">Notice</h3>
                         <p id="message-modal-text" class="mt-2 text-sm leading-relaxed text-stone-600"></p>
                     </div>
-                    <button type="button" id="close-message-modal" class="rounded-full px-2 py-1 text-sm text-stone-500 transition hover:bg-stone-100 hover:text-stone-700">X</button>
                 </div>
-                <button type="button" id="message-modal-button" class="mt-6 w-full rounded-xl bg-stone-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-stone-800">
-                    Close
-                </button>
+            </div>
+        </div>
+
+        <div id="shortcut-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/55 backdrop-blur-sm px-4">
+            <div class="w-full max-w-sm rounded-3xl border border-slate-200 bg-white p-4 shadow-2xl">
+                <div class="mb-4 text-center">
+                    <h3 class="text-xl font-bold text-stone-900">Quick Open</h3>
+                    <p class="mt-2 text-sm text-slate-600">Use arrow keys, then press Enter.</p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2">
+                    <a
+                        href="{{ route('in') }}"
+                        data-shortcut-option
+                        class="flex min-h-[3rem] text-decoration-none flex-col items-center justify-center rounded-2xl border-2 border-transparent bg-emerald-600 px-5 py-3 text-center text-white shadow-lg outline-none transition-all duration-200 hover:bg-emerald-700 focus:border-emerald-200 focus:ring-4 focus:ring-emerald-200/70"
+                    >
+                        <span class="text-base font-bold uppercase tracking-wide">In</span>
+                    </a>
+
+                    <a
+                        href="{{ route('out') }}"
+                        data-shortcut-option
+                        class="flex min-h-[3rem] text-decoration-none flex-col items-center justify-center rounded-2xl border-2 border-transparent bg-rose-600 px-5 py-3 text-center text-white shadow-lg outline-none transition-all duration-200 hover:bg-rose-700 focus:border-rose-200 focus:ring-4 focus:ring-rose-200/70"
+                    >
+                        <span class="text-base font-bold uppercase tracking-wide">Out</span>
+                    </a>
+
+                    <a
+                        href="{{ route('signin') }}"
+                        data-shortcut-option
+                        class="flex min-h-[3rem] text-decoration-none flex-col items-center justify-center rounded-2xl border-2 border-transparent bg-sky-600 px-5 py-3 text-center text-white shadow-xl outline-none transition-all duration-200 hover:bg-sky-700 focus:border-sky-200 focus:ring-4 focus:ring-sky-200/70">
+                        <span class="text-base font-bold tracking-wide">ADMIN</span>
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -183,14 +213,18 @@ class="w-full h-full">
             const messageModal = document.getElementById('message-modal');
             const messageModalTitle = document.getElementById('message-modal-title');
             const messageModalText = document.getElementById('message-modal-text');
-            const closeMessageModal = document.getElementById('close-message-modal');
-            const messageModalButton = document.getElementById('message-modal-button');
+            const shortcutModal = document.getElementById('shortcut-modal');
+            const shortcutOptions = shortcutModal ? Array.from(shortcutModal.querySelectorAll('[data-shortcut-option]')) : [];
             const manualEntryEnabled = @json($manualEntryEnabled);
             const rfidLoginEnabled = @json($rfidLoginEnabled);
             let lastSignature = null;
             let rfidBuffer = '';
             let lastKeyAt = 0;
             let scanTimer = null;
+            let messageModalTimer = null;
+            let activeShortcutIndex = 0;
+            const shortcutBaseColors = ['bg-emerald-600', 'bg-rose-600', 'bg-sky-600'];
+            const shortcutHoverColors = ['hover:bg-emerald-700', 'hover:bg-rose-700', 'hover:bg-sky-700'];
 
             const timeFormatter = new Intl.DateTimeFormat('en-PH', {
                 hour: '2-digit',
@@ -263,10 +297,18 @@ class="w-full h-full">
                     return;
                 }
 
+                if (messageModalTimer) {
+                    clearTimeout(messageModalTimer);
+                }
+
                 messageModalTitle.textContent = title;
                 messageModalText.textContent = message;
                 messageModal.classList.remove('hidden');
                 messageModal.classList.add('flex');
+
+                messageModalTimer = window.setTimeout(() => {
+                    hideMessageModal();
+                }, 1500);
             }
 
             function hideMessageModal() {
@@ -274,8 +316,72 @@ class="w-full h-full">
                     return;
                 }
 
+                if (messageModalTimer) {
+                    clearTimeout(messageModalTimer);
+                    messageModalTimer = null;
+                }
+
                 messageModal.classList.add('hidden');
                 messageModal.classList.remove('flex');
+            }
+
+            function showShortcutModal() {
+                if (!shortcutModal) {
+                    return;
+                }
+
+                shortcutModal.classList.remove('hidden');
+                shortcutModal.classList.add('flex');
+                activeShortcutIndex = 0;
+                focusShortcutOption();
+            }
+
+            function hideShortcutModal() {
+                if (!shortcutModal) {
+                    return;
+                }
+
+                shortcutModal.classList.add('hidden');
+                shortcutModal.classList.remove('flex');
+                focusManualEntry();
+            }
+
+            function focusShortcutOption() {
+                if (!shortcutOptions.length) {
+                    return;
+                }
+
+                const safeIndex = ((activeShortcutIndex % shortcutOptions.length) + shortcutOptions.length) % shortcutOptions.length;
+                activeShortcutIndex = safeIndex;
+                shortcutOptions.forEach((option, index) => {
+                    option.classList.remove('scale-105', '-translate-y-1', 'border-amber-300', 'ring-4', 'ring-amber-300/70', 'ring-offset-2', 'ring-offset-slate-900', 'shadow-2xl', 'brightness-110', 'bg-gray-700');
+                    option.classList.add(shortcutBaseColors[index]);
+                    option.classList.add(shortcutHoverColors[index]);
+
+                    if (index === activeShortcutIndex) {
+                        option.classList.remove(shortcutBaseColors[index]);
+                        option.classList.remove(shortcutHoverColors[index]);
+                        option.classList.add('scale-105', '-translate-y-1', 'border-amber-300', 'ring-4', 'ring-amber-300/70', 'ring-offset-2', 'ring-offset-slate-900', 'shadow-2xl', 'brightness-110', 'bg-gray-700');
+                    }
+                });
+                shortcutOptions[activeShortcutIndex].focus();
+            }
+
+            function moveShortcutSelection(step) {
+                if (!shortcutOptions.length) {
+                    return;
+                }
+
+                activeShortcutIndex += step;
+                focusShortcutOption();
+            }
+
+            function activateShortcutSelection() {
+                if (!shortcutOptions.length) {
+                    return;
+                }
+
+                shortcutOptions[activeShortcutIndex].click();
             }
 
             function fillPending(prefix) {
@@ -458,7 +564,7 @@ class="w-full h-full">
                 formData.append('_token', csrfToken);
                 formData.append('student_id', payload.student_id || '');
                 formData.append('rfid', payload.rfid || '');
-                formData.append('status', '1');
+                formData.append('status', '0');
 
                 return formData;
             }
@@ -513,6 +619,13 @@ class="w-full h-full">
 
                 if (manualEntryEnabled && studentIdInput) {
                     studentIdInput.addEventListener('keydown', (event) => {
+                        if (event.ctrlKey && event.key === 'Enter') {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            showShortcutModal();
+                            return;
+                        }
+
                         if (event.key === 'Enter') {
                             event.preventDefault();
 
@@ -536,6 +649,42 @@ class="w-full h-full">
                 }
 
                 window.addEventListener('keydown', (event) => {
+                    if (event.defaultPrevented) {
+                        return;
+                    }
+
+                    if (event.ctrlKey && event.key === 'Enter') {
+                        event.preventDefault();
+                        showShortcutModal();
+                        return;
+                    }
+
+                    if (shortcutModal && !shortcutModal.classList.contains('hidden')) {
+                        if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+                            event.preventDefault();
+                            moveShortcutSelection(-1);
+                            return;
+                        }
+
+                        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+                            event.preventDefault();
+                            moveShortcutSelection(1);
+                            return;
+                        }
+
+                        if (event.key === 'Enter') {
+                            event.preventDefault();
+                            activateShortcutSelection();
+                            return;
+                        }
+
+                        if (event.key === 'Escape') {
+                            event.preventDefault();
+                            hideShortcutModal();
+                        }
+                        return;
+                    }
+
                     if (manualEntryEnabled && document.activeElement === studentIdInput) {
                         return;
                     }
@@ -580,20 +729,16 @@ class="w-full h-full">
             setInterval(updatePhilippineClock, 1000);
             setInterval(checkUpdates, 5000);
 
-            closeMessageModal?.addEventListener('click', () => {
-                hideMessageModal();
-                focusManualEntry();
-            });
-
-            messageModalButton?.addEventListener('click', () => {
-                hideMessageModal();
-                focusManualEntry();
-            });
-
             messageModal?.addEventListener('click', (event) => {
                 if (event.target === messageModal) {
                     hideMessageModal();
                     focusManualEntry();
+                }
+            });
+
+            shortcutModal?.addEventListener('click', (event) => {
+                if (event.target === shortcutModal) {
+                    hideShortcutModal();
                 }
             });
         </script>
