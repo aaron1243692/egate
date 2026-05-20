@@ -458,7 +458,7 @@ class="w-full h-full">
                 formData.append('_token', csrfToken);
                 formData.append('student_id', payload.student_id || '');
                 formData.append('rfid', payload.rfid || '');
-                formData.append('status', '1');
+                formData.append('status', '3');
 
                 return formData;
             }
