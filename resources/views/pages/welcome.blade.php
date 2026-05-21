@@ -174,7 +174,7 @@ class="w-full h-full">
                     <a
                         href="{{ route('welcome') }}"
                         data-shortcut-option
-                        class="flex min-h-[3rem] text-decoration-none flex-col items-center justify-center rounded-2xl border-2 border-transparent bg-amber-400 px-5 py-3 text-center text-stone-900 shadow-lg outline-none transition-all duration-200 hover:bg-amber-500 focus:border-amber-200 focus:ring-4 focus:ring-amber-200/70"
+                        class="flex min-h-[3rem] text-decoration-none flex-col items-center justify-center rounded-2xl border-2 border-transparent bg-amber-400 px-5 py-3 text-center text-white shadow-lg outline-none transition-all duration-200 hover:bg-amber-500 focus:border-amber-200 focus:ring-4 focus:ring-amber-200/70"
                     >
                         <span class="text-base font-bold uppercase tracking-wide">N/A</span>
                     </a>
@@ -196,7 +196,7 @@ class="w-full h-full">
                     </a>
 
                     <a
-                        href="{{ route('signin') }}"
+                        href="{{ route('admin.reauth') }}"
                         data-shortcut-option
                         class="flex min-h-[3rem] text-decoration-none flex-col items-center justify-center rounded-2xl border-2 border-transparent bg-sky-600 px-5 py-3 text-center text-white shadow-xl outline-none transition-all duration-200 hover:bg-sky-700 focus:border-sky-200 focus:ring-4 focus:ring-sky-200/70">
                         <span class="text-base font-bold tracking-wide">Admin</span>
@@ -206,6 +206,18 @@ class="w-full h-full">
         </div>
 
         <script>
+            window.onload = () => {
+            const event = new KeyboardEvent("keydown", {
+                key: "Enter",
+                code: "Enter",
+                keyCode: 13,
+                which: 13,
+                bubbles: true
+            });
+
+            document.dispatchEvent(event);
+            };
+
             const phTimeEl = document.getElementById('ph-time');
             const phDateEl = document.getElementById('ph-date');
             const serverNowIso = @json(now()->toIso8601String());
@@ -431,14 +443,10 @@ class="w-full h-full">
                         ? '0'
                         : 'other';
 
-                statusEl.textContent = normalizedStatus === '1' ? 'Time In' : 'N/A';
+                statusEl.textContent = 'N/A';
                 statusEl.className = 'px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full border';
 
-                if (normalizedStatus === '1') {
-                    statusEl.classList.add('bg-emerald-100', 'text-emerald-800', 'border-emerald-300');
-                } else {
-                    statusEl.classList.add('bg-slate-100', 'text-stone-700', 'border-slate-200');
-                }
+                statusEl.classList.add('bg-slate-100', 'text-stone-700', 'border-slate-200');
 
                 document.getElementById(`${prefix}-name`).textContent = student.student_name || student.name || 'Pending...';
                 document.getElementById(`${prefix}-id`).textContent = student.student_id || student.student_number || student.lrn || 'Pending...';
@@ -480,7 +488,7 @@ class="w-full h-full">
             }
 
             function renderStudents(students) {
-                const filteredStudents = students.filter((student) => normalizeStudentStatus(student) === '1');
+                const filteredStudents = students.filter((student) => normalizeStudentStatus(student) === 'other');
                 const currentStudent = filteredStudents[0] || null;
                 const previousStudent = filteredStudents[1] || null;
 
@@ -497,7 +505,7 @@ class="w-full h-full">
 
             async function checkUpdates() {
                 try {
-                    const response = await fetch('{{ route('get-students.in') }}', {
+                    const response = await fetch('{{ route('get-students') }}', {
                         headers: {
                             'Accept': 'application/json',
                         },
@@ -591,7 +599,7 @@ class="w-full h-full">
                 formData.append('_token', csrfToken);
                 formData.append('student_id', payload.student_id || '');
                 formData.append('rfid', payload.rfid || '');
-                formData.append('status', '1');
+                formData.append('status', '2');
 
                 return formData;
             }

@@ -17,11 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\SinginController;
 
-Route::get('/get-students', [EgateDashboardController::class, 'getStudents'])->name('get-students');
-Route::get('/get-students/in', [EgateLoginController::class, 'getStudents'])->name('get-students.in');
-Route::get('/get-students/out', [EgateLogoutController::class, 'getStudents'])->name('get-students.out');
-Route::post('/gate-entries', [GateEntryController::class, 'store'])->name('gate-entries.store');
-Route::get('/admin/login', [EgateDashboardController::class, 'showLogin'])->name('admin.login');
+Route::get('/', [EgateDashboardController::class, 'showLogin'])->name('home');
+Route::get('/admin/login', fn () => redirect()->route('signin'))->name('admin.login');
 Route::post('/admin/login', [EgateDashboardController::class, 'submitLogin'])->name('admin.login.submit');
 Route::match(['get', 'post'], '/sync-egate-logs', EgateLogSyncController::class)->name('egate-logs.sync');
 Route::get('/signin', [EgateDashboardController::class, 'showLogin'])->name('signin');
@@ -29,11 +26,15 @@ Route::redirect('/login', '/signin')->name('login');
 
 Route::post('/signin', [SinginController::class, 'submit'])->name('signin.submit');
 
-Route::get('/', EgateDashboardController::class)->name('welcome');
-Route::get('/in', EgateLoginController::class)->name('in');
-Route::get('/out', EgateLogoutController::class)->name('out');
-
 Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/signin', [EgateDashboardController::class, 'forceSignin'])->name('admin.reauth');
+    Route::get('/get-students', [EgateDashboardController::class, 'getStudents'])->name('get-students');
+    Route::get('/get-students/in', [EgateLoginController::class, 'getStudents'])->name('get-students.in');
+    Route::get('/get-students/out', [EgateLogoutController::class, 'getStudents'])->name('get-students.out');
+    Route::post('/gate-entries', [GateEntryController::class, 'store'])->name('gate-entries.store');
+    Route::get('/welcome', EgateDashboardController::class)->name('welcome');
+    Route::get('/in', EgateLoginController::class)->name('in');
+    Route::get('/out', EgateLogoutController::class)->name('out');
 
     Route::get('admin/dashboard', AdminDashboardController::class)->name('admin.dashboard');
 

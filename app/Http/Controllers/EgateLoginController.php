@@ -13,7 +13,7 @@ class EgateLoginController extends Controller
 {
     public function __invoke(): View
     {
-        return view('in', [
+        return view('pages.in', [
             'manualEntryEnabled' => SettingController::isEnabled(1),
             'rfidLoginEnabled' => SettingController::isEnabled(2),
         ]);
@@ -21,12 +21,12 @@ class EgateLoginController extends Controller
 
     public function showLogin(): View
     {
-        return view('login');
+        return view('signin');
     }
 
     public function adminDashboard(): View
     {
-        return view('in');
+        return view('pages.in');
     }
 
     public function getStudents(Request $request): JsonResponse

@@ -27,7 +27,7 @@
         @endcan
     </nav>
 
-    <a href="{{ route('login') }}"
+    <a href="{{ route('admin.reauth') }}"
     class="mr-3 shrink-0 text-decoration-none px-3 py-1 text-sm font-medium leading-none text-white bg-white/10 border
     border-white/20 transition duration-300 hover:bg-black/30
     hover:border-black hover:text-white hover:scale-107"

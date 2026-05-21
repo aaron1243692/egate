@@ -6,4 +6,6 @@
 
     @yield('content')
 
+    @include('layouts.admin-shortcuts')
+
 @endsection

@@ -13,7 +13,7 @@ class EgateDashboardController extends Controller
 {
     public function __invoke(): View
     {
-        return view('welcome', [
+        return view('pages.welcome', [
             'manualEntryEnabled' => SettingController::isEnabled(1),
             'rfidLoginEnabled' => SettingController::isEnabled(2),
         ]);
@@ -21,12 +21,21 @@ class EgateDashboardController extends Controller
 
     public function showLogin(): View
     {
-        return view('login');
+        return view('signin');
     }
 
     public function adminDashboard(): View
     {
-        return view('welcome');
+        return view('pages.welcome');
+    }
+
+    public function forceSignin(Request $request): RedirectResponse
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('signin');
     }
 
     public function getStudents(Request $request): JsonResponse
