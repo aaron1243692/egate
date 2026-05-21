@@ -29,7 +29,7 @@
 
             <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
                 <table class="w-full text-left">
-                    <thead class="sticky top-0 z-10 bg-blue-600 text-white">
+                    <thead class="sticky top-0 z-10 bg-blue-600 text-black">
                         <tr>
                             <th class="px-3 py-2.5">No.</th>
                             <th class="px-3 py-2.5">ID</th>

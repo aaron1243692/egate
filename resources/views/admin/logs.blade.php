@@ -63,8 +63,8 @@
                         <label for="filter-status" class="text-sm font-medium text-slate-700">Status</label>
                         <select id="filter-status" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
                             <option value="">All Status</option>
-                            <option value="1">Log In</option>
-                            <option value="0">Log Out</option>
+                            <option value="1">Time In</option>
+                            <option value="0">Time Out</option>
                             <option value="2">N/A</option>
                         </select>
                     </div>
@@ -113,7 +113,7 @@
 
             <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
                 <table class="w-full text-left">
-                    <thead class="sticky top-0 z-10 bg-blue-600 text-white">
+                    <thead class="sticky top-0 z-10 bg-blue-600 text-black">
                         <tr>
                             <th class="px-3 py-2.5">No.</th>
                             <th class="px-3 py-2.5">ID</th>
@@ -159,8 +159,8 @@
                 <div class="flex flex-col gap-1">
                     <label for="log-status">Status</label>
                     <select id="log-status" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-white" required>
-                        <option value="1">Log In</option>
-                        <option value="0">Log Out</option>
+                        <option value="1">Time In</option>
+                        <option value="0">Time Out</option>
                         <option value="2">N/A</option>
                     </select>
                 </div>
@@ -344,7 +344,14 @@
             return value;
         }
 
-        return date.toLocaleString();
+        return date.toLocaleString(undefined, {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true,
+        });
     }
 
     function formatDateTimeForInput(value) {

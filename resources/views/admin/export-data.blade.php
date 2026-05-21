@@ -1,8 +1,9 @@
 <table border="1">
     <thead>
-        <tr>
+        <tr style="color: #000000;">
             <th>No.</th>
             <th>Student ID</th>
+            <th>LRN</th>
             <th>Last Name</th>
             <th>First Name</th>
             <th>Middle Name</th>
@@ -17,6 +18,7 @@
             <tr>
                 <td>{{ $index + 1 }}</td>
                 <td>{{ $record->student_number }}</td>
+                <td>{{ $record->lrn }}</td>
                 <td>{{ $record->last_name }}</td>
                 <td>{{ $record->first_name }}</td>
                 <td>{{ $record->middle_name }}</td>
@@ -27,7 +29,7 @@
             </tr>
         @empty
             <tr>
-                <td colspan="9">No records found.</td>
+                <td colspan="10">No records found.</td>
             </tr>
         @endforelse
     </tbody>

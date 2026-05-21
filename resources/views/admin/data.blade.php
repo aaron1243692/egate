@@ -95,7 +95,7 @@
 
             <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
                 <table class="w-full text-left">
-                    <thead class="sticky top-0 z-10 bg-blue-600 text-white">
+                    <thead class="sticky top-0 z-10 bg-blue-600 text-black">
                         <tr>
                             <th class="px-3 py-2.5">No.</th>
                             <th class="px-3 py-2.5">ID</th>
@@ -176,11 +176,6 @@
                     <div class="flex flex-col gap-1">
                         <label for="form-course">Course</label>
                         <input id="form-course" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none">
-                    </div>
-
-                    <div class="flex flex-col gap-1">
-                        <label for="form-year-level">Year Level</label>
-                        <input id="form-year-level" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none">
                     </div>
 
                     <div class="flex flex-col gap-1">
@@ -609,7 +604,6 @@
         document.getElementById('form-sex').value = record.sex || '';
         document.getElementById('form-department').value = record.department || '';
         document.getElementById('form-course').value = record.course || '';
-        document.getElementById('form-year-level').value = record.year_level || '';
         document.getElementById('form-grade-level').value = record.grade_level || '';
     }
 
@@ -732,7 +726,6 @@
         formData.set('sex', document.getElementById('form-sex').value);
         formData.set('department', document.getElementById('form-department').value);
         formData.set('course', document.getElementById('form-course').value);
-        formData.set('year_level', document.getElementById('form-year-level').value);
         formData.set('grade_level', document.getElementById('form-grade-level').value);
 
         if (recordId) {

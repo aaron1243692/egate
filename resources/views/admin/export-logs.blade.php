@@ -1,6 +1,6 @@
 <table border="1">
     <thead>
-        <tr>
+        <tr style="color: #000000;">
             <th>No.</th>
             <th>Student ID</th>
             <th>Name</th>

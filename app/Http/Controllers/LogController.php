@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use App\Models\EgateEntryLog;
+use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -70,7 +71,7 @@ class LogController extends Controller
                     'student_id' => $log->student_id,
                     'name' => $name,
                     'status' => $this->resolveStatusLabel((int) $log->status),
-                    'time' => $log->created_at,
+                    'time' => $this->formatLogTime($log->created_at),
                 ];
             });
 
@@ -106,7 +107,7 @@ class LogController extends Controller
                     'student_id' => $log->student_id,
                     'name' => count($nameParts) ? implode(' ', $nameParts) : $log->student_id,
                     'status' => $this->resolveStatusLabel((int) $log->status),
-                    'time' => $log->created_at,
+                    'time' => $this->formatLogTime($log->created_at),
                 ];
             });
 
@@ -236,11 +237,23 @@ class LogController extends Controller
     private function resolveStatusLabel(int $status): string
     {
         return match ($status) {
-            0 => 'Log Out',
-            1 => 'Log In',
-            2 => 'N/A',
+            0 => 'Time Out',
+            1 => 'Time In',
             default => 'N/A',
         };
+    }
+
+    private function formatLogTime(mixed $value): string
+    {
+        if (blank($value)) {
+            return 'N/A';
+        }
+
+        try {
+            return Carbon::parse($value)->format('M j, Y g:i A');
+        } catch (\Throwable) {
+            return (string) $value;
+        }
     }
 
     private function resolveTimeSortDirection(Request $request): string

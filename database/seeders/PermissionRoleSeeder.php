@@ -68,9 +68,13 @@ class PermissionRoleSeeder extends Seeder
             ->whereIn('code', [
                 'data',
                 'data.create',
+                'data.export',
+                'data.print',
                 'data.update',
                 'data.view',
                 'logs',
+                'export.logs',
+                'logs.print',
                 'logs.update',
                 'logs.view',
                 'users',
@@ -84,8 +88,11 @@ class PermissionRoleSeeder extends Seeder
         $guardPermissions = Permission::query()
             ->whereIn('code', [
                 'data',
+                'data.export',
+                'data.print',
                 'data.view',
                 'logs',
+                'export.logs',
                 'logs.view',
                 'logs.print',
             ])

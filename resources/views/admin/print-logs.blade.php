@@ -4,12 +4,21 @@
     <meta charset="utf-8">
     <title>Logs Print</title>
     <style>
+        @page {
+            margin: 12mm;
+            @bottom-center {
+                content: "Page " counter(page) " of " counter(pages);
+                font-family: Arial, sans-serif;
+                font-size: 11px;
+                color: #111827;
+            }
+        }
         body { font-family: Arial, sans-serif; margin: 24px; color: #111827; }
         h1 { margin: 0 0 8px; font-size: 24px; }
         p { margin: 0 0 16px; color: #4b5563; }
         table { width: 100%; border-collapse: collapse; }
         th, td { border: 1px solid #d1d5db; padding: 8px 10px; text-align: left; font-size: 13px; }
-        th { background: #2563eb; color: #fff; }
+        th { background: #2563eb; color: #000; }
     </style>
 </head>
 <body>
