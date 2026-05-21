@@ -82,9 +82,9 @@
     </div>
 </div>
 
-<div id="permissions-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-4xl rounded-xl bg-white p-4 shadow-2xl">
-        <form id="permissions-form" class="flex flex-col gap-3">
+<div id="permissions-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4 py-4">
+    <div class="w-full max-w-4xl max-h-[calc(100vh-2rem)] rounded-xl bg-white p-4 shadow-2xl overflow-hidden">
+        <form id="permissions-form" class="flex max-h-[calc(100vh-4rem)] min-h-0 flex-col gap-3">
             <input type="hidden" id="permissions-role-id">
 
             <div class="w-full flex items-center justify-between">
@@ -92,11 +92,11 @@
                 <button type="button" data-close-modal="permissions-modal" class="rounded-full px-2 py-1 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-700">X</button>
             </div>
 
-            <div id="permissions-card-list" class="grid gap-3 md:grid-cols-2">
+            <div id="permissions-card-list" class="grid min-h-0 gap-3 overflow-y-auto pr-1 md:grid-cols-2">
                 <div class="rounded-xl border border-slate-200 p-3 text-sm text-slate-500">Loading permissions...</div>
             </div>
 
-            <div class="w-full flex justify-center gap-2 pt-2">
+            <div class="w-full flex shrink-0 justify-center gap-2 border-t border-slate-200 pt-3">
                 <button type="button" data-close-modal="permissions-modal" class="rounded-full bg-gray-900 px-4 py-1.5 text-sm font-medium text-white transition-all duration-150 hover:bg-gray-800 active:scale-[0.98]">
                     Cancel
                 </button>

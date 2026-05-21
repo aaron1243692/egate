@@ -90,23 +90,23 @@
                     </div>
 
                     <div class="flex flex-col gap-1">
-                        <label for="filter-year-level" class="text-sm font-medium text-slate-700">Year Level</label>
-                        <select id="filter-year-level" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
-                            <option value="">All year levels</option>
-                            @foreach ($yearLevels as $yearLevel)
-                                <option value="{{ $yearLevel }}">{{ $yearLevel }}</option>
+                        <label for="filter-grade-level" class="text-sm font-medium text-slate-700">Grade Level</label>
+                        <select id="filter-grade-level" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
+                            <option value="">All grade levels</option>
+                            @foreach ($gradeLevels as $gradeLevel)
+                                <option value="{{ $gradeLevel }}">{{ $gradeLevel }}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <div class="flex flex-col gap-1">
                         <label for="filter-date-from" class="text-sm font-medium text-slate-700">From</label>
-                        <input id="filter-date-from" type="date" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
+                        <input id="filter-date-from" type="datetime-local" step="1" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
                     </div>
 
                     <div class="flex flex-col gap-1">
                         <label for="filter-date-to" class="text-sm font-medium text-slate-700">To</label>
-                        <input id="filter-date-to" type="date" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
+                        <input id="filter-date-to" type="datetime-local" step="1" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
                     </div>
                 </div>
             </div>
@@ -242,7 +242,7 @@
     const filterStatus = document.getElementById('filter-status');
     const filterDepartment = document.getElementById('filter-department');
     const filterCourse = document.getElementById('filter-course');
-    const filterYearLevel = document.getElementById('filter-year-level');
+    const filterGradeLevel = document.getElementById('filter-grade-level');
     const filterDateFrom = document.getElementById('filter-date-from');
     const filterDateTo = document.getElementById('filter-date-to');
     const logsTableBody = document.getElementById('logs-table-body');
@@ -368,6 +368,21 @@
         return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
     }
 
+    function formatDateTimeFilterValue(date) {
+        const pad = (number) => String(number).padStart(2, '0');
+
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    }
+
+    function setDefaultDateFilters() {
+        const now = new Date();
+        const startOfToday = new Date(now);
+        startOfToday.setHours(0, 0, 0, 0);
+
+        filterDateFrom.value = formatDateTimeFilterValue(startOfToday);
+        filterDateTo.value = formatDateTimeFilterValue(now);
+    }
+
     function renderLogRows(logs, from) {
         if (!logs.length) {
             logsTableBody.innerHTML = `
@@ -477,8 +492,8 @@
         if (filterCourse.value !== '') {
             url.searchParams.set('course', filterCourse.value);
         }
-        if (filterYearLevel.value !== '') {
-            url.searchParams.set('year_level', filterYearLevel.value);
+        if (filterGradeLevel.value !== '') {
+            url.searchParams.set('grade_level', filterGradeLevel.value);
         }
         if (filterDateFrom.value !== '') {
             url.searchParams.set('date_from', filterDateFrom.value);
@@ -527,8 +542,8 @@
         if (filterCourse.value !== '') {
             url.searchParams.set('course', filterCourse.value);
         }
-        if (filterYearLevel.value !== '') {
-            url.searchParams.set('year_level', filterYearLevel.value);
+        if (filterGradeLevel.value !== '') {
+            url.searchParams.set('grade_level', filterGradeLevel.value);
         }
         if (filterDateFrom.value !== '') {
             url.searchParams.set('date_from', filterDateFrom.value);
@@ -624,7 +639,7 @@
         }, 300);
     });
 
-    [filterTimeSort, filterStatus, filterDepartment, filterCourse, filterYearLevel, filterDateFrom, filterDateTo].forEach((element) => {
+    [filterTimeSort, filterStatus, filterDepartment, filterCourse, filterGradeLevel, filterDateFrom, filterDateTo].forEach((element) => {
         element.addEventListener('change', () => {
             fetchLogs(1);
         });
@@ -723,6 +738,7 @@
         hideMessage();
     });
 
+    setDefaultDateFilters();
     fetchLogs();
 </script>
 

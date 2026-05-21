@@ -31,14 +31,14 @@ class LogController extends Controller
             ->orderBy('course')
             ->pluck('course');
 
-        $yearLevels = DB::table('egate_data')
-            ->whereNotNull('year_level')
-            ->where('year_level', '!=', '')
+        $gradeLevels = DB::table('egate_data')
+            ->whereNotNull('grade_level')
+            ->where('grade_level', '!=', '')
             ->distinct()
-            ->orderBy('year_level')
-            ->pluck('year_level');
+            ->orderBy('grade_level')
+            ->pluck('grade_level');
 
-        return view('admin.logs', compact('departments', 'courses', 'yearLevels'));
+        return view('admin.logs', compact('departments', 'courses', 'gradeLevels'));
     }
 
     public function fetchLogs(Request $request): JsonResponse
@@ -267,7 +267,7 @@ class LogController extends Controller
         $status = trim((string) $request->get('status', ''));
         $department = trim((string) $request->get('department', ''));
         $course = trim((string) $request->get('course', ''));
-        $yearLevel = trim((string) $request->get('year_level', ''));
+        $gradeLevel = trim((string) $request->get('grade_level', ''));
         $dateFrom = trim((string) $request->get('date_from', ''));
         $dateTo = trim((string) $request->get('date_to', ''));
 
@@ -298,14 +298,29 @@ class LogController extends Controller
             ->when($course !== '', function ($query) use ($course) {
                 $query->where('egate_data.course', $course);
             })
-            ->when($yearLevel !== '', function ($query) use ($yearLevel) {
-                $query->where('egate_data.year_level', $yearLevel);
+            ->when($gradeLevel !== '', function ($query) use ($gradeLevel) {
+                $query->where('egate_data.grade_level', $gradeLevel);
             })
             ->when($dateFrom !== '', function ($query) use ($dateFrom) {
-                $query->whereDate('egate_logs.created_at', '>=', $dateFrom);
+                $query->where('egate_logs.created_at', '>=', $this->normalizeDateTimeFilter($dateFrom, false));
             })
             ->when($dateTo !== '', function ($query) use ($dateTo) {
-                $query->whereDate('egate_logs.created_at', '<=', $dateTo);
+                $query->where('egate_logs.created_at', '<=', $this->normalizeDateTimeFilter($dateTo, true));
             });
+    }
+
+    private function normalizeDateTimeFilter(string $value, bool $endOfDay): string
+    {
+        try {
+            $date = Carbon::parse($value);
+
+            if (! str_contains($value, 'T') && ! str_contains($value, ':')) {
+                $date = $endOfDay ? $date->endOfDay() : $date->startOfDay();
+            }
+
+            return $date->format('Y-m-d H:i:s');
+        } catch (\Throwable) {
+            return str_replace('T', ' ', $value);
+        }
     }
 }

@@ -12,13 +12,14 @@ class PermissionRoleSeeder extends Seeder
     public function run(): void
     {
         $admin = Role::findOrCreate('admin', 'web');
-        $staff = Role::findOrCreate('staff', 'web');
-        $guard = Role::findOrCreate('guard', 'web');
+        $staff = Role::findOrCreate('Staff', 'web');
+        $guard = Role::findOrCreate('Guard', 'web');
 
         $parents = collect([
             'data' => 'Data',
             'logs' => 'Logs',
             'roles' => 'Roles',
+            'time' => 'Time Log',
             'users' => 'Users',
         ])->mapWithKeys(function (string $name, string $code) {
             $permission = Permission::query()->updateOrCreate(
@@ -45,6 +46,10 @@ class PermissionRoleSeeder extends Seeder
             ['name' => 'Create Roles', 'code' => 'roles.create', 'parent_id' => $parents['roles']->id],
             ['name' => 'Update Roles', 'code' => 'roles.update', 'parent_id' => $parents['roles']->id],
             ['name' => 'Delete Roles', 'code' => 'roles.delete', 'parent_id' => $parents['roles']->id],
+            ['name' => 'In', 'code' => 'time.in', 'parent_id' => $parents['time']->id],
+            ['name' => 'Out', 'code' => 'time.out', 'parent_id' => $parents['time']->id],
+            ['name' => 'None', 'code' => 'time.none', 'parent_id' => $parents['time']->id],
+            ['name' => 'Login', 'code' => 'time.login', 'parent_id' => $parents['time']->id],
             ['name' => 'View Users', 'code' => 'users.view', 'parent_id' => $parents['users']->id],
             ['name' => 'Create Users', 'code' => 'users.create', 'parent_id' => $parents['users']->id],
             ['name' => 'Update Users', 'code' => 'users.update', 'parent_id' => $parents['users']->id],
@@ -77,6 +82,10 @@ class PermissionRoleSeeder extends Seeder
                 'logs.print',
                 'logs.update',
                 'logs.view',
+                'time',
+                'time.in',
+                'time.none',
+                'time.out',
                 'users',
                 'users.view',
                 'users.create',
@@ -95,6 +104,10 @@ class PermissionRoleSeeder extends Seeder
                 'export.logs',
                 'logs.view',
                 'logs.print',
+                'time',
+                'time.in',
+                'time.none',
+                'time.out',
             ])
             ->where('guard_name', 'web')
             ->get();

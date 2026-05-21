@@ -5,17 +5,20 @@
             <p class="mt-2 text-sm text-slate-600">Use arrow keys, then press Enter.</p>
         </div>
 
-        <div class="grid grid-cols-2 gap-2 sm:grid-cols-5">
+        <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            @if (canAccessWithParent(auth()->user(), 'time.none'))
             <a
                 href="{{ route('welcome') }}"
                 data-admin-shortcut-option
                 data-base-class="bg-amber-400"
                 data-hover-class="hover:bg-amber-500"
-                class="flex min-h-[3rem] text-decoration-none flex-col items-center justify-center rounded-2xl border-2 border-transparent bg-amber-400 px-5 py-3 text-center text-stone-900 shadow-lg outline-none transition-all duration-200 hover:bg-amber-500 focus:border-amber-200 focus:ring-4 focus:ring-amber-200/70"
+                class="flex min-h-[3rem] text-decoration-none flex-col items-center justify-center rounded-2xl border-2 border-transparent bg-amber-400 px-5 py-3 text-center text-white shadow-lg outline-none transition-all duration-200 hover:bg-amber-500 focus:border-amber-200 focus:ring-4 focus:ring-amber-200/70"
             >
                 <span class="text-base font-bold uppercase tracking-wide">N/A</span>
             </a>
+            @endif
 
+            @if (canAccessWithParent(auth()->user(), 'time.in'))
             <a
                 href="{{ route('in') }}"
                 data-admin-shortcut-option
@@ -25,7 +28,9 @@
             >
                 <span class="text-base font-bold uppercase tracking-wide">In</span>
             </a>
+            @endif
 
+            @if (canAccessWithParent(auth()->user(), 'time.out'))
             <a
                 href="{{ route('out') }}"
                 data-admin-shortcut-option
@@ -35,19 +40,9 @@
             >
                 <span class="text-base font-bold uppercase tracking-wide">Out</span>
             </a>
+            @endif
 
-            @can('logs.view')
-            <a
-                href="{{ route('admin.logs') }}"
-                data-admin-shortcut-option
-                data-base-class="bg-violet-600"
-                data-hover-class="hover:bg-violet-700"
-                class="flex min-h-[3rem] text-decoration-none flex-col items-center justify-center rounded-2xl border-2 border-transparent bg-violet-600 px-5 py-3 text-center text-white shadow-lg outline-none transition-all duration-200 hover:bg-violet-700 focus:border-violet-200 focus:ring-4 focus:ring-violet-200/70"
-            >
-                <span class="text-base font-bold uppercase tracking-wide">Logs</span>
-            </a>
-            @endcan
-
+            @if (canAccessWithParent(auth()->user(), 'time.login'))
             <a
                 href="{{ route('admin.dashboard') }}"
                 data-admin-shortcut-option
@@ -57,6 +52,7 @@
             >
                 <span class="text-base font-bold tracking-wide">Admin</span>
             </a>
+            @endif
         </div>
     </div>
 </div>
