@@ -94,6 +94,7 @@ class LogController extends Controller
                 'egate_data.first_name',
                 'egate_data.middle_name',
                 'egate_data.last_name',
+                'egate_data.lrn',
             ])
             ->get()
             ->map(function ($log) {
@@ -105,14 +106,28 @@ class LogController extends Controller
 
                 return [
                     'student_id' => $log->student_id,
+                    'lrn' => $log->lrn,
                     'name' => count($nameParts) ? implode(' ', $nameParts) : $log->student_id,
                     'status' => $this->resolveStatusLabel((int) $log->status),
                     'time' => $this->formatLogTime($log->created_at),
                 ];
             });
 
+        $studentName = $request->filled('student_id')
+            ? ($logs->first()['name'] ?? (string) $request->get('student_id'))
+            : null;
+        $studentNumber = $request->filled('student_id')
+            ? ($logs->first()['student_id'] ?? (string) $request->get('student_id'))
+            : null;
+        $studentLrn = $request->filled('student_id')
+            ? ($logs->first()['lrn'] ?? null)
+            : null;
+
         return view('admin.print-logs', [
             'logs' => $logs,
+            'studentName' => $studentName,
+            'studentNumber' => $studentNumber,
+            'studentLrn' => $studentLrn,
             'printedAt' => now(),
         ]);
     }

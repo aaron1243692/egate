@@ -80,6 +80,7 @@ class DataController extends Controller
 
         return view('admin.print-data', [
             'records' => $records,
+            'individualPrint' => $request->filled('record_id'),
             'printedAt' => now(),
         ]);
     }

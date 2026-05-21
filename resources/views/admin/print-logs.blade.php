@@ -14,7 +14,9 @@
             }
         }
         body { font-family: Arial, sans-serif; margin: 24px; color: #111827; }
-        h1 { margin: 0 0 8px; font-size: 24px; }
+        h1 { margin: 0 0 4px; font-size: 24px; }
+        .student-info { margin: 0 0 12px; color: #000; font-size: 14px; line-height: 1.5; }
+        .student-info div { font-weight: 700; }
         p { margin: 0 0 16px; color: #4b5563; }
         table { width: 100%; border-collapse: collapse; }
         th, td { border: 1px solid #d1d5db; padding: 8px 10px; text-align: left; font-size: 13px; }
@@ -23,6 +25,13 @@
 </head>
 <body>
     <h1>Logs</h1>
+    @if ($studentName)
+        <div class="student-info">
+            <div>Name: {{ $studentName }}</div>
+            <div>St No.: {{ $studentNumber ?: 'N/A' }}</div>
+            <div>LRN: {{ $studentLrn ?: 'N/A' }}</div>
+        </div>
+    @endif
     <p>Printed at {{ $printedAt->format('F j, Y g:i A') }}</p>
 
     <table>
@@ -30,7 +39,9 @@
             <tr>
                 <th>No.</th>
                 <th>Student ID</th>
+                @if (! $studentName)
                 <th>Name</th>
+                @endif
                 <th>Status</th>
                 <th>DateTime</th>
             </tr>
@@ -40,13 +51,15 @@
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $log['student_id'] }}</td>
+                    @if (! $studentName)
                     <td>{{ $log['name'] }}</td>
+                    @endif
                     <td>{{ $log['status'] }}</td>
                     <td>{{ $log['time'] }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5">No logs found.</td>
+                    <td colspan="{{ $studentName ? 4 : 5 }}">No logs found.</td>
                 </tr>
             @endforelse
         </tbody>
