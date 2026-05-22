@@ -98,7 +98,7 @@
                     <thead class="sticky top-0 z-10 bg-blue-600 text-black">
                         <tr>
                             <th class="px-3 py-2.5">No.</th>
-                            <th class="px-3 py-2.5">ID</th>
+                            <th class="px-3 py-2.5">ST No / LRN</th>
                             <th class="px-3 py-2.5">Name</th>
                             <th class="px-3 py-2.5">Department</th>
                             <th class="px-3 py-2.5">Course</th>
@@ -135,7 +135,7 @@
             <div class="overflow-y-auto px-4 py-3">
                 <div class="grid gap-3 md:grid-cols-2">
                     <div class="flex flex-col gap-1">
-                        <label for="form-student-number">Student ID</label>
+                        <label for="form-student-number">ST No / LRN</label>
                         <input id="form-student-number" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none" required>
                     </div>
 
@@ -147,11 +147,6 @@
                     <div class="flex flex-col gap-1">
                         <label for="form-name">Name (FN MN, LN)</label>
                         <input id="form-name" type="text" placeholder="Juan Santos, Dela Cruz" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none" required>
-                    </div>
-
-                    <div class="flex flex-col gap-1">
-                        <label for="form-lrn">LRN</label>
-                        <input id="form-lrn" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none">
                     </div>
 
                     <div class="flex flex-col gap-1">
@@ -171,15 +166,6 @@
                     <div class="flex flex-col gap-1">
                         <label for="form-contact">Contact</label>
                         <input id="form-contact" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none">
-                    </div>
-
-                    <div class="flex flex-col gap-1">
-                        <label for="form-sex">Sex</label>
-                        <select id="form-sex" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-white">
-                            <option value="">Select sex</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                        </select>
                     </div>
 
                     <div class="flex flex-col gap-1">
@@ -226,8 +212,8 @@
         <div class="overflow-y-auto px-4 py-3">
             <form class="grid gap-3 md:grid-cols-2">
                 <div class="flex flex-col gap-1">
-                    <label>Student ID</label>
-                    <input id="detail-student-number" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
+                    <label>ST No / LRN</label>
+                    <input id="detail-stno-lrn" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
                 </div>
 
                 <div class="flex flex-col gap-1">
@@ -238,11 +224,6 @@
                 <div class="flex flex-col gap-1">
                     <label>Name</label>
                     <input id="detail-name" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
-                </div>
-
-                <div class="flex flex-col gap-1">
-                    <label>LRN</label>
-                    <input id="detail-lrn" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
                 </div>
 
                 <div class="flex flex-col gap-1">
@@ -258,11 +239,6 @@
                 <div class="flex flex-col gap-1">
                     <label>Contact</label>
                     <input id="detail-contact" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
-                </div>
-
-                <div class="flex flex-col gap-1">
-                    <label>Sex</label>
-                    <input id="detail-sex" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
                 </div>
 
                 <div class="flex flex-col gap-1">
@@ -489,7 +465,7 @@
             return `
             <tr class="border-b border-black hover:bg-gray-50 transition">
                 <td class="px-3 py-2.5">${from + index}</td>
-                <td class="px-3 py-2.5">${escapeHtml(record.student_number)}</td>
+                <td class="px-3 py-2.5">${escapeHtml(record.student_number || record.lrn || 'N/A')}</td>
                 <td class="px-3 py-2.5">${escapeHtml(formatNameCell(record))}</td>
                 <td class="px-3 py-2.5">${escapeHtml(record.department || 'N/A')}</td>
                 <td class="px-3 py-2.5">${escapeHtml(record.course || 'N/A')}</td>
@@ -616,14 +592,12 @@
     }
 
     function fillDetails(record) {
-        document.getElementById('detail-student-number').value = record.student_number || '';
-        document.getElementById('detail-lrn').value = record.lrn || '';
+        document.getElementById('detail-stno-lrn').value = record.student_number || record.lrn || 'N/A';
         document.getElementById('detail-rfid').value = record.rfid || '';
         document.getElementById('detail-name').value = record.name || '';
         document.getElementById('detail-role').value = formatRole(record.role);
         document.getElementById('detail-email').value = record.email || '';
         document.getElementById('detail-contact').value = record.contact || '';
-        document.getElementById('detail-sex').value = record.sex || '';
         document.getElementById('detail-department').value = record.department || '';
         document.getElementById('detail-course').value = record.course || '';
         document.getElementById('detail-school-level').value = record.school_level || '';
@@ -639,14 +613,12 @@
 
     function fillDataForm(record) {
         dataIdInput.value = record.id || '';
-        document.getElementById('form-student-number').value = record.student_number || '';
-        document.getElementById('form-lrn').value = record.lrn || '';
+        document.getElementById('form-student-number').value = record.student_number || record.lrn || '';
         document.getElementById('form-rfid').value = record.rfid || '';
         document.getElementById('form-name').value = record.name || '';
         document.getElementById('form-role').value = record.role || '';
         document.getElementById('form-email').value = record.email || '';
         document.getElementById('form-contact').value = record.contact || '';
-        document.getElementById('form-sex').value = record.sex || '';
         document.getElementById('form-department').value = record.department || '';
         document.getElementById('form-course').value = record.course || '';
         document.getElementById('form-school-level').value = record.school_level || '';
@@ -765,13 +737,11 @@
         const recordId = dataIdInput.value;
         const formData = new FormData();
         formData.set('student_number', document.getElementById('form-student-number').value);
-        formData.set('lrn', document.getElementById('form-lrn').value);
         formData.set('rfid', document.getElementById('form-rfid').value);
         formData.set('name', document.getElementById('form-name').value);
         formData.set('role', document.getElementById('form-role').value);
         formData.set('email', document.getElementById('form-email').value);
         formData.set('contact', document.getElementById('form-contact').value);
-        formData.set('sex', document.getElementById('form-sex').value);
         formData.set('department', document.getElementById('form-department').value);
         formData.set('course', document.getElementById('form-course').value);
         formData.set('school_level', document.getElementById('form-school-level').value);
