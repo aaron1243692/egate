@@ -47,4 +47,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function hasAdminRole(): bool
+    {
+        return $this->roles
+            ->contains(fn ($role) => strcasecmp((string) $role->name, 'admin') === 0);
+    }
 }

@@ -3,7 +3,7 @@
 @section('content')
 
 <main class="w-full p-2 gap-2 flex flex-1 flex-col overflow-hidden">
-    <h3 class="text-lg font-semibold text-slate-800">Student Logs</h3>
+    <h3 class="text-lg font-semibold text-slate-800">Employee Logs</h3>
 
     <section class="w-full flex flex-1 justify-center p-2 overflow-hidden">
         <div class="w-full bg-white rounded-md shadow-sm overflow-hidden border border-slate-200 flex flex-col min-h-0">
@@ -73,9 +73,6 @@
                         <label for="filter-department" class="text-sm font-medium text-slate-700">Department</label>
                         <select id="filter-department" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
                             <option value="">All departments</option>
-                            @foreach ($departments as $department)
-                                <option value="{{ $department }}">{{ $department }}</option>
-                            @endforeach
                         </select>
                     </div>
 
@@ -83,9 +80,6 @@
                         <label for="filter-course" class="text-sm font-medium text-slate-700">Course</label>
                         <select id="filter-course" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
                             <option value="">All courses</option>
-                            @foreach ($courses as $course)
-                                <option value="{{ $course }}">{{ $course }}</option>
-                            @endforeach
                         </select>
                     </div>
 
@@ -93,9 +87,6 @@
                         <label for="filter-grade-level" class="text-sm font-medium text-slate-700">Grade Level</label>
                         <select id="filter-grade-level" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
                             <option value="">All grade levels</option>
-                            @foreach ($gradeLevels as $gradeLevel)
-                                <option value="{{ $gradeLevel }}">{{ $gradeLevel }}</option>
-                            @endforeach
                         </select>
                     </div>
 
@@ -320,8 +311,6 @@
     }
 
     function renderLogRows(logs, from) {
-
-        console.log(logs);
 
         if (!logs.length) {
             logsTableBody.innerHTML = `

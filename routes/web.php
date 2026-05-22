@@ -13,6 +13,7 @@ use App\Http\Controllers\LogController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CsrfTokenController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\SinginController;
@@ -23,18 +24,19 @@ Route::post('/admin/login', [EgateDashboardController::class, 'submitLogin'])->n
 Route::match(['get', 'post'], '/sync-egate-logs', EgateLogSyncController::class)->name('egate-logs.sync');
 Route::get('/signin', [EgateDashboardController::class, 'showLogin'])->name('signin');
 Route::redirect('/login', '/signin')->name('login');
+Route::get('/csrf-token', [CsrfTokenController::class, 'show'])->name('csrf.token');
 
 Route::post('/signin', [SinginController::class, 'submit'])->name('signin.submit');
+Route::get('/get-students/in', [EgateLoginController::class, 'getStudents'])->name('get-students.in');
+Route::get('/get-students/out', [EgateLogoutController::class, 'getStudents'])->name('get-students.out');
+Route::post('/gate-entries', [GateEntryController::class, 'store'])->name('gate-entries.store');
+Route::get('/in', EgateLoginController::class)->name('in');
+Route::get('/out', EgateLogoutController::class)->name('out');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/signin', [EgateDashboardController::class, 'forceSignin'])->name('admin.reauth');
     Route::get('/get-students', [EgateDashboardController::class, 'getStudents'])->name('get-students');
-    Route::get('/get-students/in', [EgateLoginController::class, 'getStudents'])->name('get-students.in');
-    Route::get('/get-students/out', [EgateLogoutController::class, 'getStudents'])->name('get-students.out');
-    Route::post('/gate-entries', [GateEntryController::class, 'store'])->name('gate-entries.store');
     Route::get('/welcome', EgateDashboardController::class)->name('welcome');
-    Route::get('/in', EgateLoginController::class)->name('in');
-    Route::get('/out', EgateLogoutController::class)->name('out');
 
     Route::get('admin/dashboard', AdminDashboardController::class)->name('admin.dashboard');
 
@@ -54,10 +56,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/fetch', 'fetchLogs')->name('.fetch')->middleware('permission:logs.view');
         Route::get('/print', 'print')->name('.print')->middleware('permission:logs.print');
         Route::get('/export', 'export')->name('.export')->middleware('permission:export.logs');
-        Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('permission:logs.update');
-        Route::put('/{id}', 'update')->name('.update')->middleware('permission:logs.update');
         Route::delete('/{id}', 'destroy')->name('.destroy')->middleware('permission:logs.delete');
     })->middleware('permission:logs.view');
+
+    Route::get('admin/employee-logs', function(){
+        return view('admin.employee_logs');
+    })->name('admin.employee_logs');
+
+    // Route::get('admin/logs')->controller()
 
     Route::prefix('admin/permissions')->controller(PermissionController::class)->name('admin.permissions')->group(function () {
         Route::get('/', 'index');

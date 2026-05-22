@@ -268,7 +268,7 @@ class UserController extends Controller
             ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
             ->where('model_has_roles.model_type', User::class)
             ->where('model_has_roles.model_id', $userId)
-            ->where('roles.name', $roleName)
+            ->whereRaw('LOWER(roles.name) = ?', [strtolower($roleName)])
             ->exists();
     }
 
@@ -278,7 +278,7 @@ class UserController extends Controller
         return DB::table('model_has_roles')
             ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
             ->where('model_has_roles.model_type', User::class)
-            ->where('roles.name', $roleName)
+            ->whereRaw('LOWER(roles.name) = ?', [strtolower($roleName)])
             ->distinct('model_has_roles.model_id')
             ->count('model_has_roles.model_id');
     }

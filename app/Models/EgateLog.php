@@ -19,32 +19,66 @@ class EgateLog extends Model
     protected $fillable = [
         'student_number',
         'lrn',
-        'last_name',
-        'first_name',
-        'middle_name',
+        'rfid',
+        'name',
+        'role',
+        'email',
+        'contact',
         'sex',
         'department',
         'course',
-        'year_level',
+        'school_level',
         'grade_level',
-        'status',
         'image',
-        'logged_at',
-        'gate_name',
-        'ip_address',
-        'remarks',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    protected $appends = [
+        'first_name',
+        'middle_name',
+        'last_name',
+        'year_level',
+    ];
+
+    public function getFirstNameAttribute(): string
     {
-        return [
-            'logged_at' => 'datetime',
-        ];
+        if (array_key_exists('first_name', $this->attributes)) {
+            return (string) ($this->attributes['first_name'] ?? '');
+        }
+
+        $parts = $this->nameParts();
+
+        if (count($parts) <= 1) {
+            return $parts[0] ?? '';
+        }
+
+        return $parts[0];
+    }
+
+    public function getMiddleNameAttribute(): string
+    {
+        if (array_key_exists('middle_name', $this->attributes)) {
+            return (string) ($this->attributes['middle_name'] ?? '');
+        }
+
+        $parts = $this->nameParts();
+
+        return count($parts) > 2 ? implode(' ', array_slice($parts, 1, -1)) : '';
+    }
+
+    public function getLastNameAttribute(): string
+    {
+        if (array_key_exists('last_name', $this->attributes)) {
+            return (string) ($this->attributes['last_name'] ?? '');
+        }
+
+        $parts = $this->nameParts();
+
+        return count($parts) > 1 ? end($parts) : '';
+    }
+
+    public function getYearLevelAttribute(): string
+    {
+        return (string) ($this->attributes['year_level'] ?? $this->attributes['school_level'] ?? $this->attributes['grade_level'] ?? '');
     }
 
     public function getImageUrlAttribute(): string
@@ -53,7 +87,7 @@ class EgateLog extends Model
             return $this->image;
         }
 
-        $initials = collect([$this->first_name, $this->last_name])
+        $initials = collect([$this->first_name, $this->last_name ?: $this->name])
             ->filter()
             ->map(fn (string $part) => strtoupper(mb_substr($part, 0, 1)))
             ->implode('');
@@ -71,5 +105,23 @@ class EgateLog extends Model
 SVG;
 
         return 'data:image/svg+xml;utf8,' . rawurlencode($svg);
+    }
+
+    private function nameParts(): array
+    {
+        $name = trim((string) ($this->attributes['name'] ?? ''));
+
+        if ($name === '') {
+            return [];
+        }
+
+        if (str_contains($name, ',')) {
+            return array_values(array_filter(
+                array_map('trim', explode(',', $name)),
+                fn (string $part) => $part !== ''
+            ));
+        }
+
+        return preg_split('/\s+/', $name, -1, PREG_SPLIT_NO_EMPTY) ?: [];
     }
 }

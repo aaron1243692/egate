@@ -15,8 +15,12 @@
         @endcan
         @can('logs.view')
         <a href="{{ route('admin.logs') }}" class="text-white text-lg leading-none text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
-        >Logs</a>
+        >Student Logs</a>
         @endcan
+
+        <a href="{{ route('admin.employee_logs') }}" class="text-white text-lg leading-none text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
+        >Employee Logs</a>
+
         @can('roles.view')
         <a href="{{ route('admin.roles') }}" class="text-white text-lg leading-none text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
         >Roles</a>
@@ -28,7 +32,7 @@
     </nav>
 
     <a href="{{ route('admin.reauth') }}"
-    class="mr-3 shrink-0 text-decoration-none px-3 py-1 text-sm font-medium leading-none text-white bg-white/10 border
+    class="mr-3 shrink-0 text-decoration-none px-4 py-2 text-md font-medium leading-none text-white bg-white/10 border
     border-white/20 transition duration-300 hover:bg-black/30
     hover:border-black hover:text-white hover:scale-107"
     style="border-radius: 1.5rem;">

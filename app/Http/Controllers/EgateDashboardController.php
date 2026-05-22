@@ -60,24 +60,17 @@ class EgateDashboardController extends Controller
                 'egate_data.id',
                 'egate_data.student_number',
                 'egate_data.lrn',
-                'egate_data.first_name',
-                'egate_data.middle_name',
-                'egate_data.last_name',
+                'egate_data.name',
                 'egate_data.department',
                 'egate_data.course',
-                'egate_data.year_level',
+                'egate_data.school_level',
                 'egate_data.grade_level',
                 'egate_data.image',
-                'egate_data.remarks',
             ])
             ->take(100)
             ->get()
             ->map(function ($student) {
-                $name = collect([
-                    $student->first_name,
-                    $student->middle_name,
-                    $student->last_name,
-                ])->filter()->implode(' ');
+                $name = trim((string) $student->name);
 
                 $rawStatus = is_null($student->log_status)
                     ? null
@@ -98,7 +91,7 @@ class EgateDashboardController extends Controller
                     'student_name' => $name !== '' ? $name : $student->student_id,
                     'department' => $student->department,
                     'course' => $student->course,
-                    'year_level' => $student->year_level,
+                    'year_level' => $student->school_level ?: $student->grade_level,
                     'grade_level' => $student->grade_level,
                     'image' => $student->image,
                     'status' => $status,
@@ -135,7 +128,7 @@ class EgateDashboardController extends Controller
 
         $request->session()->regenerate();
 
-        if (! Auth::user()?->hasRole('admin')) {
+        if (! Auth::user()?->hasAdminRole()) {
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();

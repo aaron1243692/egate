@@ -53,6 +53,7 @@ class GateEntryController extends Controller
         $student = EgateData::query()
             ->where('student_number', $lookup)
             ->orWhere('lrn', $lookup)
+            ->orWhere('rfid', $lookup)
             ->first();
 
         if (! $student) {
@@ -72,13 +73,6 @@ class GateEntryController extends Controller
                 'created_at' => $loggedAt,
                 'updated_at' => $loggedAt,
             ]);
-
-            $student->forceFill([
-                'status' => (string) $status,
-                'logged_at' => $loggedAt,
-                'gate_name' => 'Welcome Gate',
-                'ip_address' => $request->ip(),
-            ])->save();
 
             return $entryLogId;
         });

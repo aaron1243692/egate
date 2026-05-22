@@ -45,16 +45,24 @@
                 <div class="value">{{ $value($record->lrn) }}</div>
             </div>
             <div class="field">
-                <label>Last Name</label>
-                <div class="value">{{ $value($record->last_name) }}</div>
+                <label>RFID</label>
+                <div class="value">{{ $value($record->rfid) }}</div>
             </div>
             <div class="field">
-                <label>First Name</label>
-                <div class="value">{{ $value($record->first_name) }}</div>
+                <label>Name</label>
+                <div class="value">{{ $value($record->name) }}</div>
             </div>
             <div class="field">
-                <label>Middle Name</label>
-                <div class="value">{{ $value($record->middle_name) }}</div>
+                <label>Role</label>
+                <div class="value">{{ $value($record->role) }}</div>
+            </div>
+            <div class="field">
+                <label>Email</label>
+                <div class="value">{{ $value($record->email) }}</div>
+            </div>
+            <div class="field">
+                <label>Contact</label>
+                <div class="value">{{ $value($record->contact) }}</div>
             </div>
             <div class="field">
                 <label>Sex</label>
@@ -69,8 +77,8 @@
                 <div class="value">{{ $value($record->course) }}</div>
             </div>
             <div class="field">
-                <label>Year Level</label>
-                <div class="value">{{ $value($record->year_level) }}</div>
+                <label>School Level</label>
+                <div class="value">{{ $value($record->school_level) }}</div>
             </div>
             <div class="field">
                 <label>Grade Level</label>
@@ -84,6 +92,7 @@
                 <th>No.</th>
                 <th>Student ID</th>
                 <th>Name</th>
+                <th>RFID</th>
                 <th>Department</th>
                 <th>Course</th>
                 <th>Grade Level</th>
@@ -94,14 +103,15 @@
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $record->student_number }}</td>
-                    <td>{{ trim(($record->last_name ?? '') . ', ' . ($record->first_name ?? '') . (($record->middle_name ?? '') ? ' ' . $record->middle_name : '')) }}</td>
+                    <td>{{ $record->name ?: 'N/A' }}</td>
+                    <td>{{ $record->rfid ?: 'N/A' }}</td>
                     <td>{{ $record->department ?: 'N/A' }}</td>
                     <td>{{ $record->course ?: 'N/A' }}</td>
                     <td>{{ $record->grade_level ?: 'N/A' }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6">No records found.</td>
+                    <td colspan="7">No records found.</td>
                 </tr>
             @endforelse
         </tbody>

@@ -14,7 +14,7 @@
                         <input
                             id="search-data"
                             type="text"
-                            placeholder="Search name, ID, department, course"
+                            placeholder="Search name, ID, RFID, email, department"
                             class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                         >
                     </div>
@@ -82,9 +82,9 @@
                     </div>
 
                     <div class="flex flex-col gap-1">
-                        <label for="filter-year-level" class="text-sm font-medium text-slate-700">Year Level</label>
+                        <label for="filter-year-level" class="text-sm font-medium text-slate-700">Grade Level</label>
                         <select id="filter-year-level" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
-                            <option value="">All year levels</option>
+                            <option value="">All grade levels</option>
                             @foreach ($yearLevels as $yearLevel)
                                 <option value="{{ $yearLevel }}">{{ $yearLevel }}</option>
                             @endforeach
@@ -140,23 +140,37 @@
                     </div>
 
                     <div class="flex flex-col gap-1">
+                        <label for="form-rfid">RFID</label>
+                        <input id="form-rfid" type="number" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none">
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="form-name">Name (FN MN, LN)</label>
+                        <input id="form-name" type="text" placeholder="Juan Santos, Dela Cruz" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none" required>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
                         <label for="form-lrn">LRN</label>
                         <input id="form-lrn" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none">
                     </div>
 
                     <div class="flex flex-col gap-1">
-                        <label for="form-last-name">Last Name</label>
-                        <input id="form-last-name" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none" required>
+                        <label for="form-role">Role</label>
+                        <select id="form-role" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-white">
+                            <option value="">Select role</option>
+                            <option value="1">Student</option>
+                            <option value="2">Employee</option>
+                        </select>
                     </div>
 
                     <div class="flex flex-col gap-1">
-                        <label for="form-first-name">First Name</label>
-                        <input id="form-first-name" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none" required>
+                        <label for="form-email">Email</label>
+                        <input id="form-email" type="email" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none">
                     </div>
 
                     <div class="flex flex-col gap-1">
-                        <label for="form-middle-name">Middle Name</label>
-                        <input id="form-middle-name" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none">
+                        <label for="form-contact">Contact</label>
+                        <input id="form-contact" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none">
                     </div>
 
                     <div class="flex flex-col gap-1">
@@ -176,6 +190,11 @@
                     <div class="flex flex-col gap-1">
                         <label for="form-course">Course</label>
                         <input id="form-course" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none">
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="form-school-level">School Level</label>
+                        <input id="form-school-level" type="text" class="w-full rounded-full border border-black/70 px-3 py-2 outline-none">
                     </div>
 
                     <div class="flex flex-col gap-1">
@@ -212,18 +231,33 @@
                 </div>
 
                 <div class="flex flex-col gap-1">
-                    <label>Last Name</label>
-                    <input id="detail-last-name" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
+                    <label>RFID</label>
+                    <input id="detail-rfid" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
                 </div>
 
                 <div class="flex flex-col gap-1">
-                    <label>First Name</label>
-                    <input id="detail-first-name" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
+                    <label>Name</label>
+                    <input id="detail-name" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
                 </div>
 
                 <div class="flex flex-col gap-1">
-                    <label>Middle Name</label>
-                    <input id="detail-middle-name" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
+                    <label>LRN</label>
+                    <input id="detail-lrn" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label>Role</label>
+                    <input id="detail-role" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label>Email</label>
+                    <input id="detail-email" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label>Contact</label>
+                    <input id="detail-contact" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
                 </div>
 
                 <div class="flex flex-col gap-1">
@@ -242,8 +276,8 @@
                 </div>
 
                 <div class="flex flex-col gap-1">
-                    <label>Year Level</label>
-                    <input id="detail-year-level" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
+                    <label>School Level</label>
+                    <input id="detail-school-level" type="text" readonly class="w-full rounded-full border border-black/70 px-3 py-2 outline-none bg-slate-50">
                 </div>
 
                 <div class="flex flex-col gap-1">
@@ -411,10 +445,16 @@
     }
 
     function formatNameCell(record) {
-        const lastName = record.last_name || '';
-        const firstName = record.first_name || '';
-        const middleName = record.middle_name || '';
-        return `${lastName}, ${firstName}${middleName ? ` ${middleName}` : ''}`.trim();
+        return record.name || '';
+    }
+
+    function formatRole(value) {
+        const roles = {
+            1: 'Student',
+            2: 'Employee',
+        };
+
+        return roles[Number(value)] || value || '';
     }
 
     function renderRows(records, from) {
@@ -577,13 +617,16 @@
 
     function fillDetails(record) {
         document.getElementById('detail-student-number').value = record.student_number || '';
-        document.getElementById('detail-last-name').value = record.last_name || '';
-        document.getElementById('detail-first-name').value = record.first_name || '';
-        document.getElementById('detail-middle-name').value = record.middle_name || '';
+        document.getElementById('detail-lrn').value = record.lrn || '';
+        document.getElementById('detail-rfid').value = record.rfid || '';
+        document.getElementById('detail-name').value = record.name || '';
+        document.getElementById('detail-role').value = formatRole(record.role);
+        document.getElementById('detail-email').value = record.email || '';
+        document.getElementById('detail-contact').value = record.contact || '';
         document.getElementById('detail-sex').value = record.sex || '';
         document.getElementById('detail-department').value = record.department || '';
         document.getElementById('detail-course').value = record.course || '';
-        document.getElementById('detail-year-level').value = record.year_level || '';
+        document.getElementById('detail-school-level').value = record.school_level || '';
         document.getElementById('detail-grade-level').value = record.grade_level || '';
     }
 
@@ -598,12 +641,15 @@
         dataIdInput.value = record.id || '';
         document.getElementById('form-student-number').value = record.student_number || '';
         document.getElementById('form-lrn').value = record.lrn || '';
-        document.getElementById('form-last-name').value = record.last_name || '';
-        document.getElementById('form-first-name').value = record.first_name || '';
-        document.getElementById('form-middle-name').value = record.middle_name || '';
+        document.getElementById('form-rfid').value = record.rfid || '';
+        document.getElementById('form-name').value = record.name || '';
+        document.getElementById('form-role').value = record.role || '';
+        document.getElementById('form-email').value = record.email || '';
+        document.getElementById('form-contact').value = record.contact || '';
         document.getElementById('form-sex').value = record.sex || '';
         document.getElementById('form-department').value = record.department || '';
         document.getElementById('form-course').value = record.course || '';
+        document.getElementById('form-school-level').value = record.school_level || '';
         document.getElementById('form-grade-level').value = record.grade_level || '';
     }
 
@@ -720,12 +766,15 @@
         const formData = new FormData();
         formData.set('student_number', document.getElementById('form-student-number').value);
         formData.set('lrn', document.getElementById('form-lrn').value);
-        formData.set('last_name', document.getElementById('form-last-name').value);
-        formData.set('first_name', document.getElementById('form-first-name').value);
-        formData.set('middle_name', document.getElementById('form-middle-name').value);
+        formData.set('rfid', document.getElementById('form-rfid').value);
+        formData.set('name', document.getElementById('form-name').value);
+        formData.set('role', document.getElementById('form-role').value);
+        formData.set('email', document.getElementById('form-email').value);
+        formData.set('contact', document.getElementById('form-contact').value);
         formData.set('sex', document.getElementById('form-sex').value);
         formData.set('department', document.getElementById('form-department').value);
         formData.set('course', document.getElementById('form-course').value);
+        formData.set('school_level', document.getElementById('form-school-level').value);
         formData.set('grade_level', document.getElementById('form-grade-level').value);
 
         if (recordId) {

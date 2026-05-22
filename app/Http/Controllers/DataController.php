@@ -30,11 +30,11 @@ class DataController extends Controller
                 ->pluck('course')
                 ->values(),
             'yearLevels' => EgateLog::query()
-                ->whereNotNull('year_level')
-                ->where('year_level', '!=', '')
+                ->whereNotNull('grade_level')
+                ->where('grade_level', '!=', '')
                 ->distinct()
-                ->orderBy('year_level')
-                ->pluck('year_level')
+                ->orderBy('grade_level')
+                ->pluck('grade_level')
                 ->values(),
         ]);
     }
@@ -43,8 +43,7 @@ class DataController extends Controller
     {
         abort_unless(auth()->user()?->can('data.view'), 403);
         $records = $this->buildFilteredQuery($request)
-            ->orderBy('last_name', $this->resolveNameSortDirection($request))
-            ->orderBy('first_name', $this->resolveNameSortDirection($request))
+            ->orderBy('name', $this->resolveNameSortDirection($request))
             ->paginate(10);
 
         return response()->json($records);
@@ -74,8 +73,7 @@ class DataController extends Controller
 
         $records = $this->buildFilteredQuery($request)
             ->when($request->filled('record_id'), fn ($query) => $query->whereKey($request->integer('record_id')))
-            ->orderBy('last_name', $this->resolveNameSortDirection($request))
-            ->orderBy('first_name', $this->resolveNameSortDirection($request))
+            ->orderBy('name', $this->resolveNameSortDirection($request))
             ->get();
 
         return view('admin.print-data', [
@@ -90,8 +88,7 @@ class DataController extends Controller
         abort_unless(auth()->user()?->can('data.export'), 403);
 
         $records = $this->buildFilteredQuery($request)
-            ->orderBy('last_name', $this->resolveNameSortDirection($request))
-            ->orderBy('first_name', $this->resolveNameSortDirection($request))
+            ->orderBy('name', $this->resolveNameSortDirection($request))
             ->get();
 
         $filename = 'student-data-' . now()->format('Y-m-d_H-i-s') . '.xls';
@@ -113,7 +110,7 @@ class DataController extends Controller
         try {
             $validated = $request->validate($this->rules());
 
-            $record = EgateLog::query()->create($validated);
+            $record = EgateLog::query()->create($this->dataForSave($validated));
 
             return response()->json([
                 'success' => true,
@@ -141,7 +138,7 @@ class DataController extends Controller
         try {
             $record = EgateLog::query()->findOrFail($id);
             $validated = $request->validate($this->rules($record->id));
-            $record->update($validated);
+            $record->update($this->dataForSave($validated));
 
             return response()->json([
                 'success' => true,
@@ -187,26 +184,52 @@ class DataController extends Controller
         return [
             'student_number' => ['required', 'string', 'max:255', 'unique:egate_data,student_number' . ($ignoreId ? ',' . $ignoreId : '')],
             'lrn' => ['nullable', 'digits_between:1,20'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'first_name' => ['required', 'string', 'max:255'],
-            'middle_name' => ['nullable', 'string', 'max:255'],
+            'rfid' => ['nullable', 'integer'],
+            'name' => ['required', 'string', 'max:150'],
+            'role' => ['nullable', 'integer', 'in:1,2'],
+            'email' => ['nullable', 'email', 'max:100'],
+            'contact' => ['nullable', 'string', 'max:100'],
             'sex' => ['nullable', 'string', 'max:20'],
-            'department' => ['nullable', 'string', 'max:255'],
-            'course' => ['nullable', 'string', 'max:255'],
-            'year_level' => ['nullable', 'string', 'max:50'],
-            'grade_level' => ['nullable', 'string', 'max:50'],
-            'status' => ['nullable', 'string', 'max:10'],
-            'image' => ['nullable', 'string'],
-            'logged_at' => ['nullable', 'date'],
-            'gate_name' => ['nullable', 'string', 'max:255'],
-            'ip_address' => ['nullable', 'string', 'max:45'],
-            'remarks' => ['nullable', 'string'],
+            'department' => ['nullable', 'string', 'max:100'],
+            'course' => ['nullable', 'string', 'max:100'],
+            'school_level' => ['nullable', 'string', 'max:100'],
+            'grade_level' => ['nullable', 'string', 'max:100'],
+        ];
+    }
+
+    private function dataForSave(array $validated): array
+    {
+        return [
+            'student_number' => $validated['student_number'],
+            'lrn' => $validated['lrn'] ?? null,
+            'rfid' => $validated['rfid'] ?? null,
+            'name' => $this->normalizeName($validated['name']),
+            'role' => $validated['role'] ?? null,
+            'email' => $validated['email'] ?? null,
+            'contact' => $validated['contact'] ?? null,
+            'sex' => $validated['sex'] ?? null,
+            'department' => $validated['department'] ?? null,
+            'course' => $validated['course'] ?? null,
+            'school_level' => $validated['school_level'] ?? null,
+            'grade_level' => $validated['grade_level'] ?? null,
         ];
     }
 
     private function resolveNameSortDirection(Request $request): string
     {
         return $request->get('name_sort') === 'desc' ? 'desc' : 'asc';
+    }
+
+    private function normalizeName(string $name): string
+    {
+        $name = trim(preg_replace('/\s+/', ' ', $name) ?? $name);
+        $parts = array_values(array_filter(array_map('trim', explode(',', $name))));
+
+        if (count($parts) === 3) {
+            return "{$parts[0]} {$parts[1]}, {$parts[2]}";
+        }
+
+        return $name;
     }
 
     private function buildFilteredQuery(Request $request): Builder
@@ -221,15 +244,20 @@ class DataController extends Controller
                 $query->where(function ($innerQuery) use ($search) {
                     $innerQuery
                         ->where('student_number', 'like', "%{$search}%")
-                        ->orWhere('last_name', 'like', "%{$search}%")
-                        ->orWhere('first_name', 'like', "%{$search}%")
-                        ->orWhere('middle_name', 'like', "%{$search}%")
+                        ->orWhere('lrn', 'like', "%{$search}%")
+                        ->orWhere('rfid', 'like', "%{$search}%")
+                        ->orWhere('name', 'like', "%{$search}%")
+                        ->orWhere('role', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('contact', 'like', "%{$search}%")
                         ->orWhere('department', 'like', "%{$search}%")
-                        ->orWhere('course', 'like', "%{$search}%");
+                        ->orWhere('course', 'like', "%{$search}%")
+                        ->orWhere('school_level', 'like', "%{$search}%")
+                        ->orWhere('grade_level', 'like', "%{$search}%");
                 });
             })
             ->when($department !== '', fn ($query) => $query->where('department', $department))
             ->when($course !== '', fn ($query) => $query->where('course', $course))
-            ->when($yearLevel !== '', fn ($query) => $query->where('year_level', $yearLevel));
+            ->when($yearLevel !== '', fn ($query) => $query->where('grade_level', $yearLevel));
     }
 }

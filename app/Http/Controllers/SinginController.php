@@ -20,15 +20,19 @@ class SinginController extends Controller
         $field = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
         if (! Auth::attempt([$field => $login, 'password' => $password], $request->boolean('remember'))) {
+            $request->session()->regenerateToken();
+
             return response()->json([
                 'message' => 'Incorrect credentials',
                 'status' => 0,
-            ], 422);
+                'csrf_token' => csrf_token(),
+            ], 422)->header('X-CSRF-TOKEN', csrf_token());
         }
 
         $request->session()->regenerate();
+        $request->session()->regenerateToken();
 
-        if (! Auth::user()?->hasRole('admin')) {
+        if (! Auth::user()?->hasAdminRole()) {
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
@@ -36,13 +40,15 @@ class SinginController extends Controller
             return response()->json([
                 'message' => 'Incorrect credentials',
                 'status' => 0,
-            ], 403);
+                'csrf_token' => csrf_token(),
+            ], 403)->header('X-CSRF-TOKEN', csrf_token());
         }
 
         return response()->json([
             'message' => 'Login successful',
             'status' => 1,
             'redirect' => route('admin.dashboard'),
-        ]);
+            'csrf_token' => csrf_token(),
+        ])->header('X-CSRF-TOKEN', csrf_token());
     }
 }

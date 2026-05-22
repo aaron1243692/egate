@@ -15,10 +15,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([
-            PermissionRoleSeeder::class,
-            EgateLogSeeder::class,
-        ]);
+        // $this->call([
+        //     PermissionRoleSeeder::class,
+        //     EgateLogSeeder::class,
+        // ]);
 
         $user = User::query()->updateOrCreate(
             ['email' => 'test@example.com'],

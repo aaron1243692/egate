@@ -66,22 +66,13 @@
 </div>
 
         <div id="shortcut-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/55 backdrop-blur-sm px-4">
-            <div class="w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-3 shadow-2xl">
+            <div class="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-3 shadow-2xl">
                 <div class="mb-4 text-center">
                     <h3 class="text-xl font-bold text-stone-900">Quick Open</h3>
                     <p class="mt-2 text-sm text-slate-600">Use arrow keys, then press Enter.</p>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
-
-                    <a
-                        href="{{ route('welcome') }}"
-                        data-shortcut-option
-                        class="flex min-h-[3rem] text-decoration-none flex-col items-center justify-center rounded-2xl border-2 border-transparent bg-amber-400 px-5 py-3 text-center text-white shadow-lg outline-none transition-all duration-200 hover:bg-amber-500 focus:border-amber-200 focus:ring-4 focus:ring-amber-200/70"
-                    >
-                        <span class="text-base font-bold uppercase tracking-wide">N/A</span>
-                    </a>
-
+                <div class="grid grid-cols-2 gap-2">
                     <a
                         href="{{ route('in') }}"
                         data-shortcut-option
@@ -97,13 +88,6 @@
                     >
                         <span class="text-base font-bold uppercase tracking-wide">Out</span>
                     </a>
-
-                    <a
-                        href="{{ route('signin') }}"
-                        data-shortcut-option
-                        class="flex min-h-[3rem] text-decoration-none flex-col items-center justify-center rounded-2xl border-2 border-transparent bg-sky-600 px-5 py-3 text-center text-white shadow-xl outline-none transition-all duration-200 hover:bg-sky-700 focus:border-sky-200 focus:ring-4 focus:ring-sky-200/70">
-                        <span class="text-base font-bold tracking-wide">ADMIN</span>
-                    </a>
                 </div>
             </div>
         </div>
@@ -118,8 +102,67 @@
     const loginInput = document.getElementById('login');
     const passwordInput = document.getElementById('password');
     let activeShortcutIndex = 0;
-    const shortcutBaseColors = ['bg-amber-400', 'bg-emerald-600', 'bg-rose-600', 'bg-sky-600'];
-    const shortcutHoverColors = ['hover:bg-amber-500', 'hover:bg-emerald-700', 'hover:bg-rose-700', 'hover:bg-sky-700'];
+    const shortcutBaseColors = ['bg-emerald-600', 'bg-rose-600'];
+    const shortcutHoverColors = ['hover:bg-emerald-700', 'hover:bg-rose-700'];
+    const csrfTokenUrl = @json(route('csrf.token'));
+
+    function readCsrfToken() {
+        return document.querySelector('meta[name="csrf-token"]')?.content || '';
+    }
+
+    function writeCsrfToken(token) {
+        const meta = document.querySelector('meta[name="csrf-token"]');
+        const input = form?.querySelector('input[name="_token"]');
+
+        if (meta && token) {
+            meta.content = token;
+        }
+
+        if (input && token) {
+            input.value = token;
+        }
+    }
+
+    async function refreshCsrfToken() {
+        const response = await fetch(`${csrfTokenUrl}?fresh=1`, {
+            headers: { 'Accept': 'application/json' },
+        });
+        const data = await response.json();
+        writeCsrfToken(data.token || '');
+
+        return data.token || '';
+    }
+
+    async function submitSignin(formData, allowRetry = true) {
+        formData.set('_token', readCsrfToken());
+
+        const response = await fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': readCsrfToken(),
+                'Accept': 'application/json'
+            },
+            body: formData
+        });
+
+        const responseToken = response.headers.get('X-CSRF-TOKEN');
+        if (responseToken) {
+            writeCsrfToken(responseToken);
+        }
+
+        if (response.status === 419 && allowRetry) {
+            await refreshCsrfToken();
+            return submitSignin(formData, false);
+        }
+
+        const data = await response.json().catch(() => ({
+            message: response.status === 419 ? 'CSRF token mismatch.' : 'Something went wrong',
+            status: 0,
+        }));
+        writeCsrfToken(data.csrf_token || responseToken || readCsrfToken());
+
+        return data;
+    }
 
     function focusLoginInput() {
         loginInput?.focus();
@@ -191,18 +234,7 @@
         const formData = new FormData(form);
 
         try {
-            const response = await fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document
-                        .querySelector('meta[name="csrf-token"]')
-                        .content,
-                    'Accept': 'application/json'
-                },
-                body: formData
-            });
-
-            const data = await response.json();
+            const data = await submitSignin(formData);
 
             if (data.status === 1) {
                 window.location.href = data.redirect || "{{ route('admin.dashboard') }}";

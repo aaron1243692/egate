@@ -1,23 +1,11 @@
 <div id="admin-shortcut-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/55 backdrop-blur-sm px-4">
-    <div class="w-full max-w-3xl rounded-3xl border border-slate-200 bg-white p-3 shadow-2xl">
+    <div class="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-3 shadow-2xl">
         <div class="mb-4 text-center">
             <h3 class="text-xl font-bold text-stone-900">Quick Open</h3>
             <p class="mt-2 text-sm text-slate-600">Use arrow keys, then press Enter.</p>
         </div>
 
-        <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            @if (canAccessWithParent(auth()->user(), 'time.none'))
-            <a
-                href="{{ route('welcome') }}"
-                data-admin-shortcut-option
-                data-base-class="bg-amber-400"
-                data-hover-class="hover:bg-amber-500"
-                class="flex min-h-[3rem] text-decoration-none flex-col items-center justify-center rounded-2xl border-2 border-transparent bg-amber-400 px-5 py-3 text-center text-white shadow-lg outline-none transition-all duration-200 hover:bg-amber-500 focus:border-amber-200 focus:ring-4 focus:ring-amber-200/70"
-            >
-                <span class="text-base font-bold uppercase tracking-wide">N/A</span>
-            </a>
-            @endif
-
+        <div class="grid grid-cols-2 gap-2">
             @if (canAccessWithParent(auth()->user(), 'time.in'))
             <a
                 href="{{ route('in') }}"
@@ -42,17 +30,6 @@
             </a>
             @endif
 
-            @if (canAccessWithParent(auth()->user(), 'time.login'))
-            <a
-                href="{{ route('admin.dashboard') }}"
-                data-admin-shortcut-option
-                data-base-class="bg-sky-600"
-                data-hover-class="hover:bg-sky-700"
-                class="flex min-h-[3rem] text-decoration-none flex-col items-center justify-center rounded-2xl border-2 border-transparent bg-sky-600 px-5 py-3 text-center text-white shadow-xl outline-none transition-all duration-200 hover:bg-sky-700 focus:border-sky-200 focus:ring-4 focus:ring-sky-200/70"
-            >
-                <span class="text-base font-bold tracking-wide">Admin</span>
-            </a>
-            @endif
         </div>
     </div>
 </div>
