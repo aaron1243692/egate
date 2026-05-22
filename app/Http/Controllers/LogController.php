@@ -17,6 +17,7 @@ class LogController extends Controller
         abort_unless(auth()->user()?->can('logs.view'), 403);
 
         $departments = DB::table('egate_data')
+            ->where('role', 1)
             ->whereNotNull('department')
             ->where('department', '!=', '')
             ->distinct()
@@ -24,6 +25,7 @@ class LogController extends Controller
             ->pluck('department');
 
         $courses = DB::table('egate_data')
+            ->where('role', 1)
             ->whereNotNull('course')
             ->where('course', '!=', '')
             ->distinct()
@@ -31,6 +33,7 @@ class LogController extends Controller
             ->pluck('course');
 
         $gradeLevels = DB::table('egate_data')
+            ->where('role', 1)
             ->whereNotNull('grade_level')
             ->where('grade_level', '!=', '')
             ->distinct()
@@ -86,6 +89,8 @@ class LogController extends Controller
                 'egate_logs.created_at',
                 'egate_data.name',
                 'egate_data.lrn',
+                'egate_data.contact',
+                'egate_data.email',
             ])
             ->get()
             ->map(function ($log) {
@@ -95,6 +100,8 @@ class LogController extends Controller
                     'student_id' => $log->student_id,
                     'lrn' => $log->lrn,
                     'name' => $name !== '' ? $name : $log->student_id,
+                    'contact' => $log->contact,
+                    'email' => $log->email,
                     'status' => $this->resolveStatusLabel((int) $log->status),
                     'time' => $this->formatLogTime($log->created_at),
                 ];
@@ -109,12 +116,20 @@ class LogController extends Controller
         $studentLrn = $request->filled('student_id')
             ? ($logs->first()['lrn'] ?? null)
             : null;
+        $studentContact = $request->filled('student_id')
+            ? ($logs->first()['contact'] ?? null)
+            : null;
+        $studentEmail = $request->filled('student_id')
+            ? ($logs->first()['email'] ?? null)
+            : null;
 
         return view('admin.print-logs', [
             'logs' => $logs,
             'studentName' => $studentName,
             'studentNumber' => $studentNumber,
             'studentLrn' => $studentLrn,
+            'studentContact' => $studentContact,
+            'studentEmail' => $studentEmail,
             'printedAt' => now(),
         ]);
     }
@@ -130,6 +145,8 @@ class LogController extends Controller
                 'egate_logs.status',
                 'egate_logs.created_at',
                 'egate_data.name',
+                'egate_data.contact',
+                'egate_data.email',
             ])
             ->get()
             ->map(function ($log) {
@@ -138,6 +155,8 @@ class LogController extends Controller
                 return [
                     'student_id' => $log->student_id,
                     'name' => $name !== '' ? $name : $log->student_id,
+                    'contact' => $log->contact,
+                    'email' => $log->email,
                     'status' => $this->resolveStatusLabel((int) $log->status),
                     'time' => $log->created_at,
                 ];
@@ -218,6 +237,7 @@ class LogController extends Controller
                     ->on('egate_data.id', '=', 'egate_logs.egate_data_id')
                     ->orOn('egate_data.student_number', '=', 'egate_logs.student_id');
             })
+            ->where('egate_data.role', 1)
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($innerQuery) use ($search) {
                     $innerQuery

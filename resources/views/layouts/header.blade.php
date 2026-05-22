@@ -17,9 +17,10 @@
         <a href="{{ route('admin.logs') }}" class="text-white text-lg leading-none text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
         >Student Logs</a>
         @endcan
-
+        @can('emlog.view')
         <a href="{{ route('admin.employee_logs') }}" class="text-white text-lg leading-none text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
         >Employee Logs</a>
+        @endcan
 
         @can('roles.view')
         <a href="{{ route('admin.roles') }}" class="text-white text-lg leading-none text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"

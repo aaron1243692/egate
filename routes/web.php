@@ -60,16 +60,14 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{id}', 'destroy')->name('.destroy')->middleware('permission:logs.delete');
     })->middleware('permission:logs.view');
 
-    // Route::get('admin/employee-logs', function(){
-    //     return view('admin.employee_logs');
-    // })->name('admin.employee_logs');
 
-Route::prefix('admin/employee-logs')
-    ->controller(EmployeeLogController::class)
-    ->name('admin.employee_logs')
-    ->group(function () {
-        Route::get('/', 'index');
-    });
+    Route::prefix('admin/employee-logs')->controller(EmployeeLogController::class)->name('admin.employee_logs')->group(function () {
+        Route::get('/', 'index')->middleware('permission:emlog.view');
+        Route::get('/fetch', 'fetchLogs')->name('.fetch')->middleware('permission:emlog.view');
+        Route::get('/print', 'print')->name('.print')->middleware('permission:emlog.print');
+        Route::get('/export', 'export')->name('.export')->middleware('permission:emlog.export');
+        Route::delete('/{id}', 'destroy')->name('.destroy')->middleware('permission:emlog.delete');
+    })->middleware('permission:emlog.view');
 
     Route::prefix('admin/permissions')->controller(PermissionController::class)->name('admin.permissions')->group(function () {
         Route::get('/', 'index');

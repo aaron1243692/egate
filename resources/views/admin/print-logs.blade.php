@@ -30,6 +30,8 @@
             <div>Name: {{ $studentName }}</div>
             <div>St No.: {{ $studentNumber ?: 'N/A' }}</div>
             <div>LRN: {{ $studentLrn ?: 'N/A' }}</div>
+            <div>Contact: {{ $studentContact ?: 'N/A' }}</div>
+            <div>Email: {{ $studentEmail ?: 'N/A' }}</div>
         </div>
     @endif
     <p>Printed at {{ $printedAt->format('F j, Y g:i A') }}</p>

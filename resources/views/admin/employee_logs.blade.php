@@ -27,7 +27,7 @@
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
-                        @can('logs.print')
+                        @can('emlog.print')
                         <button
                             type="button"
                             id="print-logs-button"
@@ -37,7 +37,7 @@
                             <img src="{{ asset('icons/print.png') }}" class="h-7 w-7" alt="">
                         </button>
                         @endcan
-                        @can('export.logs')
+                        @can('emlog.export')
                         <button
                             type="button"
                             id="export-logs-button"
@@ -171,15 +171,15 @@
 </div>
 
 <script>
-    const csrfToken = document.querySelector('meta[name="csrf-toprint-logs-buttonken"]')?.content;
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     const logsRoutes = {
-        fetch: @json(route('admin.logs.fetch')),
-        base: @json(url('admin/logs')),
-        print: @json(route('admin.logs.print')),
-        export: @json(route('admin.logs.export')),
+        fetch: @json(route('admin.employee_logs.fetch')),
+        base: @json(url('admin/employee-logs')),
+        print: @json(route('admin.employee_logs.print')),
+        export: @json(route('admin.employee_logs.export')),
     };
-    const canPrintLogs = @json(auth()->user()?->can('logs.print'));
-    const canDeleteLogs = @json(auth()->user()?->can('logs.delete'));
+    const canPrintLogs = @json(auth()->user()?->can('emlog.print'));
+    const canDeleteLogs = @json(auth()->user()?->can('emlog.delete'));
 
     const searchLogsInput = document.getElementById('search-logs');
     const searchLogsButton = document.getElementById('search-logs-button');
@@ -324,12 +324,12 @@
         logsTableBody.innerHTML = logs.map((log, index) => {
             const actionButtons = [
                 canPrintLogs ? `
-                        <button type="button" data-action="print" data-student-id="${escapeHtml(log.student_id)}" class="transition duration-200 hover:scale-110">
-                            <img src="{{ asset('icons/print.png') }}" class="w-7 h-7" alt="print student logs">
+                        <button type="button" data-action="print" data-student-id="${escapeHtml(log.student_id)}" class="transition duration-200 hover:scale-110" title="Print">
+                            <img src="{{ asset('icons/print.png') }}" class="w-7 h-7" alt="print employee logs">
                         </button>
                 ` : '',
                 canDeleteLogs ? `
-                        <button type="button" data-action="delete" data-id="${log.id}" data-name="${escapeHtml(log.student_id)}" class="transition duration-200 hover:scale-110">
+                        <button type="button" data-action="delete" data-id="${log.id}" data-name="${escapeHtml(log.student_id)}" class="transition duration-200 hover:scale-110" title="Delete">
                             <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete log">
                         </button>
                 ` : '',
