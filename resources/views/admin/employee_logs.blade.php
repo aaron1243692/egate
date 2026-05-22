@@ -50,29 +50,15 @@
                     </div>
                 </div>
 
-                <div class="grid gap-2 md:grid-cols-3 xl:grid-cols-7">
-                    <div class="flex flex-col gap-1">
-                        <label for="filter-time-sort" class="text-sm font-medium text-slate-700">Time Sort</label>
-                        <select id="filter-time-sort" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
-                            <option value="desc">Descending</option>
-                            <option value="asc">Ascending</option>
-                        </select>
-                    </div>
-
-                    <div class="flex flex-col gap-1">
-                        <label for="filter-status" class="text-sm font-medium text-slate-700">Status</label>
-                        <select id="filter-status" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
-                            <option value="">All Status</option>
-                            <option value="1">Time In</option>
-                            <option value="0">Time Out</option>
-                            <option value="2">N/A</option>
-                        </select>
-                    </div>
+                <div class="grid gap-2 md:grid-cols-3 xl:grid-cols-5">
 
                     <div class="flex flex-col gap-1">
                         <label for="filter-department" class="text-sm font-medium text-slate-700">Department</label>
                         <select id="filter-department" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
                             <option value="">All departments</option>
+                            @foreach ($departments as $dept)
+                                <option value="{{ $dept }}">{{ $dept }}</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -80,6 +66,9 @@
                         <label for="filter-course" class="text-sm font-medium text-slate-700">Course</label>
                         <select id="filter-course" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
                             <option value="">All courses</option>
+                            @foreach ($courses as $cou)
+                                <option value="{{ $cou }}">{{ $cou }}</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -87,17 +76,67 @@
                         <label for="filter-grade-level" class="text-sm font-medium text-slate-700">Grade Level</label>
                         <select id="filter-grade-level" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
                             <option value="">All grade levels</option>
+                            @foreach ($gradeLevels as $gl)
+                                <option value="{{ $gl }}">{{ $gl }}</option>
+                            @endforeach
                         </select>
                     </div>
 
-                    <div class="flex flex-col gap-1">
-                        <label for="filter-date-from" class="text-sm font-medium text-slate-700">From</label>
-                        <input id="filter-date-from" type="datetime-local" step="1" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
-                    </div>
+                    @php
+                        $currentYear = date('Y');
+                        $startYear = $currentYear - 10;
+                    @endphp
 
                     <div class="flex flex-col gap-1">
-                        <label for="filter-date-to" class="text-sm font-medium text-slate-700">To</label>
-                        <input id="filter-date-to" type="datetime-local" step="1" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
+                        <label for="filter-year" class="text-sm font-medium text-slate-700">
+                            Year
+                        </label>
+
+                        <select id="filter-year"
+                            class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm bg-white">
+                            @for ($y = $currentYear; $y >= $startYear; $y--)
+                                <option value="{{ $y }}" {{ $y == $currentYear ? 'selected' : '' }}>
+                                    {{ $y }}
+                                </option>
+                            @endfor
+
+                        </select>
+                    </div>
+
+                    @php
+                        $currentMonth = date('n'); // 1 - 12
+                    @endphp
+
+                    <div class="flex flex-col gap-1">
+                        <label for="filter-month" class="text-sm font-medium text-slate-700">
+                            Month
+                        </label>
+                        <select id="filter-month"
+                            class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm bg-white">
+                            @php
+                                $months = [
+                                    1 => 'January',
+                                    2 => 'February',
+                                    3 => 'March',
+                                    4 => 'April',
+                                    5 => 'May',
+                                    6 => 'June',
+                                    7 => 'July',
+                                    8 => 'August',
+                                    9 => 'September',
+                                    10 => 'October',
+                                    11 => 'November',
+                                    12 => 'December',
+                                ];
+                            @endphp
+
+                            @foreach ($months as $num => $name)
+                                <option value="{{ $num }}" {{ $num == $currentMonth ? 'selected' : '' }}>
+                                    {{ $name }}
+                                </option>
+                            @endforeach
+
+                        </select>
                     </div>
                 </div>
             </div>
@@ -109,8 +148,6 @@
                             <th class="px-3 py-2.5">No.</th>
                             <th class="px-3 py-2.5">ID</th>
                             <th class="px-3 py-2.5">Name</th>
-                            <th class="px-3 py-2.5">Status</th>
-                            <th class="px-3 py-2.5">DateTime</th>
                             <th class="px-3 py-2.5 text-center">Action</th>
                         </tr>
                     </thead>
@@ -171,452 +208,220 @@
 </div>
 
 <script>
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-    const logsRoutes = {
-        fetch: @json(route('admin.employee_logs.fetch')),
-        base: @json(url('admin/employee-logs')),
-        print: @json(route('admin.employee_logs.print')),
-        export: @json(route('admin.employee_logs.export')),
-    };
-    const canPrintLogs = @json(auth()->user()?->can('emlog.print'));
-    const canDeleteLogs = @json(auth()->user()?->can('emlog.delete'));
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
-    const searchLogsInput = document.getElementById('search-logs');
-    const searchLogsButton = document.getElementById('search-logs-button');
-    const printLogsButton = document.getElementById('print-logs-button');
-    const exportLogsButton = document.getElementById('export-logs-button');
-    const filterTimeSort = document.getElementById('filter-time-sort');
-    const filterStatus = document.getElementById('filter-status');
-    const filterDepartment = document.getElementById('filter-department');
-    const filterCourse = document.getElementById('filter-course');
-    const filterGradeLevel = document.getElementById('filter-grade-level');
-    const filterDateFrom = document.getElementById('filter-date-from');
-    const filterDateTo = document.getElementById('filter-date-to');
-    const logsTableBody = document.getElementById('logs-table-body');
-    const logsTableSummary = document.getElementById('table-summary');
-    const logsPagination = document.getElementById('pagination');
-    const deleteLogModal = document.getElementById('delete-log-modal');
-    const deleteLogModalText = document.getElementById('delete-log-modal-text');
-    const confirmDeleteLogButton = document.getElementById('confirm-delete-log');
-    const messageModal = document.getElementById('message-modal');
-    const messageModalPanel = document.getElementById('message-modal-panel');
-    const messageModalIcon = document.getElementById('message-modal-icon');
-    const messageModalTitle = document.getElementById('message-modal-title');
-    const messageModalText = document.getElementById('message-modal-text');
+const logsRoutes = {
+    fetch: @json(route('admin.employee_logs.fetch')),
+    base: @json(url('admin/employee-logs')),
+    print: @json(route('admin.employee_logs.print')),
+    export: @json(route('admin.employee_logs.export')),
+};
 
-    let logsCurrentPage = 1;
-    let logsSearchTimer = null;
-    let messageHideTimer = null;
-    let logToDelete = null;
+const canPrintLogs = @json(auth()->user()?->can('emlog.print'));
+const canDeleteLogs = @json(auth()->user()?->can('emlog.delete'));
 
-    function escapeHtml(value) {
-        return String(value ?? '')
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;')
-            .replaceAll("'", '&#039;');
+const searchLogsInput = document.getElementById('search-logs');
+const searchLogsButton = document.getElementById('search-logs-button');
+
+const printLogsButton = document.getElementById('print-logs-button');
+const exportLogsButton = document.getElementById('export-logs-button');
+
+const filterDepartment = document.getElementById('filter-department');
+const filterCourse = document.getElementById('filter-course');
+const filterGradeLevel = document.getElementById('filter-grade-level');
+const filterYear = document.getElementById('filter-year');
+const filterMonth = document.getElementById('filter-month');
+
+const logsTableBody = document.getElementById('logs-table-body');
+const logsTableSummary = document.getElementById('table-summary');
+const logsPagination = document.getElementById('pagination');
+
+const deleteLogModal = document.getElementById('delete-log-modal');
+const deleteLogModalText = document.getElementById('delete-log-modal-text');
+const confirmDeleteLogButton = document.getElementById('confirm-delete-log');
+
+let logsCurrentPage = 1;
+let logsSearchTimer = null;
+let logToDelete = null;
+
+/* ---------------- helpers ---------------- */
+
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+}
+
+/* ---------------- render employees ---------------- */
+
+function renderEmployeeRows(employees, from) {
+    if (!employees.length) {
+        logsTableBody.innerHTML = `
+            <tr>
+                <td colspan="3" class="px-3 py-5 text-center text-slate-500">
+                    No employees found.
+                </td>
+            </tr>
+        `;
+        return;
     }
 
-    function openModal(modal) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-    }
+    logsTableBody.innerHTML = employees.map((emp, index) => {
+        const actionButtons = `
+                <button type="button" data-action="print" class="transition duration-200 hover:scale-110">
+                    <img src="{{ asset('icons/print.png') }}" class="w-7 h-7" alt="print data">
+                </button>
 
-    function closeModal(modal) {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    }
+                <button type="button" data-action="edit" class="transition duration-200 hover:scale-110">
+                    <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="edit data">
+                </button>
 
-    function showMessage(message, tone = 'success') {
-        if (messageHideTimer) {
-            window.clearTimeout(messageHideTimer);
-            messageHideTimer = null;
-        }
-
-        const tones = {
-            success: {
-                icon: 'bg-emerald-50 text-emerald-500',
-                title: 'Success',
-            },
-            error: {
-                icon: 'bg-rose-50 text-rose-500',
-                title: 'Error',
-            },
-        };
-
-        const config = tones[tone] || tones.success;
-        messageModalIcon.className = `mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full ${config.icon}`;
-        messageModalTitle.textContent = config.title;
-        messageModalText.textContent = message;
-
-        openModal(messageModal);
-        requestAnimationFrame(() => {
-            messageModalPanel.classList.remove('scale-95', 'opacity-0');
-            messageModalPanel.classList.add('scale-100', 'opacity-100');
-        });
-
-        messageHideTimer = window.setTimeout(() => {
-            hideMessage();
-        }, 2000);
-    }
-
-    function hideMessage() {
-        if (messageHideTimer) {
-            window.clearTimeout(messageHideTimer);
-            messageHideTimer = null;
-        }
-
-        messageModalPanel.classList.remove('scale-100', 'opacity-100');
-        messageModalPanel.classList.add('scale-95', 'opacity-0');
-
-        window.setTimeout(() => {
-            closeModal(messageModal);
-        }, 150);
-    }
-
-    function formatTime(value) {
-        if (!value) {
-            return 'N/A';
-        }
-
-        const date = new Date(value);
-        if (Number.isNaN(date.getTime())) {
-            return value;
-        }
-
-        return date.toLocaleString(undefined, {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: '2-digit',
-            hour12: true,
-        });
-    }
-
-    function formatDateTimeFilterValue(date) {
-        const pad = (number) => String(number).padStart(2, '0');
-
-        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
-    }
-
-    function setDefaultDateFilters() {
-        const now = new Date();
-        const startOfToday = new Date(now);
-        startOfToday.setHours(0, 0, 0, 0);
-
-        filterDateFrom.value = formatDateTimeFilterValue(startOfToday);
-        filterDateTo.value = formatDateTimeFilterValue(now);
-    }
-
-    function renderLogRows(logs, from) {
-
-        if (!logs.length) {
-            logsTableBody.innerHTML = `
-                <tr>
-                    <td colspan="6" class="px-3 py-5 text-center text-slate-500">No logs found.</td>
-                </tr>
+                <button type="button" data-action="delete" class="transition duration-200 hover:scale-110">
+                    <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete data">
+                </button>
             `;
-            return;
-        }
 
-        logsTableBody.innerHTML = logs.map((log, index) => {
-            const actionButtons = [
-                canPrintLogs ? `
-                        <button type="button" data-action="print" data-student-id="${escapeHtml(log.student_id)}" class="transition duration-200 hover:scale-110" title="Print">
-                            <img src="{{ asset('icons/print.png') }}" class="w-7 h-7" alt="print employee logs">
-                        </button>
-                ` : '',
-                canDeleteLogs ? `
-                        <button type="button" data-action="delete" data-id="${log.id}" data-name="${escapeHtml(log.student_id)}" class="transition duration-200 hover:scale-110" title="Delete">
-                            <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete log">
-                        </button>
-                ` : '',
-            ].join('');
-
-            return `
+        return `
             <tr class="border-b border-black hover:bg-gray-50 transition">
                 <td class="px-3 py-2.5">${from + index}</td>
-                <td class="px-3 py-2.5">${escapeHtml(log.student_id)}</td>
-                <td class="px-3 py-2.5">${escapeHtml(log.name)}</td>
-                <td class="px-3 py-2.5">${escapeHtml(log.status)}</td>
-                <td class="px-3 py-2.5">${escapeHtml(formatTime(log.time))}</td>
+                <td class="px-3 py-2.5">${escapeHtml(emp.student_number ?? 'N/A')}</td>
+                <td class="px-3 py-2.5">${escapeHtml(emp.name ?? 'N/A')}</td>
                 <td class="px-3 py-2.5">
                     <div class="flex justify-center items-center gap-4">
-                        ${actionButtons || '<span class="text-sm text-slate-400">N/A</span>'}
+                        ${actionButtons}
                     </div>
                 </td>
             </tr>
         `;
-        }).join('');
+    }).join('');
+}
+
+/* ---------------- fetch employees ---------------- */
+
+async function fetchLogs(page = 1) {
+    logsCurrentPage = page;
+
+    logsTableBody.innerHTML = `
+        <tr>
+            <td colspan="3" class="px-3 py-5 text-center text-slate-500">
+                Loading employees...
+            </td>
+        </tr>
+    `;
+
+    const url = new URL(logsRoutes.fetch, window.location.origin);
+    url.searchParams.set('page', page);
+
+    if (searchLogsInput.value.trim() !== '') {
+        url.searchParams.set('search', searchLogsInput.value.trim());
     }
 
-    function renderLogsPagination(meta) {
-        if (meta.last_page <= 1) {
-            logsPagination.innerHTML = '';
-            return;
-        }
-
-        const maxVisiblePages = 7;
-        const halfWindow = Math.floor(maxVisiblePages / 2);
-        let startPage = Math.max(1, meta.current_page - halfWindow);
-        let endPage = Math.min(meta.last_page, startPage + maxVisiblePages - 1);
-
-        if ((endPage - startPage + 1) < maxVisiblePages) {
-            startPage = Math.max(1, endPage - maxVisiblePages + 1);
-        }
-
-        const buttons = [];
-
-        buttons.push(`
-            <button type="button" class="rounded-full border px-3 py-1 text-sm ${meta.current_page === 1 ? 'cursor-not-allowed border-slate-200 text-slate-400' : 'border-slate-300 text-slate-700 hover:bg-slate-50'}" data-page="${meta.current_page - 1}" ${meta.current_page === 1 ? 'disabled' : ''}>
-                Prev
-            </button>
-        `);
-
-        for (let page = startPage; page <= endPage; page += 1) {
-            buttons.push(`
-                <button type="button" class="rounded-full px-3 py-1 text-sm ${page === meta.current_page ? 'bg-blue-600 text-white' : 'border border-slate-300 text-slate-700 hover:bg-slate-50'}" data-page="${page}">
-                    ${page}
-                </button>
-            `);
-        }
-
-        buttons.push(`
-            <button type="button" class="rounded-full border px-3 py-1 text-sm ${meta.current_page === meta.last_page ? 'cursor-not-allowed border-slate-200 text-slate-400' : 'border-slate-300 text-slate-700 hover:bg-slate-50'}" data-page="${meta.current_page + 1}" ${meta.current_page === meta.last_page ? 'disabled' : ''}>
-                Next
-            </button>
-        `);
-
-        logsPagination.innerHTML = buttons.join('');
+    if (filterDepartment.value !== '') {
+        url.searchParams.set('department', filterDepartment.value);
     }
 
-    async function fetchLogs(page = 1) {
-        logsCurrentPage = page;
-        logsTableBody.innerHTML = `
-            <tr>
-                <td colspan="6" class="px-3 py-5 text-center text-slate-500">Loading logs...</td>
-            </tr>
-        `;
-
-        const url = new URL(logsRoutes.fetch, window.location.origin);
-        url.searchParams.set('page', String(page));
-        url.searchParams.set('time_sort', filterTimeSort.value);
-        if (searchLogsInput.value.trim() !== '') {
-            url.searchParams.set('search', searchLogsInput.value.trim());
-        }
-        if (filterStatus.value !== '') {
-            url.searchParams.set('status', filterStatus.value);
-        }
-        if (filterDepartment.value !== '') {
-            url.searchParams.set('department', filterDepartment.value);
-        }
-        if (filterCourse.value !== '') {
-            url.searchParams.set('course', filterCourse.value);
-        }
-        if (filterGradeLevel.value !== '') {
-            url.searchParams.set('grade_level', filterGradeLevel.value);
-        }
-        if (filterDateFrom.value !== '') {
-            url.searchParams.set('date_from', filterDateFrom.value);
-        }
-        if (filterDateTo.value !== '') {
-            url.searchParams.set('date_to', filterDateTo.value);
-        }
-
-        try {
-            const response = await fetch(url, {
-                headers: {
-                    'Accept': 'application/json',
-                },
-            });
-            const payload = await response.json();
-
-            renderLogRows(payload.data || [], payload.from || 1);
-            renderLogsPagination(payload);
-            logsTableSummary.textContent = payload.total
-                ? `Showing ${payload.from} to ${payload.to} of ${payload.total} logs`
-                : 'No logs available';
-        } catch (error) {
-            logsTableBody.innerHTML = `
-                <tr>
-                    <td colspan="6" class="px-3 py-5 text-center text-rose-600">Unable to load logs right now.</td>
-                </tr>
-            `;
-            logsTableSummary.textContent = 'Log list unavailable';
-            showMessage('Unable to load logs right now.', 'error');
-        }
+    if (filterCourse.value !== '') {
+        url.searchParams.set('course', filterCourse.value);
     }
 
-    function buildLogsFilterUrl(baseUrl) {
-        const url = new URL(baseUrl, window.location.origin);
-
-        url.searchParams.set('time_sort', filterTimeSort.value);
-        if (searchLogsInput.value.trim() !== '') {
-            url.searchParams.set('search', searchLogsInput.value.trim());
-        }
-        if (filterStatus.value !== '') {
-            url.searchParams.set('status', filterStatus.value);
-        }
-        if (filterDepartment.value !== '') {
-            url.searchParams.set('department', filterDepartment.value);
-        }
-        if (filterCourse.value !== '') {
-            url.searchParams.set('course', filterCourse.value);
-        }
-        if (filterGradeLevel.value !== '') {
-            url.searchParams.set('grade_level', filterGradeLevel.value);
-        }
-        if (filterDateFrom.value !== '') {
-            url.searchParams.set('date_from', filterDateFrom.value);
-        }
-        if (filterDateTo.value !== '') {
-            url.searchParams.set('date_to', filterDateTo.value);
-        }
-
-        return url;
+    if (filterGradeLevel.value !== '') {
+        url.searchParams.set('grade_level', filterGradeLevel.value);
     }
 
-    function buildStudentLogsPrintUrl(studentId) {
-        const url = buildLogsFilterUrl(logsRoutes.print);
-        url.searchParams.set('student_id', studentId);
-
-        return url;
-    }
-
-    function openDeleteLogModal(id, studentId) {
-        hideMessage();
-        logToDelete = id;
-        deleteLogModalText.textContent = `Are you sure you want to delete the log for ${studentId}?`;
-        openModal(deleteLogModal);
-    }
-
-    async function sendRequest(url, method, body) {
+    try {
         const response = await fetch(url, {
-            method,
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json',
-            },
-            body,
+            headers: { Accept: 'application/json' },
         });
 
         const payload = await response.json();
 
-        if (!response.ok) {
-            throw new Error(payload.message || 'Request failed.');
-        }
+        renderEmployeeRows(payload.data || [], payload.from || 1);
 
-        return payload;
+        logsTableSummary.textContent = payload.total
+            ? `Showing ${payload.from} to ${payload.to} of ${payload.total} employees`
+            : 'No employees found';
+
+        renderLogsPagination(payload);
+
+    } catch (error) {
+        logsTableBody.innerHTML = `
+            <tr>
+                <td colspan="3" class="px-3 py-5 text-center text-rose-600">
+                    Failed to load employees.
+                </td>
+            </tr>
+        `;
+
+        logsTableSummary.textContent = 'Error loading data';
+    }
+}
+
+/* ---------------- pagination ---------------- */
+
+function renderLogsPagination(meta) {
+    if (meta.last_page <= 1) {
+        logsPagination.innerHTML = '';
+        return;
     }
 
-    searchLogsButton.addEventListener('click', () => {
-        fetchLogs(1);
-    });
+    let buttons = [];
 
-    printLogsButton?.addEventListener('click', () => {
-        window.location.href = buildLogsFilterUrl(logsRoutes.print).toString();
-    });
+    buttons.push(`
+        <button ${meta.current_page === 1 ? 'disabled' : ''} data-page="${meta.current_page - 1}">
+            Prev
+        </button>
+    `);
 
-    exportLogsButton?.addEventListener('click', () => {
-        window.location.href = buildLogsFilterUrl(logsRoutes.export).toString();
-    });
+    for (let i = 1; i <= meta.last_page; i++) {
+        buttons.push(`
+            <button data-page="${i}" class="${i === meta.current_page ? 'bg-blue-600 text-white' : ''}">
+                ${i}
+            </button>
+        `);
+    }
 
-    searchLogsInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            fetchLogs(1);
-        }
-    });
+    buttons.push(`
+        <button ${meta.current_page === meta.last_page ? 'disabled' : ''} data-page="${meta.current_page + 1}">
+            Next
+        </button>
+    `);
 
-    searchLogsInput.addEventListener('input', () => {
-        if (logsSearchTimer) {
-            window.clearTimeout(logsSearchTimer);
-        }
+    logsPagination.innerHTML = buttons.join('');
+}
 
-        logsSearchTimer = window.setTimeout(() => {
-            fetchLogs(1);
-        }, 300);
-    });
+/* ---------------- events ---------------- */
+function onChange(el, cb) {
+    if (el) el.addEventListener('change', cb);
+}
 
-    [filterTimeSort, filterStatus, filterDepartment, filterCourse, filterGradeLevel, filterDateFrom, filterDateTo].forEach((element) => {
-        element.addEventListener('change', () => {
-            fetchLogs(1);
-        });
-    });
+// search
+searchLogsButton?.addEventListener('click', () => fetchLogs(1));
 
-    logsPagination.addEventListener('click', (event) => {
-        const button = event.target.closest('[data-page]');
-        if (!button || button.disabled) {
-            return;
-        }
+searchLogsInput?.addEventListener('input', () => {
+    clearTimeout(logsSearchTimer);
+    logsSearchTimer = setTimeout(() => fetchLogs(1), 300);
+});
 
-        fetchLogs(Number(button.dataset.page));
-    });
+// filters
+onChange(filterDepartment, () => fetchLogs(1));
+onChange(filterCourse, () => fetchLogs(1));
+onChange(filterGradeLevel, () => fetchLogs(1));
+onChange(filterYear, () => fetchLogs(1));
+onChange(filterMonth, () => fetchLogs(1));
 
-    logsTableBody.addEventListener('click', async (event) => {
-        const button = event.target.closest('[data-action]');
-        if (!button) {
-            return;
-        }
+// pagination
+logsPagination?.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-page]');
+    if (!btn || btn.disabled) return;
+    fetchLogs(Number(btn.dataset.page));
+});
 
-        const { action, id, name, studentId } = button.dataset;
+/* ---------------- init ---------------- */
 
-        try {
-            if (action === 'print') {
-                window.location.href = buildStudentLogsPrintUrl(studentId).toString();
-            }
-
-            if (action === 'delete') {
-                openDeleteLogModal(id, name);
-            }
-        } catch (error) {
-            showMessage(error.message || 'Action failed.', 'error');
-        }
-    });
-
-    confirmDeleteLogButton.addEventListener('click', async () => {
-        hideMessage();
-
-        const formData = new FormData();
-        formData.set('_method', 'DELETE');
-
-        try {
-            const payload = await sendRequest(`${logsRoutes.base}/${logToDelete}`, 'POST', formData);
-            closeModal(deleteLogModal);
-            showMessage(payload.message || 'Log deleted successfully.', 'success');
-            fetchLogs(1);
-        } catch (error) {
-            showMessage(error.message, 'error');
-        }
-    });
-
-    document.querySelectorAll('[data-close-modal]').forEach((button) => {
-        button.addEventListener('click', () => {
-            closeModal(document.getElementById(button.dataset.closeModal));
-        });
-    });
-
-    [deleteLogModal, messageModal].forEach((modal) => {
-        modal.addEventListener('click', (event) => {
-            if (event.target === modal) {
-                if (modal === messageModal) {
-                    hideMessage();
-                    return;
-                }
-
-                closeModal(modal);
-            }
-        });
-    });
-
-    document.getElementById('close-message-modal').addEventListener('click', () => {
-        hideMessage();
-    });
-
-    setDefaultDateFilters();
-    fetchLogs();
+fetchLogs();
 </script>
 
 @endsection

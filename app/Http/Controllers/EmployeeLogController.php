@@ -47,32 +47,23 @@ class EmployeeLogController extends Controller
     {
         abort_unless(auth()->user()?->can('emlog.view'), 403);
 
-        $logs = $this->buildFilteredQuery($request)
-            ->orderBy('egate_logs.created_at', $this->resolveTimeSortDirection($request))
+        $employees = DB::table('egate_data')
+            ->where('role', 2)
             ->select([
-                'egate_logs.id',
-                'egate_logs.egate_data_id',
-                'egate_logs.student_id',
-                'egate_logs.status',
-                'egate_logs.created_at',
-                'egate_data.name',
+                'id',
+                'student_number',
+                'lrn',
+                'rfid',
+                'name',
+                'email',
+                'contact',
+                'department',
+                'course',
+                'grade_level',
             ])
-            ->paginate(10)
-            ->through(function ($log) {
-                $name = trim((string) $log->name);
+            ->paginate(10);
 
-                $name = $name !== '' ? $name : $log->student_id;
-
-                return [
-                    'id' => $log->id,
-                    'student_id' => $log->student_id,
-                    'name' => $name,
-                    'status' => $this->resolveStatusLabel((int) $log->status),
-                    'time' => $this->formatLogTime($log->created_at),
-                ];
-            });
-
-        return response()->json($logs);
+        return response()->json($employees);
     }
 
     public function print(Request $request)
@@ -90,8 +81,6 @@ class EmployeeLogController extends Controller
                 'egate_logs.created_at',
                 'egate_data.name',
                 'egate_data.lrn',
-                'egate_data.contact',
-                'egate_data.email',
             ])
             ->get()
             ->map(function ($log) {
@@ -101,8 +90,6 @@ class EmployeeLogController extends Controller
                     'student_id' => $log->student_id,
                     'lrn' => $log->lrn,
                     'name' => $name !== '' ? $name : $log->student_id,
-                    'contact' => $log->contact,
-                    'email' => $log->email,
                     'status' => $this->resolveStatusLabel((int) $log->status),
                     'time' => $this->formatLogTime($log->created_at),
                 ];
@@ -117,20 +104,12 @@ class EmployeeLogController extends Controller
         $studentLrn = $request->filled('student_id')
             ? ($logs->first()['lrn'] ?? null)
             : null;
-        $studentContact = $request->filled('student_id')
-            ? ($logs->first()['contact'] ?? null)
-            : null;
-        $studentEmail = $request->filled('student_id')
-            ? ($logs->first()['email'] ?? null)
-            : null;
 
         return view('admin.print-logs', [
             'logs' => $logs,
             'studentName' => $studentName,
             'studentNumber' => $studentNumber,
             'studentLrn' => $studentLrn,
-            'studentContact' => $studentContact,
-            'studentEmail' => $studentEmail,
             'printedAt' => now(),
         ]);
     }
@@ -146,8 +125,6 @@ class EmployeeLogController extends Controller
                 'egate_logs.status',
                 'egate_logs.created_at',
                 'egate_data.name',
-                'egate_data.contact',
-                'egate_data.email',
             ])
             ->get()
             ->map(function ($log) {
@@ -156,8 +133,6 @@ class EmployeeLogController extends Controller
                 return [
                     'student_id' => $log->student_id,
                     'name' => $name !== '' ? $name : $log->student_id,
-                    'contact' => $log->contact,
-                    'email' => $log->email,
                     'status' => $this->resolveStatusLabel((int) $log->status),
                     'time' => $log->created_at,
                 ];
