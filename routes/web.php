@@ -64,6 +64,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('admin/employee-logs')->controller(EmployeeLogController::class)->name('admin.employee_logs')->group(function () {
         Route::get('/', 'index')->middleware('permission:emlog.view');
         Route::get('/fetch', 'fetchLogs')->name('.fetch')->middleware('permission:emlog.view');
+        Route::get('/{studentId}/logs', 'viewEmployeeLogs')->name('.view_logs')->middleware('permission:emlog.view');
         Route::get('/print', 'print')->name('.print')->middleware('permission:emlog.print');
         Route::get('/export', 'export')->name('.export')->middleware('permission:emlog.export');
         Route::delete('/{id}', 'destroy')->name('.destroy')->middleware('permission:emlog.delete');

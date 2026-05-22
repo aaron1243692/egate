@@ -14,7 +14,7 @@
                         <input
                             id="search-logs"
                             type="text"
-                            placeholder="Search by student ID or name"
+                            placeholder="Search by Employee ID or name"
                             class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                         >
                         <button
@@ -50,7 +50,7 @@
                     </div>
                 </div>
 
-                <div class="grid gap-2 md:grid-cols-3 xl:grid-cols-5">
+                <div class="grid gap-2 md:grid-cols-3">
 
                     <div class="flex flex-col gap-1">
                         <label for="filter-department" class="text-sm font-medium text-slate-700">Department</label>
@@ -58,26 +58,6 @@
                             <option value="">All departments</option>
                             @foreach ($departments as $dept)
                                 <option value="{{ $dept }}">{{ $dept }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="flex flex-col gap-1">
-                        <label for="filter-course" class="text-sm font-medium text-slate-700">Course</label>
-                        <select id="filter-course" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
-                            <option value="">All courses</option>
-                            @foreach ($courses as $cou)
-                                <option value="{{ $cou }}">{{ $cou }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="flex flex-col gap-1">
-                        <label for="filter-grade-level" class="text-sm font-medium text-slate-700">Grade Level</label>
-                        <select id="filter-grade-level" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
-                            <option value="">All grade levels</option>
-                            @foreach ($gradeLevels as $gl)
-                                <option value="{{ $gl }}">{{ $gl }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -190,6 +170,37 @@
     </div>
 </div>
 
+<div id="view-logs-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div class="w-full max-w-2xl rounded-xl bg-white p-4 shadow-2xl">
+        <div class="mb-3 flex items-start justify-between gap-3">
+            <div>
+                <h4 id="view-logs-title" class="text-lg font-semibold text-gray-900">Employee Logs</h4>
+                <p id="view-logs-period" class="text-sm text-slate-500"></p>
+            </div>
+            <button type="button" data-close-modal="view-logs-modal" class="rounded-full border border-slate-300 px-3 py-1 text-sm text-slate-700 hover:bg-slate-50">
+                Close
+            </button>
+        </div>
+
+        <div class="max-h-[60vh] overflow-y-auto rounded-md border border-slate-200">
+            <table class="w-full text-left text-sm">
+                <thead class="sticky top-0 bg-blue-600 text-black">
+                    <tr>
+                        <th class="px-3 py-2">No.</th>
+                        <th class="px-3 py-2">Status</th>
+                        <th class="px-3 py-2">DateTime</th>
+                    </tr>
+                </thead>
+                <tbody id="view-logs-table-body">
+                    <tr>
+                        <td colspan="3" class="px-3 py-5 text-center text-slate-500">No logs loaded.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <div id="message-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
     <div id="message-modal-panel" class="w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200">
         <div id="message-modal-icon" class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-500">
@@ -227,8 +238,6 @@ const printLogsButton = document.getElementById('print-logs-button');
 const exportLogsButton = document.getElementById('export-logs-button');
 
 const filterDepartment = document.getElementById('filter-department');
-const filterCourse = document.getElementById('filter-course');
-const filterGradeLevel = document.getElementById('filter-grade-level');
 const filterYear = document.getElementById('filter-year');
 const filterMonth = document.getElementById('filter-month');
 
@@ -239,6 +248,10 @@ const logsPagination = document.getElementById('pagination');
 const deleteLogModal = document.getElementById('delete-log-modal');
 const deleteLogModalText = document.getElementById('delete-log-modal-text');
 const confirmDeleteLogButton = document.getElementById('confirm-delete-log');
+const viewLogsModal = document.getElementById('view-logs-modal');
+const viewLogsTitle = document.getElementById('view-logs-title');
+const viewLogsPeriod = document.getElementById('view-logs-period');
+const viewLogsTableBody = document.getElementById('view-logs-table-body');
 
 let logsCurrentPage = 1;
 let logsSearchTimer = null;
@@ -255,13 +268,23 @@ function escapeHtml(value) {
         .replaceAll("'", '&#039;');
 }
 
+function openModal(modal) {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeModal(modal) {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
 /* ---------------- render employees ---------------- */
 
 function renderEmployeeRows(employees, from) {
     if (!employees.length) {
         logsTableBody.innerHTML = `
             <tr>
-                <td colspan="3" class="px-3 py-5 text-center text-slate-500">
+                <td colspan="4" class="px-3 py-5 text-center text-slate-500">
                     No employees found.
                 </td>
             </tr>
@@ -270,13 +293,14 @@ function renderEmployeeRows(employees, from) {
     }
 
     logsTableBody.innerHTML = employees.map((emp, index) => {
+        const employeeId = emp.student_number || emp.id;
         const actionButtons = `
-                <button type="button" data-action="print" class="transition duration-200 hover:scale-110">
+                <button type="button" data-action="print" data-student-id="${escapeHtml(employeeId)}" class="transition duration-200 hover:scale-110">
                     <img src="{{ asset('icons/print.png') }}" class="w-7 h-7" alt="print data">
                 </button>
 
-                <button type="button" data-action="edit" class="transition duration-200 hover:scale-110">
-                    <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="edit data">
+                <button type="button" data-action="view" data-student-id="${escapeHtml(employeeId)}" class="transition duration-200 hover:scale-110">
+                    <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="view logs">
                 </button>
 
                 <button type="button" data-action="delete" class="transition duration-200 hover:scale-110">
@@ -306,7 +330,7 @@ async function fetchLogs(page = 1) {
 
     logsTableBody.innerHTML = `
         <tr>
-            <td colspan="3" class="px-3 py-5 text-center text-slate-500">
+            <td colspan="4" class="px-3 py-5 text-center text-slate-500">
                 Loading employees...
             </td>
         </tr>
@@ -323,12 +347,12 @@ async function fetchLogs(page = 1) {
         url.searchParams.set('department', filterDepartment.value);
     }
 
-    if (filterCourse.value !== '') {
-        url.searchParams.set('course', filterCourse.value);
+    if (filterYear.value !== '') {
+        url.searchParams.set('year', filterYear.value);
     }
 
-    if (filterGradeLevel.value !== '') {
-        url.searchParams.set('grade_level', filterGradeLevel.value);
+    if (filterMonth.value !== '') {
+        url.searchParams.set('month', filterMonth.value);
     }
 
     try {
@@ -349,7 +373,7 @@ async function fetchLogs(page = 1) {
     } catch (error) {
         logsTableBody.innerHTML = `
             <tr>
-                <td colspan="3" class="px-3 py-5 text-center text-rose-600">
+                <td colspan="4" class="px-3 py-5 text-center text-rose-600">
                     Failed to load employees.
                 </td>
             </tr>
@@ -392,6 +416,97 @@ function renderLogsPagination(meta) {
     logsPagination.innerHTML = buttons.join('');
 }
 
+function buildEmployeeFilterUrl(baseUrl) {
+    const url = new URL(baseUrl, window.location.origin);
+
+    if (searchLogsInput.value.trim() !== '') {
+        url.searchParams.set('search', searchLogsInput.value.trim());
+    }
+
+    if (filterDepartment.value !== '') {
+        url.searchParams.set('department', filterDepartment.value);
+    }
+
+    if (filterYear.value !== '') {
+        url.searchParams.set('year', filterYear.value);
+    }
+
+    if (filterMonth.value !== '') {
+        url.searchParams.set('month', filterMonth.value);
+    }
+
+    return url;
+}
+
+function buildEmployeeDtrPrintUrl(studentId) {
+    const url = buildEmployeeFilterUrl(logsRoutes.print);
+    url.searchParams.set('student_id', studentId);
+
+    return url;
+}
+
+function buildEmployeeViewLogsUrl(studentId) {
+    const url = new URL(`${logsRoutes.base}/${encodeURIComponent(studentId)}/logs`, window.location.origin);
+
+    if (filterYear.value !== '') {
+        url.searchParams.set('year', filterYear.value);
+    }
+
+    if (filterMonth.value !== '') {
+        url.searchParams.set('month', filterMonth.value);
+    }
+
+    return url;
+}
+
+async function openEmployeeLogsModal(studentId) {
+    viewLogsTitle.textContent = 'Employee Logs';
+    viewLogsPeriod.textContent = '';
+    viewLogsTableBody.innerHTML = `
+        <tr>
+            <td colspan="3" class="px-3 py-5 text-center text-slate-500">Loading logs...</td>
+        </tr>
+    `;
+    openModal(viewLogsModal);
+
+    try {
+        const response = await fetch(buildEmployeeViewLogsUrl(studentId), {
+            headers: { Accept: 'application/json' },
+        });
+        const payload = await response.json();
+
+        if (!response.ok) {
+            throw new Error(payload.message || 'Unable to load employee logs.');
+        }
+
+        viewLogsTitle.textContent = `${payload.employee.name} (${payload.employee.id})`;
+        viewLogsPeriod.textContent = payload.period;
+
+        if (!payload.logs.length) {
+            viewLogsTableBody.innerHTML = `
+                <tr>
+                    <td colspan="3" class="px-3 py-5 text-center text-slate-500">No logs found.</td>
+                </tr>
+            `;
+            return;
+        }
+
+        viewLogsTableBody.innerHTML = payload.logs.map((log, index) => `
+            <tr class="border-b border-slate-200">
+                <td class="px-3 py-2">${index + 1}</td>
+                <td class="px-3 py-2">${escapeHtml(log.status)}</td>
+                <td class="px-3 py-2">${escapeHtml(log.time)}</td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        viewLogsTableBody.innerHTML = `
+            <tr>
+                <td colspan="3" class="px-3 py-5 text-center text-rose-600">${escapeHtml(error.message || 'Unable to load employee logs.')}</td>
+            </tr>
+        `;
+    }
+}
+
 /* ---------------- events ---------------- */
 function onChange(el, cb) {
     if (el) el.addEventListener('change', cb);
@@ -407,8 +522,6 @@ searchLogsInput?.addEventListener('input', () => {
 
 // filters
 onChange(filterDepartment, () => fetchLogs(1));
-onChange(filterCourse, () => fetchLogs(1));
-onChange(filterGradeLevel, () => fetchLogs(1));
 onChange(filterYear, () => fetchLogs(1));
 onChange(filterMonth, () => fetchLogs(1));
 
@@ -417,6 +530,43 @@ logsPagination?.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-page]');
     if (!btn || btn.disabled) return;
     fetchLogs(Number(btn.dataset.page));
+});
+
+printLogsButton?.addEventListener('click', () => {
+    window.location.href = buildEmployeeFilterUrl(logsRoutes.print).toString();
+});
+
+exportLogsButton?.addEventListener('click', () => {
+    window.location.href = buildEmployeeFilterUrl(logsRoutes.export).toString();
+});
+
+logsTableBody?.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-action]');
+    if (!button) return;
+
+    const { action, studentId } = button.dataset;
+
+    if (action === 'print' && studentId) {
+        window.location.href = buildEmployeeDtrPrintUrl(studentId).toString();
+    }
+
+    if (action === 'view' && studentId) {
+        openEmployeeLogsModal(studentId);
+    }
+});
+
+document.querySelectorAll('[data-close-modal]').forEach((button) => {
+    button.addEventListener('click', () => {
+        closeModal(document.getElementById(button.dataset.closeModal));
+    });
+});
+
+[deleteLogModal, viewLogsModal].forEach((modal) => {
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal(modal);
+        }
+    });
 });
 
 /* ---------------- init ---------------- */
