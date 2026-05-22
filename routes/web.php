@@ -10,6 +10,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\DataController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\EmployeeLogController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -59,11 +60,16 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{id}', 'destroy')->name('.destroy')->middleware('permission:logs.delete');
     })->middleware('permission:logs.view');
 
-    Route::get('admin/employee-logs', function(){
-        return view('admin.employee_logs');
-    })->name('admin.employee_logs');
+    // Route::get('admin/employee-logs', function(){
+    //     return view('admin.employee_logs');
+    // })->name('admin.employee_logs');
 
-    // Route::get('admin/logs')->controller()
+Route::prefix('admin/employee-logs')
+    ->controller(EmployeeLogController::class)
+    ->name('admin.employee_logs')
+    ->group(function () {
+        Route::get('/', 'index');
+    });
 
     Route::prefix('admin/permissions')->controller(PermissionController::class)->name('admin.permissions')->group(function () {
         Route::get('/', 'index');
