@@ -73,46 +73,28 @@ class EmployeeLogController extends Controller
             return $this->printMonthlyDtr($request);
         }
 
-        $logs = $this->buildFilteredQuery($request)
-            ->when($request->filled('student_id'), function ($query) use ($request) {
-                $query->where('egate_logs.student_id', $request->get('student_id'));
-            })
-            ->orderBy('egate_logs.created_at', $this->resolveTimeSortDirection($request))
-            ->select([
-                'egate_logs.student_id',
-                'egate_logs.status',
-                'egate_logs.created_at',
-                'egate_data.name',
-                'egate_data.lrn',
-            ])
+        $year = (int) $request->integer('year', (int) now()->format('Y'));
+        $month = (int) $request->integer('month', (int) now()->format('n'));
+        $year = $year > 0 ? $year : (int) now()->format('Y');
+        $month = $month >= 1 && $month <= 12 ? $month : (int) now()->format('n');
+        $monthName = Carbon::create($year, $month, 1)->format('F Y');
+
+        $schedules = $this->buildFilteredEmployeesQuery($request)
+            ->orderBy('name')
             ->get()
-            ->map(function ($log) {
-                $name = trim((string) $log->name);
+            ->map(function ($employee) use ($year, $month, $monthName) {
+                $dtr = $this->buildMonthlyDtr((int) $employee->id, (string) $employee->student_number, $year, $month);
 
                 return [
-                    'student_id' => $log->student_id,
-                    'lrn' => $log->lrn,
-                    'name' => $name !== '' ? $name : $log->student_id,
-                    'status' => $this->resolveStatusLabel((int) $log->status),
-                    'time' => $this->formatLogTime($log->created_at),
+                    'employee' => $employee,
+                    'monthName' => $monthName,
+                    'rows' => $dtr['rows'],
+                    'summary' => $dtr['summary'],
                 ];
             });
 
-        $studentName = $request->filled('student_id')
-            ? ($logs->first()['name'] ?? (string) $request->get('student_id'))
-            : null;
-        $studentNumber = $request->filled('student_id')
-            ? ($logs->first()['student_id'] ?? (string) $request->get('student_id'))
-            : null;
-        $studentLrn = $request->filled('student_id')
-            ? ($logs->first()['lrn'] ?? null)
-            : null;
-
-        return view('admin.print-logs', [
-            'logs' => $logs,
-            'studentName' => $studentName,
-            'studentNumber' => $studentNumber,
-            'studentLrn' => $studentLrn,
+        return view('admin.print-monthly-dtrs', [
+            'schedules' => $schedules,
             'printedAt' => now(),
         ]);
     }
@@ -129,34 +111,20 @@ class EmployeeLogController extends Controller
         $year = $year > 0 ? $year : (int) now()->format('Y');
         $month = $month >= 1 && $month <= 12 ? $month : (int) now()->format('n');
         $start = Carbon::create($year, $month, 1)->startOfMonth();
-        $end = (clone $start)->endOfMonth();
 
-        $logs = DB::table('egate_logs')
-            ->where(function ($query) use ($employee) {
-                $query
-                    ->where('egate_data_id', (int) $employee->id)
-                    ->orWhere('student_id', (string) $employee->id)
-                    ->when((string) $employee->student_number !== '', function ($innerQuery) use ($employee) {
-                        $innerQuery->orWhere('student_id', (string) $employee->student_number);
-                    });
-            })
-            ->whereBetween('created_at', [$start->format('Y-m-d H:i:s'), $end->format('Y-m-d H:i:s')])
-            ->orderBy('created_at')
-            ->get(['status', 'created_at'])
-            ->map(function ($log) {
-                return [
-                    'status' => $this->resolveStatusLabel((int) $log->status),
-                    'time' => $this->formatLogTime($log->created_at),
-                ];
-            });
+        $dtr = $this->buildMonthlyDtr((int) $employee->id, (string) $employee->student_number, $year, $month);
 
         return response()->json([
             'employee' => [
                 'id' => $employee->student_number ?: $employee->id,
                 'name' => trim((string) $employee->name) ?: ($employee->student_number ?: $employee->id),
+                'contact' => $employee->contact,
+                'email' => $employee->email,
             ],
             'period' => $start->format('F Y'),
-            'logs' => $logs,
+            'printed_at' => now()->format('F j, Y g:i A'),
+            'rows' => $dtr['rows'],
+            'summary' => $dtr['summary'],
         ]);
     }
 
@@ -244,6 +212,28 @@ class EmployeeLogController extends Controller
             'summary' => $dtr['summary'],
             'printedAt' => now(),
         ]);
+    }
+
+    private function buildFilteredEmployeesQuery(Request $request): Builder
+    {
+        $search = trim((string) $request->get('search', ''));
+        $department = trim((string) $request->get('department', ''));
+
+        return DB::table('egate_data')
+            ->where('role', 2)
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($innerQuery) use ($search) {
+                    $innerQuery
+                        ->where('id', 'like', "%{$search}%")
+                        ->orWhere('student_number', 'like', "%{$search}%")
+                        ->orWhere('lrn', 'like', "%{$search}%")
+                        ->orWhere('name', 'like', "%{$search}%");
+                });
+            })
+            ->when($department !== '', function ($query) use ($department) {
+                $query->where('department', $department);
+            })
+            ->select(['id', 'student_number', 'name', 'contact', 'email']);
     }
 
     private function findEmployeeForDtr(string $studentId): ?object

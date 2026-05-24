@@ -37,16 +37,6 @@
                             <img src="{{ asset('icons/print.png') }}" class="h-7 w-7" alt="">
                         </button>
                         @endcan
-                        @can('emlog.export')
-                        <button
-                            type="button"
-                            id="export-logs-button"
-                            class="rounded-full border border-emerald-300 p-1.5 transition duration-200 hover:bg-emerald-50 hover:scale-105"
-                            aria-label="Export logs"
-                        >
-                            <img src="{{ asset('icons/export.png') }}" class="h-7 w-7" alt="">
-                        </button>
-                        @endcan
                     </div>
                 </div>
 
@@ -170,8 +160,8 @@
     </div>
 </div>
 
-<div id="view-logs-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-2xl rounded-xl bg-white p-4 shadow-2xl">
+<div id="view-logs-modal" class="fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto bg-black/50 px-4 py-6 backdrop-blur-sm">
+    <div class="flex max-h-[90vh] w-full max-w-4xl flex-col rounded-xl bg-white p-4 shadow-2xl">
         <div class="mb-3 flex items-start justify-between gap-3">
             <div>
                 <h4 id="view-logs-title" class="text-lg font-semibold text-gray-900">Employee Logs</h4>
@@ -182,21 +172,8 @@
             </button>
         </div>
 
-        <div class="max-h-[60vh] overflow-y-auto rounded-md border border-slate-200">
-            <table class="w-full text-left text-sm">
-                <thead class="sticky top-0 bg-blue-600 text-black">
-                    <tr>
-                        <th class="px-3 py-2">No.</th>
-                        <th class="px-3 py-2">Status</th>
-                        <th class="px-3 py-2">DateTime</th>
-                    </tr>
-                </thead>
-                <tbody id="view-logs-table-body">
-                    <tr>
-                        <td colspan="3" class="px-3 py-5 text-center text-slate-500">No logs loaded.</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div id="view-logs-content" class="min-h-0 overflow-auto rounded-md border border-slate-200">
+            <div class="px-3 py-5 text-center text-sm text-slate-500">No logs loaded.</div>
         </div>
     </div>
 </div>
@@ -225,7 +202,6 @@ const logsRoutes = {
     fetch: @json(route('admin.employee_logs.fetch')),
     base: @json(url('admin/employee-logs')),
     print: @json(route('admin.employee_logs.print')),
-    export: @json(route('admin.employee_logs.export')),
 };
 
 const canPrintLogs = @json(auth()->user()?->can('emlog.print'));
@@ -235,7 +211,6 @@ const searchLogsInput = document.getElementById('search-logs');
 const searchLogsButton = document.getElementById('search-logs-button');
 
 const printLogsButton = document.getElementById('print-logs-button');
-const exportLogsButton = document.getElementById('export-logs-button');
 
 const filterDepartment = document.getElementById('filter-department');
 const filterYear = document.getElementById('filter-year');
@@ -251,7 +226,7 @@ const confirmDeleteLogButton = document.getElementById('confirm-delete-log');
 const viewLogsModal = document.getElementById('view-logs-modal');
 const viewLogsTitle = document.getElementById('view-logs-title');
 const viewLogsPeriod = document.getElementById('view-logs-period');
-const viewLogsTableBody = document.getElementById('view-logs-table-body');
+const viewLogsContent = document.getElementById('view-logs-content');
 
 let logsCurrentPage = 1;
 let logsSearchTimer = null;
@@ -462,11 +437,7 @@ function buildEmployeeViewLogsUrl(studentId) {
 async function openEmployeeLogsModal(studentId) {
     viewLogsTitle.textContent = 'Employee Logs';
     viewLogsPeriod.textContent = '';
-    viewLogsTableBody.innerHTML = `
-        <tr>
-            <td colspan="3" class="px-3 py-5 text-center text-slate-500">Loading logs...</td>
-        </tr>
-    `;
+    viewLogsContent.innerHTML = '<div class="px-3 py-5 text-center text-sm text-slate-500">Loading logs...</div>';
     openModal(viewLogsModal);
 
     try {
@@ -482,28 +453,74 @@ async function openEmployeeLogsModal(studentId) {
         viewLogsTitle.textContent = `${payload.employee.name} (${payload.employee.id})`;
         viewLogsPeriod.textContent = payload.period;
 
-        if (!payload.logs.length) {
-            viewLogsTableBody.innerHTML = `
-                <tr>
-                    <td colspan="3" class="px-3 py-5 text-center text-slate-500">No logs found.</td>
-                </tr>
-            `;
-            return;
-        }
+        const rows = payload.rows || [];
+        const summary = payload.summary || {};
 
-        viewLogsTableBody.innerHTML = payload.logs.map((log, index) => `
-            <tr class="border-b border-slate-200">
-                <td class="px-3 py-2">${index + 1}</td>
-                <td class="px-3 py-2">${escapeHtml(log.status)}</td>
-                <td class="px-3 py-2">${escapeHtml(log.time)}</td>
-            </tr>
-        `).join('');
-    } catch (error) {
-        viewLogsTableBody.innerHTML = `
-            <tr>
-                <td colspan="3" class="px-3 py-5 text-center text-rose-600">${escapeHtml(error.message || 'Unable to load employee logs.')}</td>
-            </tr>
+        viewLogsContent.innerHTML = `
+            <div class="min-w-[760px] p-4 font-serif text-black">
+                <div class="mb-3 text-xs leading-relaxed">
+                    <div>${escapeHtml(payload.period)}</div>
+                    <div>Name: ${escapeHtml(payload.employee.name)}</div>
+                    <div>Contact: ${escapeHtml(payload.employee.contact || 'N/A')}</div>
+                    <div>Email: ${escapeHtml(payload.employee.email || 'N/A')}</div>
+                    <div>Printed at ${escapeHtml(payload.printed_at || '')}</div>
+                </div>
+
+                <table class="w-full table-fixed border-collapse text-[10px]">
+                    <colgroup>
+                        <col class="w-[10%]">
+                        <col class="w-[10%]">
+                        <col class="w-[11%]">
+                        <col class="w-[11%]">
+                        <col class="w-[11%]">
+                        <col class="w-[11%]">
+                        <col class="w-[13%]">
+                        <col class="w-[12%]">
+                        <col class="w-[11%]">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th colspan="2" rowspan="2" class="border border-black px-1 py-1 text-sm font-normal">Day</th>
+                            <th colspan="2" class="border border-black px-1 py-1 font-normal">AM</th>
+                            <th colspan="2" class="border border-black px-1 py-1 font-normal">PM</th>
+                            <th rowspan="2" class="border border-black px-1 py-1 font-normal">Late</th>
+                            <th rowspan="2" class="border border-black px-1 py-1 font-normal">Under time</th>
+                            <th rowspan="2" class="border border-black px-1 py-1 font-normal">Abs</th>
+                        </tr>
+                        <tr>
+                            <th class="border border-black px-1 py-1 font-normal">In</th>
+                            <th class="border border-black px-1 py-1 font-normal">Out</th>
+                            <th class="border border-black px-1 py-1 font-normal">In</th>
+                            <th class="border border-black px-1 py-1 font-normal">Out</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows.map((row) => `
+                            <tr>
+                                <td class="h-[18px] border border-black px-1 py-px text-center">${escapeHtml(row.day)}</td>
+                                <td class="h-[18px] border border-black px-1 py-px text-center">${escapeHtml(row.weekday)}</td>
+                                <td class="h-[18px] border border-black px-1 py-px text-center">${escapeHtml(row.am_in)}</td>
+                                <td class="h-[18px] border border-black px-1 py-px text-center">${escapeHtml(row.am_out)}</td>
+                                <td class="h-[18px] border border-black px-1 py-px text-center">${escapeHtml(row.pm_in)}</td>
+                                <td class="h-[18px] border border-black px-1 py-px text-center">${escapeHtml(row.pm_out)}</td>
+                                <td class="h-[18px] border border-black px-1 py-px text-center">${escapeHtml(row.late)}</td>
+                                <td class="h-[18px] border border-black px-1 py-px text-center">${escapeHtml(row.undertime)}</td>
+                                <td class="h-[18px] border border-black px-1 py-px text-center">${escapeHtml(row.absence)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+
+                <div class="mt-2 text-xs leading-relaxed">
+                    <div>Total Time: ${escapeHtml(summary.total_time || '')}</div>
+                    <div>Late: ${escapeHtml(summary.late || '')}</div>
+                    <div>Undertime: ${escapeHtml(summary.undertime || '')}</div>
+                    <div>Absents: ${escapeHtml(summary.absence || '')}</div>
+                </div>
+            </div>
         `;
+    } catch (error) {
+        viewLogsContent.innerHTML = `<div class="px-3 py-5 text-center text-sm text-rose-600">${escapeHtml(error.message || 'Unable to load employee logs.')}</div>`;
     }
 }
 
@@ -534,10 +551,6 @@ logsPagination?.addEventListener('click', (e) => {
 
 printLogsButton?.addEventListener('click', () => {
     window.location.href = buildEmployeeFilterUrl(logsRoutes.print).toString();
-});
-
-exportLogsButton?.addEventListener('click', () => {
-    window.location.href = buildEmployeeFilterUrl(logsRoutes.export).toString();
 });
 
 logsTableBody?.addEventListener('click', (event) => {
