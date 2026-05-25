@@ -322,7 +322,7 @@ class EmployeeLogController extends Controller
                 'pm_out' => $times['pm_out']?->format('g:i A') ?? '',
                 'late' => $lateForDay > 0 ? $this->formatDurationSummary(0, $lateForDay) : '',
                 'undertime' => $undertimeForDay > 0 ? $this->formatDurationSummary(0, $undertimeForDay) : '',
-                'absence' => $absent ? $this->formatDurationSummary(1, 0) : '',
+                'absence' => $absent ? $this->formatAbsenceSummary(1) : '',
             ];
         }
 
@@ -332,7 +332,7 @@ class EmployeeLogController extends Controller
                 'total_time' => $this->formatDurationSummary(0, $totalMinutes),
                 'late' => $this->formatDurationSummary($lateDays, $lateMinutes),
                 'undertime' => $this->formatDurationSummary($undertimeDays, $undertimeMinutes),
-                'absence' => $this->formatDurationSummary($absenceDays, 0),
+                'absence' => $this->formatAbsenceSummary($absenceDays),
             ],
         ];
     }
@@ -454,6 +454,11 @@ class EmployeeLogController extends Controller
         $remainingMinutes = $minutes % 60;
 
         return sprintf('%d d, %d h, %d m', $days, $hours, $remainingMinutes);
+    }
+
+    private function formatAbsenceSummary(int $days): string
+    {
+        return sprintf('%dd', $days);
     }
 
     private function blankDtrRow(): array

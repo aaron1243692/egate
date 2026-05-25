@@ -98,7 +98,7 @@
                     <thead class="sticky top-0 z-10 bg-blue-600 text-black">
                         <tr>
                             <th class="px-3 py-2.5">No.</th>
-                            <th class="px-3 py-2.5">ST No / LRN</th>
+                            <th class="px-3 py-2.5">ID No</th>
                             <th class="px-3 py-2.5">Name</th>
                             <th class="px-3 py-2.5">Department</th>
                             <th class="px-3 py-2.5">Course</th>
