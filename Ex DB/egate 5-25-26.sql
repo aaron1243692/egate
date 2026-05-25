@@ -11,7 +11,7 @@
  Target Server Version : 90700 (9.7.0)
  File Encoding         : 65001
 
- Date: 25/05/2026 12:04:33
+ Date: 25/05/2026 12:22:37
 */
 
 SET NAMES utf8mb4;
@@ -32,7 +32,7 @@ CREATE TABLE `cache`  (
 -- ----------------------------
 -- Records of cache
 -- ----------------------------
-INSERT INTO `cache` VALUES ('egate-cache-spatie.permission.cache', 'a:3:{s:5:\"alias\";a:6:{s:1:\"a\";s:2:\"id\";s:1:\"b\";s:4:\"name\";s:1:\"c\";s:4:\"code\";s:1:\"d\";s:9:\"parent_id\";s:1:\"e\";s:10:\"guard_name\";s:1:\"r\";s:5:\"roles\";}s:11:\"permissions\";a:39:{i:0;a:6:{s:1:\"a\";i:1;s:1:\"b\";s:5:\"Users\";s:1:\"c\";s:5:\"users\";s:1:\"d\";N;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:8;}}i:1;a:6:{s:1:\"a\";i:4;s:1:\"b\";s:12:\"Create Users\";s:1:\"c\";s:12:\"users.create\";s:1:\"d\";i:1;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:8;}}i:2;a:6:{s:1:\"a\";i:5;s:1:\"b\";s:12:\"Update Users\";s:1:\"c\";s:12:\"users.update\";s:1:\"d\";i:1;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:3;a:6:{s:1:\"a\";i:6;s:1:\"b\";s:12:\"Delete Users\";s:1:\"c\";s:12:\"users.delete\";s:1:\"d\";i:1;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:4;a:6:{s:1:\"a\";i:9;s:1:\"b\";s:21:\"Update User Passwords\";s:1:\"c\";s:17:\"users.update.pass\";s:1:\"d\";i:1;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:5;a:6:{s:1:\"a\";i:10;s:1:\"b\";s:10:\"View Users\";s:1:\"c\";s:10:\"users.view\";s:1:\"d\";i:1;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:8;}}i:6;a:6:{s:1:\"a\";i:11;s:1:\"b\";s:5:\"Roles\";s:1:\"c\";s:5:\"roles\";s:1:\"d\";N;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:7;a:6:{s:1:\"a\";i:17;s:1:\"b\";s:10:\"View Roles\";s:1:\"c\";s:10:\"roles.view\";s:1:\"d\";i:11;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:8;a:6:{s:1:\"a\";i:18;s:1:\"b\";s:12:\"Create Roles\";s:1:\"c\";s:12:\"roles.create\";s:1:\"d\";i:11;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:9;a:6:{s:1:\"a\";i:19;s:1:\"b\";s:12:\"Update Roles\";s:1:\"c\";s:12:\"roles.update\";s:1:\"d\";i:11;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:10;a:6:{s:1:\"a\";i:20;s:1:\"b\";s:12:\"Delete Roles\";s:1:\"c\";s:12:\"roles.delete\";s:1:\"d\";i:11;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:11;a:6:{s:1:\"a\";i:21;s:1:\"b\";s:12:\"Student Logs\";s:1:\"c\";s:4:\"logs\";s:1:\"d\";N;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:5:{i:0;i:1;i:1;i:5;i:2;i:6;i:3;i:8;i:4;i:9;}}i:12;a:6:{s:1:\"a\";i:22;s:1:\"b\";s:9:\"View Logs\";s:1:\"c\";s:9:\"logs.view\";s:1:\"d\";i:21;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:5:{i:0;i:1;i:1;i:5;i:2;i:6;i:3;i:8;i:4;i:9;}}i:13;a:6:{s:1:\"a\";i:23;s:1:\"b\";s:4:\"Data\";s:1:\"c\";s:4:\"Data\";s:1:\"d\";N;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:5:{i:0;i:1;i:1;i:5;i:2;i:6;i:3;i:8;i:4;i:9;}}i:14;a:6:{s:1:\"a\";i:24;s:1:\"b\";s:9:\"View Data\";s:1:\"c\";s:9:\"data.view\";s:1:\"d\";i:23;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:5:{i:0;i:1;i:1;i:5;i:2;i:6;i:3;i:8;i:4;i:9;}}i:15;a:6:{s:1:\"a\";i:25;s:1:\"b\";s:11:\"Create Data\";s:1:\"c\";s:11:\"data.create\";s:1:\"d\";i:23;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:8;i:2;i:9;}}i:16;a:6:{s:1:\"a\";i:26;s:1:\"b\";s:11:\"Update Data\";s:1:\"c\";s:11:\"data.update\";s:1:\"d\";i:23;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:8;i:2;i:9;}}i:17;a:6:{s:1:\"a\";i:27;s:1:\"b\";s:11:\"Delete Data\";s:1:\"c\";s:11:\"data.delete\";s:1:\"d\";i:23;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:18;a:6:{s:1:\"a\";i:28;s:1:\"b\";s:10:\"Print Data\";s:1:\"c\";s:10:\"data.print\";s:1:\"d\";i:23;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:8;i:2;i:9;}}i:19;a:6:{s:1:\"a\";i:29;s:1:\"b\";s:11:\"Export Data\";s:1:\"c\";s:11:\"data.export\";s:1:\"d\";i:23;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:8;i:2;i:9;}}i:20;a:6:{s:1:\"a\";i:30;s:1:\"b\";s:11:\"Update Logs\";s:1:\"c\";s:11:\"logs.update\";s:1:\"d\";i:21;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:8;i:2;i:9;}}i:21;a:6:{s:1:\"a\";i:31;s:1:\"b\";s:11:\"Delete Logs\";s:1:\"c\";s:11:\"logs.delete\";s:1:\"d\";i:21;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:22;a:6:{s:1:\"a\";i:32;s:1:\"b\";s:10:\"Print Logs\";s:1:\"c\";s:10:\"logs.print\";s:1:\"d\";i:21;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:4:{i:0;i:1;i:1;i:6;i:2;i:8;i:3;i:9;}}i:23;a:6:{s:1:\"a\";i:35;s:1:\"b\";s:11:\"Export Logs\";s:1:\"c\";s:11:\"export.logs\";s:1:\"d\";i:21;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:4:{i:0;i:1;i:1;i:6;i:2;i:8;i:3;i:9;}}i:24;a:6:{s:1:\"a\";i:36;s:1:\"b\";s:8:\"Time Log\";s:1:\"c\";s:4:\"time\";s:1:\"d\";N;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:4:{i:0;i:1;i:1;i:5;i:2;i:6;i:3;i:8;}}i:25;a:6:{s:1:\"a\";i:37;s:1:\"b\";s:2:\"In\";s:1:\"c\";s:7:\"time.in\";s:1:\"d\";i:36;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:4:{i:0;i:1;i:1;i:5;i:2;i:6;i:3;i:8;}}i:26;a:6:{s:1:\"a\";i:38;s:1:\"b\";s:3:\"Out\";s:1:\"c\";s:8:\"time.out\";s:1:\"d\";i:36;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:4:{i:0;i:1;i:1;i:5;i:2;i:6;i:3;i:8;}}i:27;a:6:{s:1:\"a\";i:39;s:1:\"b\";s:4:\"None\";s:1:\"c\";s:9:\"time.none\";s:1:\"d\";i:36;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:28;a:6:{s:1:\"a\";i:40;s:1:\"b\";s:5:\"Login\";s:1:\"c\";s:10:\"time.login\";s:1:\"d\";i:36;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:5;i:2;i:8;}}i:29;a:6:{s:1:\"a\";i:41;s:1:\"b\";s:13:\"Employee Logs\";s:1:\"c\";s:5:\"emlog\";s:1:\"d\";N;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:4:{i:0;i:1;i:1;i:5;i:2;i:8;i:3;i:9;}}i:30;a:6:{s:1:\"a\";i:42;s:1:\"b\";s:4:\"View\";s:1:\"c\";s:10:\"emlog.view\";s:1:\"d\";i:41;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:4:{i:0;i:1;i:1;i:5;i:2;i:8;i:3;i:9;}}i:31;a:6:{s:1:\"a\";i:43;s:1:\"b\";s:6:\"Export\";s:1:\"c\";s:12:\"emlog.export\";s:1:\"d\";i:41;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:9;}}i:32;a:6:{s:1:\"a\";i:44;s:1:\"b\";s:5:\"Print\";s:1:\"c\";s:11:\"emlog.print\";s:1:\"d\";i:41;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:9;}}i:33;a:6:{s:1:\"a\";i:45;s:1:\"b\";s:6:\"Delete\";s:1:\"c\";s:12:\"emlog.delete\";s:1:\"d\";i:41;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:34;a:5:{s:1:\"a\";i:46;s:1:\"b\";s:20:\"Setup Sched Schedule\";s:1:\"c\";s:13:\"setschedcehed\";s:1:\"d\";N;s:1:\"e\";s:3:\"web\";}i:35;a:5:{s:1:\"a\";i:47;s:1:\"b\";s:4:\"View\";s:1:\"c\";s:18:\"setschedcehed.view\";s:1:\"d\";i:46;s:1:\"e\";s:3:\"web\";}i:36;a:5:{s:1:\"a\";i:48;s:1:\"b\";s:6:\"Create\";s:1:\"c\";s:20:\"setschedcehed.create\";s:1:\"d\";i:46;s:1:\"e\";s:3:\"web\";}i:37;a:5:{s:1:\"a\";i:49;s:1:\"b\";s:6:\"Update\";s:1:\"c\";s:20:\"setschedcehed.update\";s:1:\"d\";i:46;s:1:\"e\";s:3:\"web\";}i:38;a:5:{s:1:\"a\";i:50;s:1:\"b\";s:6:\"Delete\";s:1:\"c\";s:20:\"setschedcehed.delete\";s:1:\"d\";i:46;s:1:\"e\";s:3:\"web\";}}s:5:\"roles\";a:5:{i:0;a:3:{s:1:\"a\";i:1;s:1:\"b\";s:5:\"Admin\";s:1:\"e\";s:3:\"web\";}i:1;a:3:{s:1:\"a\";i:8;s:1:\"b\";s:5:\"Staff\";s:1:\"e\";s:3:\"web\";}i:2;a:3:{s:1:\"a\";i:5;s:1:\"b\";s:8:\"Employee\";s:1:\"e\";s:3:\"web\";}i:3;a:3:{s:1:\"a\";i:6;s:1:\"b\";s:5:\"Guard\";s:1:\"e\";s:3:\"web\";}i:4;a:3:{s:1:\"a\";i:9;s:1:\"b\";s:2:\"HR\";s:1:\"e\";s:3:\"web\";}}}', 1779771776);
+INSERT INTO `cache` VALUES ('egate-cache-spatie.permission.cache', 'a:3:{s:5:\"alias\";a:6:{s:1:\"a\";s:2:\"id\";s:1:\"b\";s:4:\"name\";s:1:\"c\";s:4:\"code\";s:1:\"d\";s:9:\"parent_id\";s:1:\"e\";s:10:\"guard_name\";s:1:\"r\";s:5:\"roles\";}s:11:\"permissions\";a:38:{i:0;a:6:{s:1:\"a\";i:1;s:1:\"b\";s:5:\"Users\";s:1:\"c\";s:5:\"users\";s:1:\"d\";N;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:8;}}i:1;a:6:{s:1:\"a\";i:4;s:1:\"b\";s:12:\"Create Users\";s:1:\"c\";s:12:\"users.create\";s:1:\"d\";i:1;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:8;}}i:2;a:6:{s:1:\"a\";i:5;s:1:\"b\";s:12:\"Update Users\";s:1:\"c\";s:12:\"users.update\";s:1:\"d\";i:1;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:3;a:6:{s:1:\"a\";i:6;s:1:\"b\";s:12:\"Delete Users\";s:1:\"c\";s:12:\"users.delete\";s:1:\"d\";i:1;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:4;a:6:{s:1:\"a\";i:9;s:1:\"b\";s:21:\"Update User Passwords\";s:1:\"c\";s:17:\"users.update.pass\";s:1:\"d\";i:1;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:5;a:6:{s:1:\"a\";i:10;s:1:\"b\";s:10:\"View Users\";s:1:\"c\";s:10:\"users.view\";s:1:\"d\";i:1;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:8;}}i:6;a:6:{s:1:\"a\";i:11;s:1:\"b\";s:5:\"Roles\";s:1:\"c\";s:5:\"roles\";s:1:\"d\";N;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:7;a:6:{s:1:\"a\";i:17;s:1:\"b\";s:10:\"View Roles\";s:1:\"c\";s:10:\"roles.view\";s:1:\"d\";i:11;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:8;a:6:{s:1:\"a\";i:18;s:1:\"b\";s:12:\"Create Roles\";s:1:\"c\";s:12:\"roles.create\";s:1:\"d\";i:11;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:9;a:6:{s:1:\"a\";i:19;s:1:\"b\";s:12:\"Update Roles\";s:1:\"c\";s:12:\"roles.update\";s:1:\"d\";i:11;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:10;a:6:{s:1:\"a\";i:20;s:1:\"b\";s:12:\"Delete Roles\";s:1:\"c\";s:12:\"roles.delete\";s:1:\"d\";i:11;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:11;a:6:{s:1:\"a\";i:21;s:1:\"b\";s:12:\"Student Logs\";s:1:\"c\";s:4:\"logs\";s:1:\"d\";N;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:5:{i:0;i:1;i:1;i:5;i:2;i:6;i:3;i:8;i:4;i:9;}}i:12;a:6:{s:1:\"a\";i:22;s:1:\"b\";s:9:\"View Logs\";s:1:\"c\";s:9:\"logs.view\";s:1:\"d\";i:21;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:5:{i:0;i:1;i:1;i:5;i:2;i:6;i:3;i:8;i:4;i:9;}}i:13;a:6:{s:1:\"a\";i:23;s:1:\"b\";s:4:\"Data\";s:1:\"c\";s:4:\"Data\";s:1:\"d\";N;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:5:{i:0;i:1;i:1;i:5;i:2;i:6;i:3;i:8;i:4;i:9;}}i:14;a:6:{s:1:\"a\";i:24;s:1:\"b\";s:9:\"View Data\";s:1:\"c\";s:9:\"data.view\";s:1:\"d\";i:23;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:5:{i:0;i:1;i:1;i:5;i:2;i:6;i:3;i:8;i:4;i:9;}}i:15;a:6:{s:1:\"a\";i:25;s:1:\"b\";s:11:\"Create Data\";s:1:\"c\";s:11:\"data.create\";s:1:\"d\";i:23;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:8;i:2;i:9;}}i:16;a:6:{s:1:\"a\";i:26;s:1:\"b\";s:11:\"Update Data\";s:1:\"c\";s:11:\"data.update\";s:1:\"d\";i:23;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:8;i:2;i:9;}}i:17;a:6:{s:1:\"a\";i:27;s:1:\"b\";s:11:\"Delete Data\";s:1:\"c\";s:11:\"data.delete\";s:1:\"d\";i:23;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:18;a:6:{s:1:\"a\";i:28;s:1:\"b\";s:10:\"Print Data\";s:1:\"c\";s:10:\"data.print\";s:1:\"d\";i:23;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:8;i:2;i:9;}}i:19;a:6:{s:1:\"a\";i:29;s:1:\"b\";s:11:\"Export Data\";s:1:\"c\";s:11:\"data.export\";s:1:\"d\";i:23;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:8;i:2;i:9;}}i:20;a:6:{s:1:\"a\";i:31;s:1:\"b\";s:11:\"Delete Logs\";s:1:\"c\";s:11:\"logs.delete\";s:1:\"d\";i:21;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:21;a:6:{s:1:\"a\";i:32;s:1:\"b\";s:10:\"Print Logs\";s:1:\"c\";s:10:\"logs.print\";s:1:\"d\";i:21;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:4:{i:0;i:1;i:1;i:6;i:2;i:8;i:3;i:9;}}i:22;a:6:{s:1:\"a\";i:35;s:1:\"b\";s:11:\"Export Logs\";s:1:\"c\";s:11:\"export.logs\";s:1:\"d\";i:21;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:4:{i:0;i:1;i:1;i:6;i:2;i:8;i:3;i:9;}}i:23;a:6:{s:1:\"a\";i:36;s:1:\"b\";s:8:\"Time Log\";s:1:\"c\";s:4:\"time\";s:1:\"d\";N;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:4:{i:0;i:1;i:1;i:5;i:2;i:6;i:3;i:8;}}i:24;a:6:{s:1:\"a\";i:37;s:1:\"b\";s:2:\"In\";s:1:\"c\";s:7:\"time.in\";s:1:\"d\";i:36;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:4:{i:0;i:1;i:1;i:5;i:2;i:6;i:3;i:8;}}i:25;a:6:{s:1:\"a\";i:40;s:1:\"b\";s:5:\"Login\";s:1:\"c\";s:10:\"time.login\";s:1:\"d\";i:36;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:5;i:2;i:8;}}i:26;a:6:{s:1:\"a\";i:41;s:1:\"b\";s:13:\"Employee Logs\";s:1:\"c\";s:5:\"emlog\";s:1:\"d\";N;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:4:{i:0;i:1;i:1;i:5;i:2;i:8;i:3;i:9;}}i:27;a:6:{s:1:\"a\";i:42;s:1:\"b\";s:4:\"View\";s:1:\"c\";s:10:\"emlog.view\";s:1:\"d\";i:41;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:4:{i:0;i:1;i:1;i:5;i:2;i:8;i:3;i:9;}}i:28;a:6:{s:1:\"a\";i:44;s:1:\"b\";s:5:\"Print\";s:1:\"c\";s:11:\"emlog.print\";s:1:\"d\";i:41;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:9;}}i:29;a:6:{s:1:\"a\";i:45;s:1:\"b\";s:6:\"Delete\";s:1:\"c\";s:12:\"emlog.delete\";s:1:\"d\";i:41;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:9;}}i:30;a:6:{s:1:\"a\";i:46;s:1:\"b\";s:20:\"Setup Sched Schedule\";s:1:\"c\";s:13:\"setschedcehed\";s:1:\"d\";N;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:9;}}i:31;a:6:{s:1:\"a\";i:47;s:1:\"b\";s:4:\"View\";s:1:\"c\";s:18:\"setschedcehed.view\";s:1:\"d\";i:46;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:9;}}i:32;a:6:{s:1:\"a\";i:48;s:1:\"b\";s:6:\"Create\";s:1:\"c\";s:20:\"setschedcehed.create\";s:1:\"d\";i:46;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:9;}}i:33;a:6:{s:1:\"a\";i:49;s:1:\"b\";s:6:\"Update\";s:1:\"c\";s:20:\"setschedcehed.update\";s:1:\"d\";i:46;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:9;}}i:34;a:6:{s:1:\"a\";i:50;s:1:\"b\";s:6:\"Delete\";s:1:\"c\";s:20:\"setschedcehed.delete\";s:1:\"d\";i:46;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:9;}}i:35;a:6:{s:1:\"a\";i:51;s:1:\"b\";s:20:\"Setup Sched Employee\";s:1:\"c\";s:10:\"setschedem\";s:1:\"d\";N;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:9;}}i:36;a:6:{s:1:\"a\";i:52;s:1:\"b\";s:4:\"View\";s:1:\"c\";s:15:\"setschedem.view\";s:1:\"d\";i:51;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:9;}}i:37;a:6:{s:1:\"a\";i:53;s:1:\"b\";s:6:\"Update\";s:1:\"c\";s:17:\"setschedem.update\";s:1:\"d\";i:51;s:1:\"e\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:9;}}}s:5:\"roles\";a:5:{i:0;a:3:{s:1:\"a\";i:1;s:1:\"b\";s:5:\"Admin\";s:1:\"e\";s:3:\"web\";}i:1;a:3:{s:1:\"a\";i:8;s:1:\"b\";s:5:\"Staff\";s:1:\"e\";s:3:\"web\";}i:2;a:3:{s:1:\"a\";i:5;s:1:\"b\";s:8:\"Employee\";s:1:\"e\";s:3:\"web\";}i:3;a:3:{s:1:\"a\";i:6;s:1:\"b\";s:5:\"Guard\";s:1:\"e\";s:3:\"web\";}i:4;a:3:{s:1:\"a\";i:9;s:1:\"b\";s:2:\"HR\";s:1:\"e\";s:3:\"web\";}}}', 1779772872);
 
 -- ----------------------------
 -- Table structure for cache_locks
@@ -66,8 +66,8 @@ CREATE TABLE `config`  (
 -- ----------------------------
 -- Records of config
 -- ----------------------------
-INSERT INTO `config` VALUES (1, 'Manual Login', 1, '2026-05-19 14:04:40', '2026-05-25 11:58:04');
-INSERT INTO `config` VALUES (2, 'RFID Login', 1, '2026-05-19 14:04:40', '2026-05-25 11:58:04');
+INSERT INTO `config` VALUES (1, 'Manual Login', 1, '2026-05-19 14:04:40', '2026-05-25 12:22:25');
+INSERT INTO `config` VALUES (2, 'RFID Login', 1, '2026-05-19 14:04:40', '2026-05-25 12:22:25');
 
 -- ----------------------------
 -- Table structure for egate_data
@@ -102,7 +102,7 @@ CREATE TABLE `egate_data`  (
 -- ----------------------------
 INSERT INTO `egate_data` VALUES (1, '11', NULL, NULL, 'Maria, Santos, Dela Cruz', 1, NULL, NULL, 'Female', 'College of Computing Studies', 'BS Information Technology', NULL, '1st Year', NULL, '2026-05-19 23:19:45', '2026-05-22 10:54:55', NULL);
 INSERT INTO `egate_data` VALUES (2, '22', NULL, NULL, 'John Paul, Villanueva, Reyes', 1, NULL, NULL, 'Male', 'College of Computing Studies', 'BS Computer Science', NULL, '2nd Year', NULL, '2026-05-19 23:19:45', '2026-05-22 10:54:56', NULL);
-INSERT INTO `egate_data` VALUES (3, '33', NULL, 595930496, 'Angela, Lopez, Garcia', 2, NULL, NULL, 'Female', 'College of Engineering', 'BS Civil Engineering', NULL, '3rd Year', NULL, '2026-05-19 23:19:45', '2026-05-25 10:12:47', NULL);
+INSERT INTO `egate_data` VALUES (3, '33', NULL, 595930496, 'Angela, Lopez, Garcia', 2, NULL, NULL, 'Female', 'College of Engineering', 'BS Civil Engineering', NULL, '3rd Year', NULL, '2026-05-19 23:19:45', '2026-05-25 12:07:55', 1);
 INSERT INTO `egate_data` VALUES (4, '66', 44, NULL, 'Carlo, Ramos, Mendoza', 1, NULL, NULL, 'Male', 'College of Business Administration', 'BS Accountancy', NULL, '4th Year', NULL, '2026-05-19 23:19:45', '2026-05-22 10:54:59', NULL);
 INSERT INTO `egate_data` VALUES (5, '3762720653', 55, NULL, 'Bea, Fernandez, Torres', 1, NULL, NULL, 'Female', 'College of Education', 'BSEd English', NULL, '2nd Year', NULL, '2026-05-19 23:19:45', '2026-05-22 10:55:00', NULL);
 INSERT INTO `egate_data` VALUES (6, '2026-00006', NULL, NULL, 'Ethan, Diaz, Navarro', 1, NULL, NULL, 'Male', 'College of Computing Studies', 'BS Information Systems', NULL, '1st Year', NULL, '2026-05-19 23:19:45', '2026-05-22 10:55:05', NULL);
@@ -322,7 +322,7 @@ CREATE TABLE `permissions`  (
   UNIQUE INDEX `permissions_code_guard_name_unique`(`code` ASC, `guard_name` ASC) USING BTREE,
   INDEX `permissions_parent_id_foreign`(`parent_id` ASC) USING BTREE,
   CONSTRAINT `permissions_parent_id_foreign` FOREIGN KEY (`parent_id`) REFERENCES `permissions` (`id`) ON DELETE SET NULL ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 52 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 54 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of permissions
@@ -347,18 +347,14 @@ INSERT INTO `permissions` VALUES (26, 'Update Data', 'data.update', 23, 'web', '
 INSERT INTO `permissions` VALUES (27, 'Delete Data', 'data.delete', 23, 'web', '2026-05-21 01:28:13', '2026-05-21 03:02:42');
 INSERT INTO `permissions` VALUES (28, 'Print Data', 'data.print', 23, 'web', '2026-05-21 01:29:31', '2026-05-21 03:02:42');
 INSERT INTO `permissions` VALUES (29, 'Export Data', 'data.export', 23, 'web', '2026-05-21 01:29:22', '2026-05-21 03:02:42');
-INSERT INTO `permissions` VALUES (30, 'Update Logs', 'logs.update', 21, 'web', '2026-05-21 01:32:49', '2026-05-21 03:02:42');
 INSERT INTO `permissions` VALUES (31, 'Delete Logs', 'logs.delete', 21, 'web', '2026-05-21 01:32:58', '2026-05-21 03:02:42');
 INSERT INTO `permissions` VALUES (32, 'Print Logs', 'logs.print', 21, 'web', '2026-05-21 01:33:04', '2026-05-21 03:02:42');
 INSERT INTO `permissions` VALUES (35, 'Export Logs', 'export.logs', 21, 'web', '2026-05-21 03:10:36', '2026-05-21 03:10:36');
 INSERT INTO `permissions` VALUES (36, 'Time Log', 'time', NULL, 'web', '2026-05-21 09:54:15', '2026-05-21 09:54:18');
 INSERT INTO `permissions` VALUES (37, 'In', 'time.in', 36, 'web', '2026-05-21 09:54:22', '2026-05-21 09:54:25');
-INSERT INTO `permissions` VALUES (38, 'Out', 'time.out', 36, 'web', '2026-05-21 09:54:52', '2026-05-21 09:54:56');
-INSERT INTO `permissions` VALUES (39, 'None', 'time.none', 36, 'web', '2026-05-21 09:55:23', '2026-05-21 09:55:27');
 INSERT INTO `permissions` VALUES (40, 'Login', 'time.login', 36, 'web', '2026-05-21 09:55:53', '2026-05-21 09:55:56');
 INSERT INTO `permissions` VALUES (41, 'Employee Logs', 'emlog', NULL, 'web', '2026-05-22 10:39:37', '2026-05-22 10:39:40');
 INSERT INTO `permissions` VALUES (42, 'View', 'emlog.view', 41, 'web', '2026-05-22 10:43:25', '2026-05-22 10:43:25');
-INSERT INTO `permissions` VALUES (43, 'Export', 'emlog.export', 41, 'web', '2026-05-22 10:44:53', '2026-05-22 10:44:53');
 INSERT INTO `permissions` VALUES (44, 'Print', 'emlog.print', 41, 'web', '2026-05-22 10:45:09', '2026-05-22 10:45:09');
 INSERT INTO `permissions` VALUES (45, 'Delete', 'emlog.delete', 41, 'web', '2026-05-22 10:45:36', '2026-05-22 10:45:36');
 INSERT INTO `permissions` VALUES (46, 'Setup Sched Schedule', 'setschedcehed', NULL, 'web', '2026-05-25 11:59:49', '2026-05-25 11:59:49');
@@ -366,6 +362,9 @@ INSERT INTO `permissions` VALUES (47, 'View', 'setschedcehed.view', 46, 'web', '
 INSERT INTO `permissions` VALUES (48, 'Create', 'setschedcehed.create', 46, 'web', '2026-05-25 12:00:34', '2026-05-25 12:00:34');
 INSERT INTO `permissions` VALUES (49, 'Update', 'setschedcehed.update', 46, 'web', '2026-05-25 12:00:48', '2026-05-25 12:00:48');
 INSERT INTO `permissions` VALUES (50, 'Delete', 'setschedcehed.delete', 46, 'web', '2026-05-25 12:02:12', '2026-05-25 12:02:12');
+INSERT INTO `permissions` VALUES (51, 'Setup Sched Employee', 'setschedem', NULL, 'web', '2026-05-25 12:07:01', '2026-05-25 12:07:01');
+INSERT INTO `permissions` VALUES (52, 'View', 'setschedem.view', 51, 'web', '2026-05-25 12:07:14', '2026-05-25 12:07:14');
+INSERT INTO `permissions` VALUES (53, 'Update', 'setschedem.update', 51, 'web', '2026-05-25 12:07:32', '2026-05-25 12:07:32');
 
 -- ----------------------------
 -- Table structure for role_has_permissions
@@ -403,27 +402,30 @@ INSERT INTO `role_has_permissions` VALUES (26, 1);
 INSERT INTO `role_has_permissions` VALUES (27, 1);
 INSERT INTO `role_has_permissions` VALUES (28, 1);
 INSERT INTO `role_has_permissions` VALUES (29, 1);
-INSERT INTO `role_has_permissions` VALUES (30, 1);
 INSERT INTO `role_has_permissions` VALUES (31, 1);
 INSERT INTO `role_has_permissions` VALUES (32, 1);
 INSERT INTO `role_has_permissions` VALUES (35, 1);
 INSERT INTO `role_has_permissions` VALUES (36, 1);
 INSERT INTO `role_has_permissions` VALUES (37, 1);
-INSERT INTO `role_has_permissions` VALUES (38, 1);
-INSERT INTO `role_has_permissions` VALUES (39, 1);
 INSERT INTO `role_has_permissions` VALUES (40, 1);
 INSERT INTO `role_has_permissions` VALUES (41, 1);
 INSERT INTO `role_has_permissions` VALUES (42, 1);
-INSERT INTO `role_has_permissions` VALUES (43, 1);
 INSERT INTO `role_has_permissions` VALUES (44, 1);
 INSERT INTO `role_has_permissions` VALUES (45, 1);
+INSERT INTO `role_has_permissions` VALUES (46, 1);
+INSERT INTO `role_has_permissions` VALUES (47, 1);
+INSERT INTO `role_has_permissions` VALUES (48, 1);
+INSERT INTO `role_has_permissions` VALUES (49, 1);
+INSERT INTO `role_has_permissions` VALUES (50, 1);
+INSERT INTO `role_has_permissions` VALUES (51, 1);
+INSERT INTO `role_has_permissions` VALUES (52, 1);
+INSERT INTO `role_has_permissions` VALUES (53, 1);
 INSERT INTO `role_has_permissions` VALUES (21, 5);
 INSERT INTO `role_has_permissions` VALUES (22, 5);
 INSERT INTO `role_has_permissions` VALUES (23, 5);
 INSERT INTO `role_has_permissions` VALUES (24, 5);
 INSERT INTO `role_has_permissions` VALUES (36, 5);
 INSERT INTO `role_has_permissions` VALUES (37, 5);
-INSERT INTO `role_has_permissions` VALUES (38, 5);
 INSERT INTO `role_has_permissions` VALUES (40, 5);
 INSERT INTO `role_has_permissions` VALUES (41, 5);
 INSERT INTO `role_has_permissions` VALUES (42, 5);
@@ -435,7 +437,6 @@ INSERT INTO `role_has_permissions` VALUES (32, 6);
 INSERT INTO `role_has_permissions` VALUES (35, 6);
 INSERT INTO `role_has_permissions` VALUES (36, 6);
 INSERT INTO `role_has_permissions` VALUES (37, 6);
-INSERT INTO `role_has_permissions` VALUES (38, 6);
 INSERT INTO `role_has_permissions` VALUES (1, 8);
 INSERT INTO `role_has_permissions` VALUES (4, 8);
 INSERT INTO `role_has_permissions` VALUES (10, 8);
@@ -447,12 +448,10 @@ INSERT INTO `role_has_permissions` VALUES (25, 8);
 INSERT INTO `role_has_permissions` VALUES (26, 8);
 INSERT INTO `role_has_permissions` VALUES (28, 8);
 INSERT INTO `role_has_permissions` VALUES (29, 8);
-INSERT INTO `role_has_permissions` VALUES (30, 8);
 INSERT INTO `role_has_permissions` VALUES (32, 8);
 INSERT INTO `role_has_permissions` VALUES (35, 8);
 INSERT INTO `role_has_permissions` VALUES (36, 8);
 INSERT INTO `role_has_permissions` VALUES (37, 8);
-INSERT INTO `role_has_permissions` VALUES (38, 8);
 INSERT INTO `role_has_permissions` VALUES (40, 8);
 INSERT INTO `role_has_permissions` VALUES (41, 8);
 INSERT INTO `role_has_permissions` VALUES (42, 8);
@@ -464,13 +463,20 @@ INSERT INTO `role_has_permissions` VALUES (25, 9);
 INSERT INTO `role_has_permissions` VALUES (26, 9);
 INSERT INTO `role_has_permissions` VALUES (28, 9);
 INSERT INTO `role_has_permissions` VALUES (29, 9);
-INSERT INTO `role_has_permissions` VALUES (30, 9);
 INSERT INTO `role_has_permissions` VALUES (32, 9);
 INSERT INTO `role_has_permissions` VALUES (35, 9);
 INSERT INTO `role_has_permissions` VALUES (41, 9);
 INSERT INTO `role_has_permissions` VALUES (42, 9);
-INSERT INTO `role_has_permissions` VALUES (43, 9);
 INSERT INTO `role_has_permissions` VALUES (44, 9);
+INSERT INTO `role_has_permissions` VALUES (45, 9);
+INSERT INTO `role_has_permissions` VALUES (46, 9);
+INSERT INTO `role_has_permissions` VALUES (47, 9);
+INSERT INTO `role_has_permissions` VALUES (48, 9);
+INSERT INTO `role_has_permissions` VALUES (49, 9);
+INSERT INTO `role_has_permissions` VALUES (50, 9);
+INSERT INTO `role_has_permissions` VALUES (51, 9);
+INSERT INTO `role_has_permissions` VALUES (52, 9);
+INSERT INTO `role_has_permissions` VALUES (53, 9);
 
 -- ----------------------------
 -- Table structure for roles
@@ -512,18 +518,18 @@ CREATE TABLE `sched_details`  (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `schedule_id`(`schedule_id` ASC, `day` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sched_details
 -- ----------------------------
-INSERT INTO `sched_details` VALUES (15, 1, 1, NULL, NULL, NULL, NULL, '2026-05-25 10:17:50', '2026-05-25 10:17:50');
-INSERT INTO `sched_details` VALUES (16, 1, 2, NULL, NULL, NULL, NULL, '2026-05-25 10:17:50', '2026-05-25 10:17:50');
-INSERT INTO `sched_details` VALUES (17, 1, 3, NULL, NULL, NULL, NULL, '2026-05-25 10:17:50', '2026-05-25 10:17:50');
-INSERT INTO `sched_details` VALUES (18, 1, 4, NULL, NULL, NULL, NULL, '2026-05-25 10:17:50', '2026-05-25 10:17:50');
-INSERT INTO `sched_details` VALUES (19, 1, 5, NULL, NULL, NULL, NULL, '2026-05-25 10:17:50', '2026-05-25 10:17:50');
-INSERT INTO `sched_details` VALUES (20, 1, 6, NULL, NULL, NULL, NULL, '2026-05-25 10:17:50', '2026-05-25 10:17:50');
-INSERT INTO `sched_details` VALUES (21, 1, 7, NULL, NULL, NULL, NULL, '2026-05-25 10:17:50', '2026-05-25 10:17:50');
+INSERT INTO `sched_details` VALUES (22, 1, 1, '08:00:00', '12:00:00', '13:00:00', '17:00:00', '2026-05-25 12:08:20', '2026-05-25 12:08:20');
+INSERT INTO `sched_details` VALUES (23, 1, 2, '08:00:00', '12:00:00', '13:00:00', '17:00:00', '2026-05-25 12:08:20', '2026-05-25 12:08:20');
+INSERT INTO `sched_details` VALUES (24, 1, 3, '08:00:00', '12:00:00', '13:00:00', '17:00:00', '2026-05-25 12:08:20', '2026-05-25 12:08:20');
+INSERT INTO `sched_details` VALUES (25, 1, 4, '08:00:00', '12:00:00', '13:00:00', '17:00:00', '2026-05-25 12:08:20', '2026-05-25 12:08:20');
+INSERT INTO `sched_details` VALUES (26, 1, 5, '08:00:00', '12:00:00', '13:00:00', '17:00:00', '2026-05-25 12:08:20', '2026-05-25 12:08:20');
+INSERT INTO `sched_details` VALUES (27, 1, 6, '08:00:00', '12:00:00', '13:00:00', '17:00:00', '2026-05-25 12:08:20', '2026-05-25 12:08:20');
+INSERT INTO `sched_details` VALUES (28, 1, 7, '08:00:00', '12:00:00', '13:00:00', '17:00:00', '2026-05-25 12:08:20', '2026-05-25 12:08:20');
 
 -- ----------------------------
 -- Table structure for schedules
@@ -562,7 +568,7 @@ CREATE TABLE `sessions`  (
 -- ----------------------------
 -- Records of sessions
 -- ----------------------------
-INSERT INTO `sessions` VALUES ('U06MJOHQKur6fDjpF6RpIxYt7naSkA84e6mIPdhw', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiNkZqekxBWG1yNGhvREZqaEdmUVJiRmNXNDJ3TW1pVWE0R1BQU1dGNyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mzg6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9nZXQtc3R1ZGVudHMvb3V0IjtzOjU6InJvdXRlIjtzOjE2OiJnZXQtc3R1ZGVudHMub3V0Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1779685470);
+INSERT INTO `sessions` VALUES ('U06MJOHQKur6fDjpF6RpIxYt7naSkA84e6mIPdhw', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiNkZqekxBWG1yNGhvREZqaEdmUVJiRmNXNDJ3TW1pVWE0R1BQU1dGNyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mzg6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9nZXQtc3R1ZGVudHMvb3V0IjtzOjU6InJvdXRlIjtzOjE2OiJnZXQtc3R1ZGVudHMub3V0Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1779686556);
 
 -- ----------------------------
 -- Table structure for users

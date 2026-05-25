@@ -1,4 +1,7 @@
 @php
+    $canSetupSchedules = auth()->user()->can('setschedcehed.view');
+    $canSetupEmployees = auth()->user()->can('setschedem.view');
+    $canSetup = $canSetupSchedules || $canSetupEmployees;
     $canRecords = auth()->user()->can('data.view')
         || auth()->user()->can('logs.view')
         || auth()->user()->can('emlog.view');
@@ -15,7 +18,11 @@
         default => 'dashboard',
     };
 
-    if (($activeTab === 'records' && !$canRecords) || ($activeTab === 'access' && !$canAccessControl)) {
+    if (
+        ($activeTab === 'setup' && !$canSetup)
+        || ($activeTab === 'records' && !$canRecords)
+        || ($activeTab === 'access' && !$canAccessControl)
+    ) {
         $activeTab = 'dashboard';
     }
 @endphp
@@ -29,7 +36,9 @@
 
         <nav class="eg-rb-tabs" aria-label="Admin navigation">
             <button class="eg-rb-tab {{ $activeTab === 'dashboard' ? 'is-active' : '' }}" type="button" data-eg-ribbon-tab="dashboard">Dashboard</button>
-            <button class="eg-rb-tab {{ $activeTab === 'setup' ? 'is-active' : '' }}" type="button" data-eg-ribbon-tab="setup">Setup</button>
+            @if ($canSetup)
+                <button class="eg-rb-tab {{ $activeTab === 'setup' ? 'is-active' : '' }}" type="button" data-eg-ribbon-tab="setup">Setup</button>
+            @endif
             @if ($canRecords)
                 <button class="eg-rb-tab {{ $activeTab === 'records' ? 'is-active' : '' }}" type="button" data-eg-ribbon-tab="records">Records</button>
             @endif
@@ -75,21 +84,27 @@
             </section>
         </div>
 
-        <div class="eg-rb-page {{ $activeTab === 'setup' ? 'is-active' : '' }}" data-eg-ribbon-page="setup">
-            <section class="eg-rb-group">
-                <div class="eg-rb-group-title">Configuration</div>
-                <div class="eg-rb-items">
-                    <a class="eg-rb-tile {{ request()->routeIs('admin.setup.schedules*') ? 'is-active' : '' }}" href="{{ route('admin.setup.schedules') }}">
-                        <span class="eg-rb-icon">S</span>
-                        <span>Schedules</span>
-                    </a>
-                    <a class="eg-rb-tile {{ request()->routeIs('admin.setup.employee.*') ? 'is-active' : '' }}" href="{{ route('admin.setup.employee.index') }}">
-                        <span class="eg-rb-icon">E</span>
-                        <span>Employees</span>
-                    </a>
-                </div>
-            </section>
-        </div>
+        @if ($canSetup)
+            <div class="eg-rb-page {{ $activeTab === 'setup' ? 'is-active' : '' }}" data-eg-ribbon-page="setup">
+                <section class="eg-rb-group">
+                    <div class="eg-rb-group-title">Configuration</div>
+                    <div class="eg-rb-items">
+                        @if ($canSetupSchedules)
+                            <a class="eg-rb-tile {{ request()->routeIs('admin.setup.schedules*') ? 'is-active' : '' }}" href="{{ route('admin.setup.schedules') }}">
+                                <span class="eg-rb-icon">S</span>
+                                <span>Schedules</span>
+                            </a>
+                        @endif
+                        @if ($canSetupEmployees)
+                            <a class="eg-rb-tile {{ request()->routeIs('admin.setup.employee.*') ? 'is-active' : '' }}" href="{{ route('admin.setup.employee.index') }}">
+                                <span class="eg-rb-icon">E</span>
+                                <span>Employees</span>
+                            </a>
+                        @endif
+                    </div>
+                </section>
+            </div>
+        @endif
 
         @if ($canRecords)
             <div class="eg-rb-page {{ $activeTab === 'records' ? 'is-active' : '' }}" data-eg-ribbon-page="records">

@@ -22,6 +22,7 @@
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
+                        @can('setschedcehed.create')
                         <button
                             type="button"
                             id="open-add-schedule-modal"
@@ -29,6 +30,7 @@
                         >
                             Add Schedule
                         </button>
+                        @endcan
                     </div>
                 </div>
             </div>
@@ -84,9 +86,11 @@
                 <button type="button" data-close-modal="schedule-modal" class="rounded-full bg-gray-900 px-4 py-1.5 text-sm font-medium text-white transition-all duration-150 hover:bg-gray-800 active:scale-[0.98]">
                     Cancel
                 </button>
+                @canany(['setschedcehed.create', 'setschedcehed.update'])
                 <button type="submit" id="schedule-submit-button" class="rounded-full bg-blue-500 px-4 py-1.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-blue-600 hover:scale-105">
                     Save Schedule
                 </button>
+                @endcanany
             </div>
         </form>
     </div>
@@ -105,6 +109,7 @@
                 <button type="button" data-close-modal="schedule-details-modal" class="rounded-full px-2 py-1 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-700">X</button>
             </div>
 
+            @can('setschedcehed.update')
             <div class="border-b border-slate-200 px-4 py-3">
                 <div class="grid gap-2 md:grid-cols-4">
                     <div class="flex flex-col gap-1">
@@ -142,6 +147,7 @@
                     </button>
                 </div>
             </div>
+            @endcan
 
             <div class="min-h-0 flex-1 overflow-auto">
                 <table class="w-full text-left">
@@ -163,9 +169,11 @@
                 <button type="button" data-close-modal="schedule-details-modal" class="rounded-full bg-gray-900 px-4 py-1.5 text-sm font-medium text-white transition-all duration-150 hover:bg-gray-800 active:scale-[0.98]">
                     Cancel
                 </button>
+                @can('setschedcehed.update')
                 <button type="submit" class="rounded-full bg-blue-500 px-4 py-1.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-blue-600 hover:scale-105">
                     Save Details
                 </button>
+                @endcan
             </div>
         </form>
     </div>
@@ -217,6 +225,9 @@
         store: @json(route('admin.setup.schedules.store')),
         base: @json(url('admin/setup/schedules')),
     };
+    const canCreateSchedule = @json(auth()->user()?->can('setschedcehed.create'));
+    const canUpdateSchedule = @json(auth()->user()?->can('setschedcehed.update'));
+    const canDeleteSchedule = @json(auth()->user()?->can('setschedcehed.delete'));
     const scheduleDays = [
         { day: 1, name: 'Monday' },
         { day: 2, name: 'Tuesday' },
@@ -333,26 +344,38 @@
             return;
         }
 
-        schedulesTableBody.innerHTML = schedules.map((schedule, index) => `
+        schedulesTableBody.innerHTML = schedules.map((schedule, index) => {
+            const actionButtons = [
+                canUpdateSchedule ? `
+                        <button type="button" data-action="edit" data-id="${schedule.id}" class="transition duration-200 hover:scale-110">
+                            <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="edit schedule name">
+                        </button>
+                ` : '',
+                `
+                        <button type="button" data-action="details" data-id="${schedule.id}" class="transition duration-200 hover:scale-110">
+                            <img src="{{ asset('icons/schedule.png') }}" class="w-7 h-7" alt="view schedule details">
+                        </button>
+                `,
+                canDeleteSchedule ? `
+                        <button type="button" data-action="delete" data-id="${schedule.id}" data-name="${escapeHtml(schedule.name || 'this schedule')}" class="transition duration-200 hover:scale-110">
+                            <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete schedule">
+                        </button>
+                ` : '',
+            ].join('');
+
+            return `
             <tr class="border-b border-black hover:bg-gray-50 transition">
                 <td class="px-3 py-2.5">${from + index}</td>
                 <td class="px-3 py-2.5">${escapeHtml(schedule.id)}</td>
                 <td class="px-3 py-2.5">${escapeHtml(schedule.name || 'N/A')}</td>
                 <td class="px-3 py-2.5">
                     <div class="flex justify-center items-center gap-4">
-                        <button type="button" data-action="edit" data-id="${schedule.id}" class="transition duration-200 hover:scale-110">
-                            <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="edit schedule name">
-                        </button>
-                        <button type="button" data-action="details" data-id="${schedule.id}" class="transition duration-200 hover:scale-110">
-                            <img src="{{ asset('icons/schedule.png') }}" class="w-7 h-7" alt="edit schedule details">
-                        </button>
-                        <button type="button" data-action="delete" data-id="${schedule.id}" data-name="${escapeHtml(schedule.name || 'this schedule')}" class="transition duration-200 hover:scale-110">
-                            <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete schedule">
-                        </button>
+                        ${actionButtons || '<span class="text-sm text-slate-400">N/A</span>'}
                     </div>
                 </td>
             </tr>
-        `).join('');
+        `;
+        }).join('');
     }
 
     function renderPagination(meta) {
@@ -458,22 +481,23 @@
 
         scheduleDetailsTableBody.innerHTML = scheduleDays.map(({ day, name }) => {
             const detail = detailsByDay.get(day) || {};
+            const disabled = canUpdateSchedule ? '' : 'disabled';
 
             return `
                 <tr class="border-b border-black hover:bg-gray-50 transition">
                     <td class="px-3 py-2.5">${day}</td>
                     <td class="px-3 py-2.5">${name}</td>
                     <td class="px-3 py-2.5">
-                        <input type="time" data-day="${day}" data-field="am_in" value="${escapeHtml(detail.am_in || '')}" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none">
+                        <input type="time" data-day="${day}" data-field="am_in" value="${escapeHtml(detail.am_in || '')}" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none" ${disabled}>
                     </td>
                     <td class="px-3 py-2.5">
-                        <input type="time" data-day="${day}" data-field="am_out" value="${escapeHtml(detail.am_out || '')}" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none">
+                        <input type="time" data-day="${day}" data-field="am_out" value="${escapeHtml(detail.am_out || '')}" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none" ${disabled}>
                     </td>
                     <td class="px-3 py-2.5">
-                        <input type="time" data-day="${day}" data-field="pm_in" value="${escapeHtml(detail.pm_in || '')}" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none">
+                        <input type="time" data-day="${day}" data-field="pm_in" value="${escapeHtml(detail.pm_in || '')}" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none" ${disabled}>
                     </td>
                     <td class="px-3 py-2.5">
-                        <input type="time" data-day="${day}" data-field="pm_out" value="${escapeHtml(detail.pm_out || '')}" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none">
+                        <input type="time" data-day="${day}" data-field="pm_out" value="${escapeHtml(detail.pm_out || '')}" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none" ${disabled}>
                     </td>
                 </tr>
             `;
@@ -596,7 +620,7 @@
         return payload;
     }
 
-    openAddScheduleModalButton.addEventListener('click', () => {
+    openAddScheduleModalButton?.addEventListener('click', () => {
         openAddScheduleModal();
     });
 
@@ -639,11 +663,11 @@
         }
     });
 
-    autofillScheduleDetailsButton.addEventListener('click', () => {
+    autofillScheduleDetailsButton?.addEventListener('click', () => {
         autofillScheduleDetails();
     });
 
-    clearScheduleDetailsButton.addEventListener('click', () => {
+    clearScheduleDetailsButton?.addEventListener('click', () => {
         clearScheduleDetails();
     });
 

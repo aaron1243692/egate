@@ -73,6 +73,7 @@
         fetch: @json(route('admin.setup.employee.fetch')),
         base: @json(url('admin/setup/employee')),
     };
+    const canUpdateEmployeeSchedule = @json(auth()->user()?->can('setschedem.update'));
 
     const searchInput = document.getElementById('search-employee-schedules');
     const tableBody = document.getElementById('employee-schedules-table-body');
@@ -175,7 +176,7 @@
                 <td class="px-3 py-2.5">${escapeHtml(employee.student_number || employee.id)}</td>
                 <td class="px-3 py-2.5">${escapeHtml(employee.name || 'N/A')}</td>
                 <td class="w-64 px-3 py-2.5">
-                    <select data-schedule-select="${employee.id}" class="w-full max-w-90 rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none bg-white">
+                    <select data-schedule-select="${employee.id}" class="w-full max-w-90 rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none bg-white" ${canUpdateEmployeeSchedule ? '' : 'disabled'}>
                         ${renderScheduleOptions(employee.sched)}
                     </select>
                 </td>
