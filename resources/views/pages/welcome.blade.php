@@ -11,6 +11,43 @@ class="w-full h-full">
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <style>
+            .entry-body {
+                display: grid;
+                grid-template-columns: 300px minmax(0, 1fr);
+                gap: 1rem;
+                align-items: center;
+            }
+
+            .entry-photo {
+                width: 300px;
+                height: 300px;
+            }
+
+            @media (min-height: 720px) and (min-width: 1024px) {
+                .entry-body {
+                    grid-template-columns: 1fr;
+                    align-items: start;
+                }
+
+                .entry-photo {
+                    width: min(300px, 100%);
+                }
+            }
+
+            @media (max-width: 767px) {
+                .entry-body {
+                    grid-template-columns: 1fr;
+                    align-items: start;
+                }
+
+                .entry-photo {
+                    width: min(300px, 100%);
+                    height: auto;
+                    aspect-ratio: 1 / 1;
+                }
+            }
+        </style>
     </head>
     <body class="min-h-screen bg-gradient-to-br from-white via-slate-50 to-slate-100 text-stone-800 flex flex-col p-2 gap-2 overflow-hidden">
         <!-- HEADER -->
@@ -51,9 +88,9 @@ class="w-full h-full">
                     CURRENT ENTRY
                 </h2>
 
-                <div class="flex gap-4 items-center">
+                <div class="entry-body">
                     <img id="current-image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f1f5f9'/%3E%3Ccircle cx='150' cy='112' r='46' fill='%23cbd5e1'/%3E%3Cpath d='M72 244c16-42 52-68 78-68s62 26 78 68' fill='%23cbd5e1'/%3E%3C/svg%3E"
-                        class="w-[300px] h-[300px] object-cover rounded-lg border border-slate-200 shadow-md" />
+                        class="entry-photo object-cover rounded-lg border border-slate-200 shadow-md" />
 
                     <div class="flex flex-col gap-0 text-md text-stone-700">
                         <span id="current-status" class="px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full bg-slate-100 text-stone-700 border border-slate-200">
@@ -131,9 +168,9 @@ class="w-full h-full">
                     PREVIOUS ENTRY
                 </h2>
 
-                <div class="flex gap-4 items-center">
+                <div class="entry-body">
                     <img id="previous-image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f1f5f9'/%3E%3Ccircle cx='150' cy='112' r='46' fill='%23cbd5e1'/%3E%3Cpath d='M72 244c16-42 52-68 78-68s62 26 78 68' fill='%23cbd5e1'/%3E%3C/svg%3E"
-                        class="w-[300px] h-[300px] object-cover rounded-lg border border-slate-200 shadow-md" />
+                        class="entry-photo object-cover rounded-lg border border-slate-200 shadow-md" />
 
                     <div class="flex flex-col gap-0 text-md text-stone-700">
                         <span id="previous-status" class="px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full bg-slate-100 text-stone-700 border border-slate-200">

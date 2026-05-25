@@ -817,11 +817,53 @@ class="w-full h-full">
                 });
             }
 
+            function isFullscreenActive() {
+                return Boolean(
+                    document.fullscreenElement
+                    || document.webkitFullscreenElement
+                    || document.msFullscreenElement
+                );
+            }
+
+            function requestForcedFullscreen() {
+                if (isFullscreenActive()) {
+                    return;
+                }
+
+                const page = document.documentElement;
+                const requestFullscreen = page.requestFullscreen
+                    || page.webkitRequestFullscreen
+                    || page.msRequestFullscreen;
+
+                if (!requestFullscreen) {
+                    return;
+                }
+
+                Promise.resolve(requestFullscreen.call(page)).catch(() => {});
+            }
+
+            function installForcedFullscreen() {
+                if (document.fullscreenEnabled === false) {
+                    return;
+                }
+
+                requestForcedFullscreen();
+
+                ['pointerdown', 'touchstart', 'keydown'].forEach((eventName) => {
+                    window.addEventListener(eventName, requestForcedFullscreen, true);
+                });
+
+                document.addEventListener('fullscreenchange', requestForcedFullscreen);
+                document.addEventListener('webkitfullscreenchange', requestForcedFullscreen);
+                document.addEventListener('msfullscreenchange', requestForcedFullscreen);
+            }
+
             updatePhilippineClock();
             checkUpdates();
             focusManualEntry();
             listenForRfidInput();
             installFullscreenGuards();
+            installForcedFullscreen();
             setInterval(updatePhilippineClock, 1000);
             setInterval(checkUpdates, 5000);
             setInterval(maintainInputFocus, 2000);
