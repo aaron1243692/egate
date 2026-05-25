@@ -1,0 +1,386 @@
+:root {
+    --eg-rb-top: 44px;
+    --eg-rb-panel: 94px;
+    --eg-rb-fixed: calc(var(--eg-rb-top) + var(--eg-rb-panel));
+    --eg-rb-blue: #0066cc;
+    --eg-rb-blue-deep: #0d5ec0;
+    --eg-rb-bg: #f3f5f8;
+    --eg-rb-border: rgba(15, 23, 42, 0.1);
+    --eg-rb-text: #172033;
+    --eg-rb-shadow: 0 10px 30px rgba(15, 23, 42, 0.14);
+}
+
+body.eg-admin-shell {
+    min-height: 100vh;
+    height: 100vh;
+    align-items: stretch;
+    padding-top: var(--eg-rb-fixed) !important;
+    background: #f8fafc;
+    overflow: hidden;
+}
+
+.eg-admin-main {
+    display: flex;
+    flex: 1 1 0%;
+    min-height: 0;
+    width: 100%;
+    overflow: hidden;
+}
+
+.eg-rb {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 40;
+    display: grid;
+    grid-template-rows: var(--eg-rb-top) auto;
+    isolation: isolate;
+    color: var(--eg-rb-text);
+}
+
+.eg-rb-top {
+    display: flex;
+    align-items: stretch;
+    min-width: 0;
+    padding: 0 6px 0 2px;
+    color: #fff;
+    background: linear-gradient(180deg, var(--eg-rb-blue), var(--eg-rb-blue-deep));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.eg-rb-brand,
+.eg-rb-tab,
+.eg-rb-userbtn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 100%;
+    border: 0;
+    border-radius: 0;
+    color: inherit;
+    background: transparent;
+    text-decoration: none;
+}
+
+.eg-rb-brand {
+    flex: 0 0 auto;
+    gap: 8px;
+    padding: 0 12px 0 8px;
+    border-right: 1px solid rgba(255, 255, 255, 0.18);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+
+.eg-rb-brand img {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+}
+
+.eg-rb-brand:hover,
+.eg-rb-tab:hover,
+.eg-rb-userbtn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+}
+
+.eg-rb-tabs {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: stretch;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.36) transparent;
+}
+
+.eg-rb-tabs::-webkit-scrollbar,
+.eg-rb-ribbon::-webkit-scrollbar {
+    height: 4px;
+}
+
+.eg-rb-tabs::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.36);
+    border-radius: 999px;
+}
+
+.eg-rb-tab {
+    flex: 0 0 auto;
+    padding: 0 15px;
+    border-right: 1px solid rgba(255, 255, 255, 0.14);
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: background 0.16s ease, color 0.16s ease;
+}
+
+.eg-rb-tab.is-active {
+    color: var(--eg-rb-blue-deep);
+    background: #eef3fb;
+}
+
+.eg-rb-user {
+    position: relative;
+    flex: 0 0 auto;
+    margin-left: 6px;
+}
+
+.eg-rb-userbtn {
+    gap: 8px;
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.eg-rb-userlabel {
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.eg-rb-usercaret {
+    border-top: 5px solid currentcolor;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+}
+
+.eg-rb-usermenu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 212px;
+    padding: 8px;
+    border: 1px solid var(--eg-rb-border);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: var(--eg-rb-shadow);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-6px) scale(0.98);
+    transform-origin: top right;
+    transition: opacity 0.16s ease, transform 0.18s ease, visibility 0s linear 0.18s;
+}
+
+.eg-rb-usermenu.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    transition-delay: 0s;
+}
+
+.eg-rb-usercaption {
+    padding: 3px 10px 0;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.eg-rb-username {
+    margin-bottom: 7px;
+    padding: 2px 10px 8px;
+    overflow: hidden;
+    border-bottom: 1px solid #e2e8f0;
+    color: var(--eg-rb-text);
+    font-size: 13px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.eg-rb-usermenu-link {
+    display: flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--eg-rb-text);
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.eg-rb-usermenu-link:hover,
+.eg-rb-usermenu-link:focus-visible {
+    color: var(--eg-rb-blue-deep);
+    background: rgba(0, 102, 204, 0.08);
+    text-decoration: none;
+}
+
+.eg-rb-usermenu-link--danger {
+    color: #c62828;
+}
+
+.eg-rb-ribbon {
+    min-height: var(--eg-rb-panel);
+    padding: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-bottom: 1px solid var(--eg-rb-border);
+    background:
+        radial-gradient(circle at 8% 0%, rgba(0, 102, 204, 0.06), transparent 42%),
+        linear-gradient(180deg, #fff, var(--eg-rb-bg));
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(15, 23, 42, 0.22) transparent;
+}
+
+.eg-rb-ribbon::-webkit-scrollbar-thumb {
+    background: rgba(15, 23, 42, 0.22);
+    border-radius: 999px;
+}
+
+.eg-rb-page {
+    display: none;
+    align-items: stretch;
+    min-width: max-content;
+    height: 100%;
+}
+
+.eg-rb-page.is-active {
+    display: flex;
+}
+
+.eg-rb-group {
+    position: relative;
+    min-width: max-content;
+    padding: 4px 12px;
+}
+
+.eg-rb-group-title {
+    margin-bottom: 6px;
+    color: var(--eg-rb-blue-deep);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.15;
+    text-align: center;
+}
+
+.eg-rb-items {
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+}
+
+.eg-rb-tile {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 72px;
+    min-height: 57px;
+    padding: 5px 8px;
+    border-radius: 8px;
+    color: var(--eg-rb-text);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.1;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.eg-rb-tile:link,
+.eg-rb-tile:visited,
+.eg-rb-tile:hover,
+.eg-rb-tile:focus,
+.eg-rb-tile:active {
+    color: var(--eg-rb-text);
+    text-decoration: none;
+}
+
+.eg-rb-tile:hover,
+.eg-rb-tile.is-active {
+    background: rgba(0, 102, 204, 0.08);
+    box-shadow: inset 0 0 0 1px rgba(0, 102, 204, 0.12);
+}
+
+.eg-rb-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 5px;
+    border-radius: 8px;
+    color: #fff;
+    background: linear-gradient(145deg, #2587e8, var(--eg-rb-blue-deep));
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+}
+
+.eg-rb-tile--success .eg-rb-icon {
+    background: linear-gradient(145deg, #22c55e, #15803d);
+}
+
+.eg-rb-tile--danger .eg-rb-icon {
+    background: linear-gradient(145deg, #f43f5e, #be123c);
+}
+
+@media (max-width: 767.98px) {
+    :root {
+        --eg-rb-top: 82px;
+        --eg-rb-panel: 92px;
+    }
+
+    .eg-rb-top {
+        flex-wrap: wrap;
+        padding: 3px 5px;
+    }
+
+    .eg-rb-brand,
+    .eg-rb-userbtn {
+        min-height: 34px;
+    }
+
+    .eg-rb-brand {
+        padding-inline: 7px;
+        border-right: 0;
+    }
+
+    .eg-rb-brand span {
+        display: none;
+    }
+
+    .eg-rb-brand img {
+        width: 27px;
+        height: 27px;
+    }
+
+    .eg-rb-user {
+        margin-left: auto;
+    }
+
+    .eg-rb-userlabel {
+        max-width: 112px;
+    }
+
+    .eg-rb-tabs {
+        order: 3;
+        flex: 1 0 100%;
+        height: 42px;
+    }
+
+    .eg-rb-tab {
+        padding-inline: 13px;
+        border-right: 0;
+        border-radius: 6px;
+    }
+
+    .eg-rb-ribbon {
+        padding-inline: 4px;
+    }
+
+    .eg-rb-group {
+        padding-inline: 6px;
+    }
+}

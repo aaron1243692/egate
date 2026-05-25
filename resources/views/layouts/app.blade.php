@@ -1,10 +1,14 @@
 @extends('layouts.clean')
 
+@section('body-class', 'eg-admin-shell')
+
 @section('clean')
 
     @include('layouts.header')
 
-    @yield('content')
+    <div class="eg-admin-main">
+        @yield('content')
+    </div>
 
     @include('layouts.admin-shortcuts')
 

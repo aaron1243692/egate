@@ -7,9 +7,11 @@ class="w-full h-full m-0 p-0 gap-0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title') | {{ config('app.name', 'EGATE') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('styles')
 </head>
 <body class="w-full h-full m-0 p-0 gap-0
-flex flex-col items-center">
+flex flex-col items-center @yield('body-class')">
     @yield('clean')
+    @stack('scripts')
 </body>
 </html>

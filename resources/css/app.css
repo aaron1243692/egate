@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'bootstrap/dist/css/bootstrap.min.css';
+@import './egate-admin-shell.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -19,4 +20,3 @@
 button{
     border-radius: 1.5rem;
 }
-

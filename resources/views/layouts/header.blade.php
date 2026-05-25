@@ -1,102 +1,166 @@
-<header class="sticky top-0 flex w-full flex-row items-center gap-2 bg-blue-600 p-1.5">
-    <h5 onclick="window.location.href='{{ route('admin.dashboard') }}'"
-    class="m-0 flex shrink-0 items-center gap-2 text-white border border-white/20 rounded-full py-1 px-2.5 text-sm font-semibold leading-none cursor-pointer
-    hover:bg-white/20 hover:border-white/40 hover:scale-105 transition duration-200 select-none">
-        <img src="{{ asset('images/olpcc-logo.png') }}"
-            alt="Logo"
-            class="block h-7 w-7 rounded-full object-cover">
-        <span class="leading-none">OSMIS-eGATE</span>
-    </h5>
+@php
+    $canRecords = auth()->user()->can('data.view')
+        || auth()->user()->can('logs.view')
+        || auth()->user()->can('emlog.view');
+    $canAccessControl = auth()->user()->can('roles.view')
+        || auth()->user()->can('users.view');
+    $canTimeIn = canAccessWithParent(auth()->user(), 'time.in');
+    $canTimeOut = canAccessWithParent(auth()->user(), 'time.out');
+    $canGate = $canTimeIn || $canTimeOut;
 
-    <nav class="flex flex-1 items-center justify-start gap-1">
-        <button type="button" id="setupButton" class="text-white text-lg leading-none text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
-        >Setup</button>
+    $activeTab = match (true) {
+        request()->routeIs('admin.setup.*') => 'setup',
+        request()->routeIs('admin.data*', 'admin.logs*', 'admin.employee_logs*') => 'records',
+        request()->routeIs('admin.roles*', 'admin.users.*', 'admin.permissions*') => 'access',
+        default => 'dashboard',
+    };
 
-        @can('data.view')
-        <a href="{{ route('admin.data') }}" class="text-white text-lg leading-none text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
-        >Data</a>
-        @endcan
-        @can('logs.view')
-        <a href="{{ route('admin.logs') }}" class="text-white text-lg leading-none text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
-        >Student Logs</a>
-        @endcan
-        @can('emlog.view')
-        <a href="{{ route('admin.employee_logs') }}" class="text-white text-lg leading-none text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
-        >Employee Logs</a>
-        @endcan
+    if (($activeTab === 'records' && !$canRecords) || ($activeTab === 'access' && !$canAccessControl)) {
+        $activeTab = 'dashboard';
+    }
+@endphp
 
-        @can('roles.view')
-        <a href="{{ route('admin.roles') }}" class="text-white text-lg leading-none text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
-        >Roles</a>
-        @endcan
-        @can('users.view')
-            <a href="{{ route('admin.users.index') }}" class="text-white text-lg leading-none text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
-            >Users</a>
-        @endcan
-    </nav>
+<header class="eg-rb" data-eg-ribbon>
+    <div class="eg-rb-top">
+        <a class="eg-rb-brand" href="{{ route('admin.dashboard') }}" aria-label="OSMIS eGATE dashboard">
+            <img src="{{ asset('images/olpcc-logo-removebg.png') }}" alt="">
+            <span>OLPCC / OSMIS-eGATE</span>
+        </a>
 
-    <a href="{{ route('admin.reauth') }}"
-    class="mr-3 shrink-0 text-decoration-none px-4 py-2 text-md font-medium leading-none text-white bg-white/10 border
-    border-white/20 transition duration-300 hover:bg-black/30
-    hover:border-black hover:text-white hover:scale-107"
-    style="border-radius: 1.5rem;">
-    Sign Out
-    </a>
+        <nav class="eg-rb-tabs" aria-label="Admin navigation">
+            <button class="eg-rb-tab {{ $activeTab === 'dashboard' ? 'is-active' : '' }}" type="button" data-eg-ribbon-tab="dashboard">Dashboard</button>
+            <button class="eg-rb-tab {{ $activeTab === 'setup' ? 'is-active' : '' }}" type="button" data-eg-ribbon-tab="setup">Setup</button>
+            @if ($canRecords)
+                <button class="eg-rb-tab {{ $activeTab === 'records' ? 'is-active' : '' }}" type="button" data-eg-ribbon-tab="records">Records</button>
+            @endif
+            @if ($canAccessControl)
+                <button class="eg-rb-tab {{ $activeTab === 'access' ? 'is-active' : '' }}" type="button" data-eg-ribbon-tab="access">Access Control</button>
+            @endif
+            @if ($canGate)
+                <button class="eg-rb-tab" type="button" data-eg-ribbon-tab="gate">Gate</button>
+            @endif
+        </nav>
 
-</header>
-
-<div id="setup" class="hidden w-full gap-2 py-2 px-3 m-0
-flex flex-row justify-start items-center
-">
-
-    <div class="w-fit py-2 px-3
-    flex flex-col gap-3
-    bg-white shadow-md
-    border border-gray-300 rounded-2xl
-    ">
-
-        <label class="text-sm font-semibold text-black tracking-wide">
-            Schedules
-        </label>
-
-        <div class="w-full grid grid-cols-3 gap-2">
-
-            <a href="{{ route('admin.setup.schedules') }}"
-                class="flex items-center justify-center
-                text-black/70 text-sm font-medium text-decoration-none
-                py-1 px-2 bg-gray-100 rounded-xl
-                transition duration-200 hover:scale-110"
+        <div class="eg-rb-user">
+            <button
+                class="eg-rb-userbtn"
+                id="egRbUserBtn"
+                type="button"
+                aria-controls="egRbUserMenu"
+                aria-expanded="false"
             >
-                Schedules
-            </a>
-
-            <a href="{{ route('admin.setup.employee.index') }}"
-                class="flex items-center justify-center
-                text-black/70 text-sm font-medium text-decoration-none
-                py-1 px-2 bg-gray-100 rounded-xl
-                transition duration-200 hover:scale-110"
-            >
-                Employees
-            </a>
-
+                <span class="eg-rb-userlabel">{{ auth()->user()->username ?? auth()->user()->email }}</span>
+                <span class="eg-rb-usercaret" aria-hidden="true"></span>
+            </button>
+            <div class="eg-rb-usermenu" id="egRbUserMenu">
+                <div class="eg-rb-usercaption">Signed in as</div>
+                <div class="eg-rb-username">{{ auth()->user()->username ?? auth()->user()->email }}</div>
+                <a class="eg-rb-usermenu-link eg-rb-usermenu-link--danger" href="{{ route('admin.reauth') }}">
+                    Sign Out / Re-auth
+                </a>
+            </div>
         </div>
     </div>
 
-</div>
+    <div class="eg-rb-ribbon">
+        <div class="eg-rb-page {{ $activeTab === 'dashboard' ? 'is-active' : '' }}" data-eg-ribbon-page="dashboard">
+            <section class="eg-rb-group">
+                <div class="eg-rb-group-title">Dashboard</div>
+                <div class="eg-rb-items">
+                    <a class="eg-rb-tile {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">
+                        <span class="eg-rb-icon">D</span>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+            </section>
+        </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const setupButton = document.getElementById('setupButton');
-        const setup = document.getElementById('setup');
+        <div class="eg-rb-page {{ $activeTab === 'setup' ? 'is-active' : '' }}" data-eg-ribbon-page="setup">
+            <section class="eg-rb-group">
+                <div class="eg-rb-group-title">Configuration</div>
+                <div class="eg-rb-items">
+                    <a class="eg-rb-tile {{ request()->routeIs('admin.setup.schedules*') ? 'is-active' : '' }}" href="{{ route('admin.setup.schedules') }}">
+                        <span class="eg-rb-icon">S</span>
+                        <span>Schedules</span>
+                    </a>
+                    <a class="eg-rb-tile {{ request()->routeIs('admin.setup.employee.*') ? 'is-active' : '' }}" href="{{ route('admin.setup.employee.index') }}">
+                        <span class="eg-rb-icon">E</span>
+                        <span>Employees</span>
+                    </a>
+                </div>
+            </section>
+        </div>
 
-        setupButton?.addEventListener('click', () => {
-            setup?.classList.remove('hidden');
-        });
+        @if ($canRecords)
+            <div class="eg-rb-page {{ $activeTab === 'records' ? 'is-active' : '' }}" data-eg-ribbon-page="records">
+                <section class="eg-rb-group">
+                    <div class="eg-rb-group-title">Records</div>
+                    <div class="eg-rb-items">
+                        @can('data.view')
+                            <a class="eg-rb-tile {{ request()->routeIs('admin.data*') ? 'is-active' : '' }}" href="{{ route('admin.data') }}">
+                                <span class="eg-rb-icon">D</span>
+                                <span>Data</span>
+                            </a>
+                        @endcan
+                        @can('logs.view')
+                            <a class="eg-rb-tile {{ request()->routeIs('admin.logs*') ? 'is-active' : '' }}" href="{{ route('admin.logs') }}">
+                                <span class="eg-rb-icon">SL</span>
+                                <span>Student Logs</span>
+                            </a>
+                        @endcan
+                        @can('emlog.view')
+                            <a class="eg-rb-tile {{ request()->routeIs('admin.employee_logs*') ? 'is-active' : '' }}" href="{{ route('admin.employee_logs') }}">
+                                <span class="eg-rb-icon">EL</span>
+                                <span>Employee Logs</span>
+                            </a>
+                        @endcan
+                    </div>
+                </section>
+            </div>
+        @endif
 
-        setup?.querySelectorAll('a').forEach((link) => {
-            link.addEventListener('click', () => {
-                setup.classList.add('hidden');
-            });
-        });
-    });
-</script>
+        @if ($canAccessControl)
+            <div class="eg-rb-page {{ $activeTab === 'access' ? 'is-active' : '' }}" data-eg-ribbon-page="access">
+                <section class="eg-rb-group">
+                    <div class="eg-rb-group-title">Access Control</div>
+                    <div class="eg-rb-items">
+                        @can('roles.view')
+                            <a class="eg-rb-tile {{ request()->routeIs('admin.roles*') ? 'is-active' : '' }}" href="{{ route('admin.roles') }}">
+                                <span class="eg-rb-icon">R</span>
+                                <span>Roles</span>
+                            </a>
+                        @endcan
+                        @can('users.view')
+                            <a class="eg-rb-tile {{ request()->routeIs('admin.users.*') ? 'is-active' : '' }}" href="{{ route('admin.users.index') }}">
+                                <span class="eg-rb-icon">U</span>
+                                <span>Users</span>
+                            </a>
+                        @endcan
+                    </div>
+                </section>
+            </div>
+        @endif
+
+        @if ($canGate)
+            <div class="eg-rb-page" data-eg-ribbon-page="gate">
+                <section class="eg-rb-group">
+                    <div class="eg-rb-group-title">Gate</div>
+                    <div class="eg-rb-items">
+                        @if ($canTimeIn)
+                            <a class="eg-rb-tile eg-rb-tile--success" href="{{ route('in') }}">
+                                <span class="eg-rb-icon">IN</span>
+                                <span>Time In</span>
+                            </a>
+                        @endif
+                        @if ($canTimeOut)
+                            <a class="eg-rb-tile eg-rb-tile--danger" href="{{ route('out') }}">
+                                <span class="eg-rb-icon">OUT</span>
+                                <span>Time Out</span>
+                            </a>
+                        @endif
+                    </div>
+                </section>
+            </div>
+        @endif
+    </div>
+</header>
