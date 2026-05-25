@@ -32,6 +32,27 @@ class PermissionRoleSeeder extends Seeder
             return [$code => $permission];
         });
 
+        $legacyTimeLogin = Permission::query()
+            ->where('code', 'time.login')
+            ->where('guard_name', 'web')
+            ->first();
+
+        $timeOut = Permission::query()
+            ->where('code', 'time.out')
+            ->where('guard_name', 'web')
+            ->first();
+
+        if ($legacyTimeLogin && ! $timeOut) {
+            $legacyTimeLogin->update([
+                'name' => 'Out',
+                'code' => 'time.out',
+                'parent_id' => $parents['time']->id,
+            ]);
+        } elseif ($legacyTimeLogin && $timeOut) {
+            $timeOut->roles()->syncWithoutDetaching($legacyTimeLogin->roles()->pluck('id')->all());
+            $legacyTimeLogin->delete();
+        }
+
         $definitions = [
             ['name' => 'View Data', 'code' => 'data.view', 'parent_id' => $parents['data']->id],
             ['name' => 'Create Data', 'code' => 'data.create', 'parent_id' => $parents['data']->id],
@@ -57,7 +78,6 @@ class PermissionRoleSeeder extends Seeder
             ['name' => 'In', 'code' => 'time.in', 'parent_id' => $parents['time']->id],
             ['name' => 'Out', 'code' => 'time.out', 'parent_id' => $parents['time']->id],
             ['name' => 'None', 'code' => 'time.none', 'parent_id' => $parents['time']->id],
-            ['name' => 'Login', 'code' => 'time.login', 'parent_id' => $parents['time']->id],
             ['name' => 'View Users', 'code' => 'users.view', 'parent_id' => $parents['users']->id],
             ['name' => 'Create Users', 'code' => 'users.create', 'parent_id' => $parents['users']->id],
             ['name' => 'Update Users', 'code' => 'users.update', 'parent_id' => $parents['users']->id],
