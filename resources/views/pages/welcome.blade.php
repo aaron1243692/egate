@@ -14,24 +14,26 @@ class="w-full h-full">
         <style>
             .entry-body {
                 display: grid;
-                grid-template-columns: 300px minmax(0, 1fr);
+                grid-template-columns: 1fr;
                 gap: 1rem;
-                align-items: center;
+                align-items: start;
             }
 
             .entry-photo {
-                width: 300px;
-                height: 300px;
+                width: min(300px, 100%);
+                height: auto;
+                aspect-ratio: 1 / 1;
             }
 
-            @media (min-height: 720px) and (min-width: 1024px) {
+            @media (max-height: 699px) and (min-width: 1024px) {
                 .entry-body {
-                    grid-template-columns: 1fr;
-                    align-items: start;
+                    grid-template-columns: 300px minmax(0, 1fr);
+                    align-items: center;
                 }
 
                 .entry-photo {
-                    width: min(300px, 100%);
+                    width: 300px;
+                    height: 300px;
                 }
             }
 

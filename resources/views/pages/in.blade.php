@@ -11,6 +11,32 @@ class="w-full h-full">
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <style>
+            .entry-body {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                align-items: start;
+            }
+
+            .entry-photo {
+                width: min(300px, 100%);
+                height: auto;
+                aspect-ratio: 1 / 1;
+            }
+
+            @media (max-height: 699px) and (min-width: 1024px) {
+                .entry-body {
+                    grid-template-columns: 300px minmax(0, 1fr);
+                    align-items: center;
+                }
+
+                .entry-photo {
+                    width: 300px;
+                    height: 300px;
+                }
+            }
+        </style>
     </head>
     <body class="min-h-screen bg-gradient-to-br from-white via-slate-50 to-slate-100 text-stone-800 flex flex-col p-2 gap-2 overflow-hidden">
         <!-- HEADER -->
@@ -51,9 +77,9 @@ class="w-full h-full">
                     CURRENT ENTRY
                 </h2>
 
-                <div class="flex gap-4 items-center">
+                <div class="entry-body">
                     <img id="current-image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f1f5f9'/%3E%3Ccircle cx='150' cy='112' r='46' fill='%23cbd5e1'/%3E%3Cpath d='M72 244c16-42 52-68 78-68s62 26 78 68' fill='%23cbd5e1'/%3E%3C/svg%3E"
-                        class="w-[300px] h-[300px] object-cover rounded-lg border border-slate-200 shadow-md" />
+                        class="entry-photo object-cover rounded-lg border border-slate-200 shadow-md" />
 
                     <div class="flex flex-col gap-0 text-md text-stone-700">
                         <span id="current-status" class="px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full bg-slate-100 text-stone-700 border border-slate-200">
@@ -131,9 +157,9 @@ class="w-full h-full">
                     PREVIOUS ENTRY
                 </h2>
 
-                <div class="flex gap-4 items-center">
+                <div class="entry-body">
                     <img id="previous-image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f1f5f9'/%3E%3Ccircle cx='150' cy='112' r='46' fill='%23cbd5e1'/%3E%3Cpath d='M72 244c16-42 52-68 78-68s62 26 78 68' fill='%23cbd5e1'/%3E%3C/svg%3E"
-                        class="w-[300px] h-[300px] object-cover rounded-lg border border-slate-200 shadow-md" />
+                        class="entry-photo object-cover rounded-lg border border-slate-200 shadow-md" />
 
                     <div class="flex flex-col gap-0 text-md text-stone-700">
                         <span id="previous-status" class="px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full bg-slate-100 text-stone-700 border border-slate-200">
@@ -189,6 +215,16 @@ class="w-full h-full">
             </div>
         </div>
 
+        <button
+            type="button"
+            id="fullscreen-prompt"
+            class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/70 px-4 text-white backdrop-blur-sm"
+        >
+            <span class="rounded-2xl border border-white/25 bg-white/10 px-6 py-4 text-center text-lg font-semibold shadow-2xl">
+                Click to enter full screen
+            </span>
+        </button>
+
         <script>
             const phTimeEl = document.getElementById('ph-time');
             const phDateEl = document.getElementById('ph-date');
@@ -207,6 +243,7 @@ class="w-full h-full">
             const messageModalText = document.getElementById('message-modal-text');
             const shortcutModal = document.getElementById('shortcut-modal');
             const shortcutOptions = shortcutModal ? Array.from(shortcutModal.querySelectorAll('[data-shortcut-option]')) : [];
+            const fullscreenPrompt = document.getElementById('fullscreen-prompt');
             const manualEntryEnabled = @json($manualEntryEnabled);
             const rfidLoginEnabled = @json($rfidLoginEnabled);
             let lastSignature = null;
@@ -827,6 +864,7 @@ class="w-full h-full">
 
             function requestForcedFullscreen() {
                 if (isFullscreenActive()) {
+                    updateFullscreenPrompt();
                     return;
                 }
 
@@ -839,7 +877,18 @@ class="w-full h-full">
                     return;
                 }
 
-                Promise.resolve(requestFullscreen.call(page)).catch(() => {});
+                Promise.resolve(requestFullscreen.call(page))
+                    .then(updateFullscreenPrompt)
+                    .catch(updateFullscreenPrompt);
+            }
+
+            function updateFullscreenPrompt() {
+                if (!fullscreenPrompt) {
+                    return;
+                }
+
+                fullscreenPrompt.classList.toggle('hidden', isFullscreenActive());
+                fullscreenPrompt.classList.toggle('flex', !isFullscreenActive());
             }
 
             function installForcedFullscreen() {
@@ -847,6 +896,7 @@ class="w-full h-full">
                     return;
                 }
 
+                updateFullscreenPrompt();
                 requestForcedFullscreen();
 
                 ['pointerdown', 'touchstart', 'keydown'].forEach((eventName) => {
@@ -856,6 +906,7 @@ class="w-full h-full">
                 document.addEventListener('fullscreenchange', requestForcedFullscreen);
                 document.addEventListener('webkitfullscreenchange', requestForcedFullscreen);
                 document.addEventListener('msfullscreenchange', requestForcedFullscreen);
+                fullscreenPrompt?.addEventListener('click', requestForcedFullscreen);
             }
 
             updatePhilippineClock();
