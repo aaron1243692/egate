@@ -1,14 +1,26 @@
 @extends('layouts.app')
-@section('title', 'Roles')
+@section('title', 'Role Management')
 @section('content')
 
-<main class="w-full p-2 gap-2 flex flex-1 flex-col overflow-hidden">
-    <h3 class="text-lg font-semibold text-slate-800">Roles</h3>
+<main class="eg-access-page">
+    <section class="eg-access-hero">
+        <div>
+            <p class="eg-access-kicker">Access Control</p>
+            <h1 class="eg-access-title">Role Management</h1>
+            <p class="eg-access-subtitle">Manage system roles and control module permissions for EGate administrators.</p>
+        </div>
+    </section>
 
-    <section class="w-full flex flex-1 justify-center p-2 overflow-hidden">
-        <div class="w-full bg-white rounded-md shadow-sm overflow-hidden border border-slate-200 flex flex-col min-h-0">
-            <div class="w-full px-3 py-3 border-b border-slate-200 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                <div class="w-full md:max-w-sm">
+    <section class="eg-access-guide-grid" aria-label="Role management guide">
+        <article class="eg-access-guide-card">Roles define access groups.</article>
+        <article class="eg-access-guide-card">Permissions control actions.</article>
+        <article class="eg-access-guide-card">Changes affect admin access immediately.</article>
+    </section>
+
+    <section class="eg-access-card">
+        <div class="eg-access-card-inner">
+            <div class="eg-access-toolbar">
+                <div class="eg-access-search">
                     <label for="search-roles" class="sr-only">Search roles</label>
                     <input
                         id="search-roles"
@@ -21,14 +33,14 @@
                 @can('roles.create')<button
                     type="button"
                     id="open-add-role-modal"
-                    class="rounded-full bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
+                    class="eg-access-button eg-access-button--primary"
                 >
                     Add Role
                 </button>@endcan
             </div>
 
-            <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
-                <table class="w-full text-left">
+            <div class="eg-access-table-wrap">
+                <table class="eg-access-table">
                     <thead class="sticky top-0 z-10 bg-blue-600 text-black">
                         <tr>
                             <th class="px-3 py-2.5">No.</th>
@@ -46,7 +58,7 @@
                 </table>
             </div>
 
-            <div class="px-3 py-2.5 border-t border-slate-200 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div class="eg-access-footer">
                 <p id="table-summary" class="text-sm text-slate-600">Preparing role list...</p>
                 <div id="pagination" class="flex flex-wrap items-center justify-end gap-1.5"></div>
             </div>
@@ -54,9 +66,9 @@
     </section>
 </main>
 
-<div id="role-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-md rounded-xl bg-white p-4 shadow-2xl">
-        <form id="role-form" class="flex flex-col items-center gap-2">
+<div id="role-modal" class="eg-access-modal fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div class="eg-access-modal-panel w-full max-w-md rounded-xl bg-white p-4 shadow-2xl">
+        <form id="role-form" class="eg-access-form flex flex-col items-center gap-2">
             <input type="hidden" id="role-id">
 
             <div class="w-full flex items-center justify-between">
@@ -82,17 +94,20 @@
     </div>
 </div>
 
-<div id="permissions-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4 py-4">
-    <div class="w-full max-w-4xl max-h-[calc(100vh-2rem)] rounded-xl bg-white p-4 shadow-2xl overflow-hidden">
-        <form id="permissions-form" class="flex max-h-[calc(100vh-4rem)] min-h-0 flex-col gap-3">
+<div id="permissions-modal" class="eg-access-modal fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4 py-4">
+    <div class="eg-access-modal-panel w-full max-w-4xl max-h-[calc(100vh-2rem)] rounded-xl bg-white p-4 shadow-2xl overflow-hidden">
+        <form id="permissions-form" class="eg-access-form flex max-h-[calc(100vh-4rem)] min-h-0 flex-col gap-3">
             <input type="hidden" id="permissions-role-id">
 
             <div class="w-full flex items-center justify-between">
-                <h4 id="permissions-modal-title" class="text-lg font-bold text-gray-900">Modify Permissions</h4>
+                <div>
+                    <h4 id="permissions-modal-title" class="text-lg font-bold text-gray-900">Modify Permissions</h4>
+                    <p class="eg-access-modal-help">Select the actions this role can access. Save changes carefully because this affects account access.</p>
+                </div>
                 <button type="button" data-close-modal="permissions-modal" class="rounded-full px-2 py-1 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-700">X</button>
             </div>
 
-            <div id="permissions-card-list" class="grid min-h-0 gap-3 overflow-y-auto pr-1 md:grid-cols-2">
+            <div id="permissions-card-list" class="eg-access-permission-grid grid min-h-0 gap-3 overflow-y-auto pr-1 md:grid-cols-2">
                 <div class="rounded-xl border border-slate-200 p-3 text-sm text-slate-500">Loading permissions...</div>
             </div>
 
@@ -109,8 +124,8 @@
     </div>
 </div>
 
-<div id="delete-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-sm rounded-xl bg-white p-4 shadow-2xl flex flex-col items-center text-center">
+<div id="delete-modal" class="eg-access-modal fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div class="eg-access-modal-panel w-full max-w-sm rounded-xl bg-white p-4 shadow-2xl flex flex-col items-center text-center">
         <div class="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-500">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
@@ -132,8 +147,8 @@
     </div>
 </div>
 
-<div id="message-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div id="message-modal-panel" class="w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200">
+<div id="message-modal" class="eg-access-modal eg-access-message fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div id="message-modal-panel" class="eg-access-modal-panel w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200">
         <div id="message-modal-icon" class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-500">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 21a9 9 0 100-18 9 9 0 000 18z"></path>
@@ -271,22 +286,25 @@
 
             if (canUpdateRoles) {
                 buttons.push(`
-                    <button type="button" data-action="edit" data-id="${role.id}" class="transition duration-200 hover:scale-110">
+                    <button type="button" data-action="edit" data-id="${role.id}" class="eg-access-action" aria-label="Edit role">
                         <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="edit role">
+                        <span>Edit</span>
                     </button>
                 `);
 
                 buttons.push(`
-                    <button type="button" data-action="permissions" data-id="${role.id}" data-name="${escapeHtml(role.name)}" class="transition duration-200 hover:scale-110">
+                    <button type="button" data-action="permissions" data-id="${role.id}" data-name="${escapeHtml(role.name)}" class="eg-access-action" aria-label="Manage permissions">
                         <img src="{{ asset('icons/crown.png') }}" class="w-7 h-7" alt="modify permissions">
+                        <span>Permissions</span>
                     </button>
                 `);
             }
 
             if (canDeleteRoles) {
                 buttons.push(`
-                    <button type="button" data-action="delete" data-id="${role.id}" data-name="${escapeHtml(role.name)}" class="transition duration-200 hover:scale-110">
+                    <button type="button" data-action="delete" data-id="${role.id}" data-name="${escapeHtml(role.name)}" class="eg-access-action eg-access-action--danger" aria-label="Delete role">
                         <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete role">
+                        <span>Delete</span>
                     </button>
                 `);
             }
@@ -299,12 +317,12 @@
         };
 
         tableBody.innerHTML = roles.map((role, index) => `
-            <tr class="border-b border-black hover:bg-gray-50 transition">
+            <tr class="eg-access-row">
                 <td class="px-3 py-2.5">${from + index}</td>
                 <td class="px-3 py-2.5">${role.id}</td>
                 <td class="px-3 py-2.5">${escapeHtml(role.name)}</td>
                 <td class="px-3 py-2.5">
-                    <div class="flex flex-row justify-center items-center gap-2.5">
+                    <div class="eg-access-action-group">
                         ${buildActionButtons(role)}
                     </div>
                 </td>
@@ -401,15 +419,15 @@
         }
 
         permissionsCardList.innerHTML = parents.map((parent) => `
-            <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                <label class="flex items-center gap-3 text-base font-semibold text-slate-800">
+            <div class="eg-access-permission-card rounded-xl">
+                <label class="eg-access-permission-parent flex items-center gap-3 text-base font-semibold text-slate-800">
                     <input type="checkbox" class="permission-parent h-4 w-4 accent-blue-600" value="${parent.id}" ${parent.checked ? 'checked' : ''}>
                     <span>${escapeHtml(parent.name)}</span>
                 </label>
-                <div class="mt-3 flex flex-col gap-2 pl-2">
+                <div class="eg-access-permission-children mt-3 flex flex-col gap-2 pl-2">
                     ${(parent.children || []).length
                         ? parent.children.map((child) => `
-                            <label class="flex items-center gap-3 text-sm text-slate-700">
+                            <label class="eg-access-permission-child-row flex items-center gap-3 text-sm text-slate-700">
                                 <input type="checkbox" class="permission-child h-4 w-4 accent-blue-600" value="${child.id}" data-parent-id="${parent.id}" ${child.checked ? 'checked' : ''}>
                                 <span>${escapeHtml(child.name)}</span>
                             </label>

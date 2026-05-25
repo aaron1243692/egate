@@ -1,6 +1,11 @@
 @import 'tailwindcss';
 @import 'bootstrap/dist/css/bootstrap.min.css';
 @import './egate-admin-shell.css';
+@import './egate-dashboard.css';
+@import './egate-report-tables.css';
+@import './egate-setup.css';
+@import './egate-access-control.css';
+@import './egate-auth-kiosk.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';

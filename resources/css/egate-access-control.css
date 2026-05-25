@@ -1,0 +1,388 @@
+.eg-access-page {
+    --eg-access-blue: #075cb7;
+    --eg-access-blue-dark: #064990;
+    --eg-access-border: #e1e7f0;
+    --eg-access-muted: #667085;
+    width: 100%;
+    min-height: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: clamp(1rem, 2vw, 1.5rem);
+    overflow: hidden;
+    background: #f5f7fb;
+    color: #17233b;
+}
+
+.eg-access-hero {
+    flex: none;
+}
+
+.eg-access-kicker {
+    margin: 0 0 0.2rem;
+    color: var(--eg-access-blue);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.eg-access-title {
+    margin: 0;
+    color: #101828;
+    font-size: clamp(1.55rem, 2vw, 1.9rem);
+    font-weight: 750;
+    letter-spacing: -0.035em;
+    line-height: 1.15;
+}
+
+.eg-access-subtitle {
+    max-width: 52rem;
+    margin: 0.35rem 0 0;
+    color: var(--eg-access-muted);
+    font-size: 0.94rem;
+}
+
+.eg-access-guide-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.eg-access-guide-card {
+    border: 1px solid var(--eg-access-border);
+    border-radius: 0.9rem;
+    background: #ffffff;
+    padding: 0.82rem 0.95rem;
+    color: #344054;
+    font-size: 0.86rem;
+    font-weight: 650;
+    box-shadow: 0 10px 24px rgba(15, 36, 70, 0.045);
+}
+
+.eg-access-card {
+    min-height: 0;
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    border: 1px solid var(--eg-access-border);
+    border-radius: 1.1rem;
+    background: #ffffff;
+    box-shadow: 0 16px 38px rgba(15, 36, 70, 0.06);
+}
+
+.eg-access-card-inner {
+    width: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.eg-access-toolbar {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.9rem;
+    padding: 1rem;
+    border-bottom: 1px solid var(--eg-access-border);
+    background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+}
+
+.eg-access-search {
+    width: min(100%, 29rem);
+}
+
+.eg-access-page .eg-access-search input,
+.eg-access-modal .eg-access-modal-panel input,
+.eg-access-modal .eg-access-modal-panel select {
+    min-height: 2.65rem;
+    border: 1px solid #d7deea;
+    border-radius: 0.72rem;
+    background: #ffffff;
+    padding: 0.6rem 0.82rem;
+    color: #17233b;
+    font-size: 0.875rem;
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.eg-access-page .eg-access-search input:focus,
+.eg-access-modal .eg-access-modal-panel input:focus,
+.eg-access-modal .eg-access-modal-panel select:focus {
+    border-color: #4d94e7;
+    box-shadow: 0 0 0 3px rgba(7, 92, 183, 0.13);
+    outline: none;
+}
+
+.eg-access-button {
+    min-height: 2.55rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 0.55rem 1rem;
+    font-size: 0.84rem;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: transform 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+.eg-access-button:hover {
+    transform: translateY(-1px);
+}
+
+.eg-access-button--primary {
+    border: 1px solid var(--eg-access-blue);
+    background: linear-gradient(180deg, #1474d5, var(--eg-access-blue));
+    color: #ffffff;
+    box-shadow: 0 7px 14px rgba(7, 92, 183, 0.18);
+}
+
+.eg-access-table-wrap {
+    min-height: 0;
+    flex: 1;
+    overflow: auto;
+    scrollbar-color: #cbd6e5 transparent;
+    scrollbar-width: thin;
+}
+
+.eg-access-table {
+    width: 100%;
+    min-width: 45rem;
+    border-collapse: separate;
+    border-spacing: 0;
+    color: #23324a;
+    font-size: 0.875rem;
+    text-align: left;
+}
+
+.eg-access-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.eg-access-table thead th {
+    border: 0;
+    background: linear-gradient(180deg, #126cc8 0%, var(--eg-access-blue) 100%);
+    color: #ffffff;
+    padding: 0.8rem 0.9rem;
+    font-size: 0.76rem;
+    font-weight: 750;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.eg-access-table tbody td {
+    border-bottom: 1px solid #edf1f6;
+    padding: 0.76rem 0.9rem;
+    vertical-align: middle;
+}
+
+.eg-access-table .eg-access-row,
+.eg-access-table tbody tr {
+    background: #ffffff;
+    transition: background-color 150ms ease;
+}
+
+.eg-access-table .eg-access-row:hover,
+.eg-access-table tbody tr:hover {
+    background: #f5f9ff;
+}
+
+.eg-access-table tbody td[colspan] {
+    padding: 2.5rem 1rem;
+    color: var(--eg-access-muted);
+}
+
+.eg-access-action-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+}
+
+.eg-access-action {
+    display: inline-flex;
+    min-height: 2.1rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.32rem;
+    border: 1px solid #e1e8f2;
+    border-radius: 0.65rem;
+    background: #ffffff;
+    padding: 0.35rem 0.55rem;
+    color: #344054;
+    font-size: 0.75rem;
+    font-weight: 700;
+    transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+
+.eg-access-action:hover {
+    border-color: #c2d5ec;
+    background: #eff6ff;
+    transform: translateY(-1px);
+}
+
+.eg-access-action--danger:hover {
+    border-color: #fecaca;
+    background: #fff1f2;
+}
+
+.eg-access-action img {
+    width: 1rem;
+    height: 1rem;
+    object-fit: contain;
+}
+
+.eg-access-badge {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #cfe0f5;
+    border-radius: 999px;
+    background: #eff6ff;
+    padding: 0.28rem 0.65rem;
+    color: var(--eg-access-blue-dark);
+    font-size: 0.76rem;
+    font-weight: 750;
+}
+
+.eg-access-footer {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.78rem 1rem;
+    border-top: 1px solid var(--eg-access-border);
+    background: #ffffff;
+}
+
+.eg-access-footer #table-summary {
+    margin: 0;
+    color: var(--eg-access-muted);
+    font-size: 0.82rem;
+}
+
+.eg-access-footer #pagination {
+    gap: 0.35rem;
+}
+
+.eg-access-footer #pagination button {
+    min-width: 2.15rem;
+    min-height: 2.15rem;
+    border-radius: 0.62rem;
+    font-size: 0.8rem;
+    font-weight: 650;
+    transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.eg-access-footer #pagination button:not(:disabled):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(8, 42, 87, 0.09);
+}
+
+.eg-access-modal {
+    --eg-access-blue: #075cb7;
+    --eg-access-blue-dark: #064990;
+    --eg-access-border: #e1e7f0;
+    --eg-access-muted: #667085;
+    background: rgba(15, 23, 42, 0.48);
+    backdrop-filter: blur(5px);
+}
+
+.eg-access-modal .eg-access-modal-panel {
+    border: 1px solid rgba(226, 232, 240, 0.92);
+    border-radius: 1.1rem;
+    box-shadow: 0 24px 55px rgba(15, 23, 42, 0.22);
+}
+
+.eg-access-form label {
+    color: #4b5c72;
+    font-size: 0.8rem;
+    font-weight: 650;
+}
+
+.eg-access-form-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.eg-access-form-span {
+    grid-column: 1 / -1;
+}
+
+.eg-access-modal-help {
+    max-width: 38rem;
+    margin: 0.25rem 0 0;
+    color: var(--eg-access-muted);
+    font-size: 0.82rem;
+    line-height: 1.45;
+}
+
+.eg-access-permission-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.eg-access-permission-card {
+    border: 1px solid #e1e7f0;
+    background: #f8fbff;
+    padding: 0.9rem;
+}
+
+.eg-access-permission-parent {
+    border-bottom: 1px solid #e5edf7;
+    padding-bottom: 0.65rem;
+}
+
+.eg-access-permission-child-row {
+    border-radius: 0.7rem;
+    background: #ffffff;
+    padding: 0.55rem 0.65rem;
+}
+
+@media (max-width: 900px) {
+    .eg-access-guide-grid,
+    .eg-access-permission-grid,
+    .eg-access-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .eg-access-form-span {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 767px) {
+    .eg-access-page {
+        padding: 0.8rem;
+        overflow-y: auto;
+    }
+
+    .eg-access-card {
+        min-height: 34rem;
+    }
+
+    .eg-access-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .eg-access-search {
+        width: 100%;
+    }
+
+    .eg-access-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .eg-access-footer #pagination {
+        justify-content: flex-start;
+    }
+}

@@ -1,14 +1,26 @@
 @extends('layouts.app')
-@section('title', 'users')
+@section('title', 'User Management')
 @section('content')
 
-<main class="w-full p-2 gap-2 flex flex-1 flex-col overflow-hidden">
-    <h3 class="text-lg font-semibold text-slate-800">User Accounts</h3>
+<main class="eg-access-page">
+    <section class="eg-access-hero">
+        <div>
+            <p class="eg-access-kicker">Access Control</p>
+            <h1 class="eg-access-title">User Management</h1>
+            <p class="eg-access-subtitle">Create admin accounts, assign roles, and manage account access.</p>
+        </div>
+    </section>
 
-    <section class="w-full flex flex-1 justify-center p-2 overflow-hidden">
-        <div class="w-full bg-white rounded-md shadow-sm overflow-hidden border border-slate-200 flex flex-col min-h-0">
-            <div class="w-full px-3 py-3 border-b border-slate-200 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                <div class="w-full md:max-w-sm">
+    <section class="eg-access-guide-grid" aria-label="User management guide">
+        <article class="eg-access-guide-card">Assign each user one role.</article>
+        <article class="eg-access-guide-card">Use password reset for account recovery.</article>
+        <article class="eg-access-guide-card">Do not delete the last admin account.</article>
+    </section>
+
+    <section class="eg-access-card">
+        <div class="eg-access-card-inner">
+            <div class="eg-access-toolbar">
+                <div class="eg-access-search">
                     <label for="search-users" class="sr-only">Search users</label>
                     <input
                         id="search-users"
@@ -21,14 +33,14 @@
                 @can('users.create')<button
                     type="button"
                     id="open-add-user-modal"
-                    class="rounded-full bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
+                    class="eg-access-button eg-access-button--primary"
                 >
                     Add User
                 </button>@endcan
             </div>
 
-            <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
-                <table class="w-full text-left">
+            <div class="eg-access-table-wrap">
+                <table class="eg-access-table">
                     <thead class="sticky top-0 z-10 bg-blue-600 text-black">
                         <tr>
                             <th class="px-3 py-2.5">No.</th>
@@ -48,7 +60,7 @@
                 </table>
             </div>
 
-            <div class="px-3 py-2.5 border-t border-slate-200 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div class="eg-access-footer">
                 <p id="table-summary" class="text-sm text-slate-600">Preparing user list...</p>
                 <div id="pagination" class="flex flex-wrap items-center justify-end gap-1.5"></div>
             </div>
@@ -56,15 +68,16 @@
     </section>
 </main>
 
-<div id="user-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-md rounded-xl bg-white p-4 shadow-2xl">
-        <form id="user-form" class="flex flex-col items-center gap-2">
+<div id="user-modal" class="eg-access-modal fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div class="eg-access-modal-panel w-full max-w-2xl rounded-xl bg-white p-4 shadow-2xl">
+        <form id="user-form" class="eg-access-form flex flex-col items-center gap-2">
             <input type="hidden" id="user-id">
             <div class="w-full flex items-center justify-between">
                 <h4 id="user-modal-title" class="text-lg font-bold text-gray-900">Add User</h4>
                 <button type="button" data-close-modal="user-modal" class="rounded-full px-2 py-1 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-700">X</button>
             </div>
 
+            <div class="eg-access-form-grid">
             <div class="w-full gap-1 flex flex-col">
                 <label for="username">Username</label>
                 <input id="username" name="username" type="text" class="w-full rounded-full border-1 border-black/70 px-3 py-2 outline-none">
@@ -85,11 +98,12 @@
                 <input id="password_confirmation" name="password_confirmation" type="password" class="w-full rounded-full border-1 border-black/70 px-3 py-2 outline-none">
             </div>
 
-            <div class="w-full gap-1 flex flex-col">
+            <div class="w-full gap-1 flex flex-col eg-access-form-span">
                 <label for="role">Role</label>
                 <select id="role" name="role" class="w-full rounded-full border-1 border-black/70 px-3 py-2 outline-none bg-white">
                     <option value="">Select role</option>
                 </select>
+            </div>
             </div>
 
             <div class="w-full flex justify-center gap-2 pt-2">
@@ -113,12 +127,15 @@
     </div>
 </div>
 
-<div id="password-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-md rounded-xl bg-white p-4 shadow-2xl">
-        <form id="password-form" class="flex flex-col items-center gap-2">
+<div id="password-modal" class="eg-access-modal fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div class="eg-access-modal-panel w-full max-w-md rounded-xl bg-white p-4 shadow-2xl">
+        <form id="password-form" class="eg-access-form flex flex-col items-center gap-2">
             <input type="hidden" id="password-user-id">
             <div class="w-full flex items-center justify-between">
-                <h4 class="text-lg font-bold text-gray-900">Change Password</h4>
+                <div>
+                    <h4 class="text-lg font-bold text-gray-900">Change Password</h4>
+                    <p class="eg-access-modal-help">Set a new password for this user. The user can sign in using the updated password after saving.</p>
+                </div>
                 <button type="button" data-close-modal="password-modal" class="rounded-full px-2 py-1 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-700">X</button>
             </div>
 
@@ -153,8 +170,8 @@
     </div>
 </div>
 
-<div id="delete-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-sm rounded-xl bg-white p-4 shadow-2xl flex flex-col items-center text-center">
+<div id="delete-modal" class="eg-access-modal fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div class="eg-access-modal-panel w-full max-w-sm rounded-xl bg-white p-4 shadow-2xl flex flex-col items-center text-center">
         <div class="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-500">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
@@ -162,7 +179,7 @@
         </div>
         <div class="space-y-2">
             <h4 class="text-xl font-semibold text-gray-900">Delete User</h4>
-            <p id="delete-modal-text" class="text-sm text-gray-500 leading-relaxed">Are you sure you want to delete this user?</p>
+            <p id="delete-modal-text" class="text-sm text-gray-500 leading-relaxed">This will remove the user account. This action cannot be undone.</p>
         </div>
         <div class="mt-6 w-full grid grid-cols-2 gap-2 justify-items-center">
 
@@ -184,8 +201,8 @@
     </div>
 </div>
 
-<div id="message-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div id="message-modal-panel" class="w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200">
+<div id="message-modal" class="eg-access-modal eg-access-message fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div id="message-modal-panel" class="eg-access-modal-panel w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200">
         <div id="message-modal-icon" class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-500">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 21a9 9 0 100-18 9 9 0 000 18z"></path>
@@ -271,7 +288,7 @@
         };
         const activeTone = tones[tone] || tones.info;
 
-        messageModalPanel.className = 'w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200';
+        messageModalPanel.className = 'eg-access-modal-panel w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200';
         messageModalIcon.className = `mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full ${activeTone.icon}`;
         messageModalTitle.textContent = activeTone.title;
         messageModalText.className = 'text-sm text-gray-500 leading-relaxed';
@@ -349,24 +366,27 @@
 
             if (canUpdateUsers) {
                 buttons.push(`
-                    <button type="button" class="transition duration-200 hover:scale-110" data-action="edit" data-id="${user.id}">
+                    <button type="button" class="eg-access-action" data-action="edit" data-id="${user.id}" aria-label="Edit user">
                         <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="edit user">
+                        <span>Edit</span>
                     </button>
                 `);
             }
 
             if (canUpdateUserPasswords) {
                 buttons.push(`
-                    <button type="button" class="transition duration-200 hover:scale-110" data-action="password" data-id="${user.id}" data-username="${escapeHtml(user.username)}">
+                    <button type="button" class="eg-access-action" data-action="password" data-id="${user.id}" data-username="${escapeHtml(user.username)}" aria-label="Change password">
                         <img src="{{ asset('icons/key.png') }}" class="w-7 h-7" alt="change password">
+                        <span>Password</span>
                     </button>
                 `);
             }
 
             if (canDeleteUsers) {
                 buttons.push(`
-                    <button type="button" class="transition duration-200 hover:scale-110" data-action="delete" data-id="${user.id}" data-username="${escapeHtml(user.username)}">
+                    <button type="button" class="eg-access-action eg-access-action--danger" data-action="delete" data-id="${user.id}" data-username="${escapeHtml(user.username)}" aria-label="Delete user">
                         <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete user">
+                        <span>Delete</span>
                     </button>
                 `);
             }
@@ -379,14 +399,14 @@
         };
 
         tableBody.innerHTML = users.map((user, index) => `
-            <tr class="border-b border-black hover:bg-gray-50 transition">
+            <tr class="eg-access-row">
                 <td class="px-3 py-2.5">${from + index}</td>
                 <td class="px-3 py-2.5">${user.id}</td>
                 <td class="px-3 py-2.5">${escapeHtml(user.username)}</td>
                 <td class="px-3 py-2.5">${escapeHtml(user.email)}</td>
-                <td class="px-3 py-2.5">${escapeHtml(roleNames(user))}</td>
+                <td class="px-3 py-2.5"><span class="eg-access-badge">${escapeHtml(roleNames(user))}</span></td>
                 <td class="px-3 py-2.5">
-                    <div class="flex flex-row justify-center items-center gap-2.5">
+                    <div class="eg-access-action-group">
                         ${buildActionButtons(user)}
                     </div>
                 </td>
@@ -550,7 +570,7 @@
     function openDeleteModal(userId, username) {
         hideMessage();
         userToDelete = userId;
-        deleteModalText.textContent = `Are you sure you want to delete ${username}?`;
+        deleteModalText.textContent = `This will remove the user account for ${username}. This action cannot be undone.`;
         openModal(deleteModal);
     }
 
