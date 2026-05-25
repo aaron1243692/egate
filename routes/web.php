@@ -7,6 +7,8 @@ use App\Http\Controllers\EgateLogoutController;
 use App\Http\Controllers\EgateLogSyncController;
 use App\Http\Controllers\GateEntryController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\SetSchEmployeeController;
+use App\Http\Controllers\SetSchScheduleController;
 use App\Http\Controllers\DataController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\LogController;
@@ -40,6 +42,29 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/welcome', EgateDashboardController::class)->name('welcome');
 
     Route::get('admin/dashboard', AdminDashboardController::class)->name('admin.dashboard');
+
+    Route::prefix('admin/setup')->name('admin.setup.')->group(function () {
+        Route::get('/', function () {
+            return view('admin.Setup.index');
+        })->name('index');
+
+        Route::get('/schedules', [SetSchScheduleController::class, 'index'])->name('schedules');
+        Route::prefix('schedules')->controller(SetSchScheduleController::class)->name('schedules.')->group(function () {
+            Route::get('/fetch', 'fetch')->name('fetch');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{id}/details', 'details')->name('details');
+            Route::post('/{id}/details', 'saveDetails')->name('details.save');
+            Route::get('/{id}', 'show')->name('show');
+            Route::put('/{id}', 'update')->name('update');
+            Route::delete('/{id}', 'destroy')->name('destroy');
+        });
+
+        Route::prefix('employee')->controller(SetSchEmployeeController::class)->name('employee.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/fetch', 'fetch')->name('fetch');
+            Route::put('/{id}/schedule', 'updateSchedule')->name('schedule.update');
+        });
+    });
 
     Route::prefix('admin/data')->controller(DataController::class)->name('admin.data')->group(function () {
         Route::get('/', 'index')->middleware('permission:data.view');

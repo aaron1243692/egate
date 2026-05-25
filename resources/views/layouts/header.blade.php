@@ -9,6 +9,9 @@
     </h5>
 
     <nav class="flex flex-1 items-center justify-start gap-1">
+        <button type="button" id="setupButton" class="text-white text-lg leading-none text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
+        >Setup</button>
+
         @can('data.view')
         <a href="{{ route('admin.data') }}" class="text-white text-lg leading-none text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
         >Data</a>
@@ -41,3 +44,59 @@
     </a>
 
 </header>
+
+<div id="setup" class="hidden w-full gap-2 py-2 px-3 m-0
+flex flex-row justify-start items-center
+">
+
+    <div class="w-fit py-2 px-3
+    flex flex-col gap-3
+    bg-white shadow-md
+    border border-gray-300 rounded-2xl
+    ">
+
+        <label class="text-sm font-semibold text-black tracking-wide">
+            Schedules
+        </label>
+
+        <div class="w-full grid grid-cols-3 gap-2">
+
+            <a href="{{ route('admin.setup.schedules') }}"
+                class="flex items-center justify-center
+                text-black/70 text-sm font-medium text-decoration-none
+                py-1 px-2 bg-gray-100 rounded-xl
+                transition duration-200 hover:scale-110"
+            >
+                Schedules
+            </a>
+
+            <a href="{{ route('admin.setup.employee.index') }}"
+                class="flex items-center justify-center
+                text-black/70 text-sm font-medium text-decoration-none
+                py-1 px-2 bg-gray-100 rounded-xl
+                transition duration-200 hover:scale-110"
+            >
+                Employees
+            </a>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const setupButton = document.getElementById('setupButton');
+        const setup = document.getElementById('setup');
+
+        setupButton?.addEventListener('click', () => {
+            setup?.classList.remove('hidden');
+        });
+
+        setup?.querySelectorAll('a').forEach((link) => {
+            link.addEventListener('click', () => {
+                setup.classList.add('hidden');
+            });
+        });
+    });
+</script>

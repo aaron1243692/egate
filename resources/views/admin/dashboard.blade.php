@@ -15,8 +15,8 @@
                 <label for="status" class="text-sm font-medium text-slate-700">Status</label>
                 <select id="status" name="status" class="w-full rounded-full border border-slate-300 bg-white px-3 py-1.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
                     <option value="">All status</option>
-                    <option value="1" @selected($filters['status'] === '1')>Log In</option>
-                    <option value="0" @selected($filters['status'] === '0')>Log Out</option>
+                    <option value="1" @selected($filters['status'] === '1')>Time In</option>
+                    <option value="0" @selected($filters['status'] === '0')>Time Out</option>
                     <option value="2" @selected($filters['status'] === '2')>N/A</option>
                 </select>
             </div>
@@ -80,11 +80,11 @@
                 <p class="mt-1 text-2xl font-bold text-slate-900">{{ number_format($logSummary['total']) }}</p>
             </div>
             <div class="rounded-md border border-emerald-200 p-3">
-                <p class="text-xs font-medium text-emerald-600">Log In</p>
+                <p class="text-xs font-medium text-emerald-600">Time In</p>
                 <p class="mt-1 text-2xl font-bold text-emerald-700">{{ number_format($logSummary['log_in']) }}</p>
             </div>
             <div class="rounded-md border border-rose-200 p-3">
-                <p class="text-xs font-medium text-rose-600">Log Out</p>
+                <p class="text-xs font-medium text-rose-600">Time Out</p>
                 <p class="mt-1 text-2xl font-bold text-rose-700">{{ number_format($logSummary['log_out']) }}</p>
             </div>
             <div class="rounded-md border border-amber-200 p-3">

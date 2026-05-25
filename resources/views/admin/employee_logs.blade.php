@@ -118,13 +118,14 @@
                             <th class="px-3 py-2.5">No.</th>
                             <th class="px-3 py-2.5">ID</th>
                             <th class="px-3 py-2.5">Name</th>
+                            <th class="px-3 py-2.5">Schedule</th>
                             <th class="px-3 py-2.5 text-center">Action</th>
                         </tr>
                     </thead>
 
                     <tbody id="logs-table-body" class="divide-y divide-black">
                         <tr>
-                            <td colspan="6" class="px-3 py-5 text-center text-slate-500">Loading logs...</td>
+                            <td colspan="5" class="px-3 py-5 text-center text-slate-500">Loading logs...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -259,7 +260,7 @@ function renderEmployeeRows(employees, from) {
     if (!employees.length) {
         logsTableBody.innerHTML = `
             <tr>
-                <td colspan="4" class="px-3 py-5 text-center text-slate-500">
+                <td colspan="5" class="px-3 py-5 text-center text-slate-500">
                     No employees found.
                 </td>
             </tr>
@@ -288,6 +289,7 @@ function renderEmployeeRows(employees, from) {
                 <td class="px-3 py-2.5">${from + index}</td>
                 <td class="px-3 py-2.5">${escapeHtml(emp.student_number ?? 'N/A')}</td>
                 <td class="px-3 py-2.5">${escapeHtml(emp.name ?? 'N/A')}</td>
+                <td class="px-3 py-2.5">${escapeHtml(emp.schedule_name ?? 'Default Schedule (8:00 AM - 5:00 PM)')}</td>
                 <td class="px-3 py-2.5">
                     <div class="flex justify-center items-center gap-4">
                         ${actionButtons}
@@ -305,7 +307,7 @@ async function fetchLogs(page = 1) {
 
     logsTableBody.innerHTML = `
         <tr>
-            <td colspan="4" class="px-3 py-5 text-center text-slate-500">
+            <td colspan="5" class="px-3 py-5 text-center text-slate-500">
                 Loading employees...
             </td>
         </tr>
@@ -348,7 +350,7 @@ async function fetchLogs(page = 1) {
     } catch (error) {
         logsTableBody.innerHTML = `
             <tr>
-                <td colspan="4" class="px-3 py-5 text-center text-rose-600">
+                <td colspan="5" class="px-3 py-5 text-center text-rose-600">
                     Failed to load employees.
                 </td>
             </tr>

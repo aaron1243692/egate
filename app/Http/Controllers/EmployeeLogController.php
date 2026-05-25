@@ -17,7 +17,7 @@ class EmployeeLogController extends Controller
         abort_unless(auth()->user()?->can('emlog.view'), 403);
 
         $departments = DB::table('egate_data')
-            ->where('role', 2)
+            ->where('egate_data.role', 2)
             ->whereNotNull('department')
             ->where('department', '!=', '')
             ->distinct()
@@ -35,30 +35,34 @@ class EmployeeLogController extends Controller
         $department = trim((string) $request->get('department', ''));
 
         $employees = DB::table('egate_data')
+            ->leftJoin('schedules', 'schedules.id', '=', 'egate_data.sched')
             ->where('role', 2)
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($innerQuery) use ($search) {
                     $innerQuery
-                        ->where('id', 'like', "%{$search}%")
-                        ->orWhere('student_number', 'like', "%{$search}%")
-                        ->orWhere('lrn', 'like', "%{$search}%")
-                        ->orWhere('name', 'like', "%{$search}%");
+                        ->where('egate_data.id', 'like', "%{$search}%")
+                        ->orWhere('egate_data.student_number', 'like', "%{$search}%")
+                        ->orWhere('egate_data.lrn', 'like', "%{$search}%")
+                        ->orWhere('egate_data.name', 'like', "%{$search}%")
+                        ->orWhere('schedules.name', 'like', "%{$search}%");
                 });
             })
             ->when($department !== '', function ($query) use ($department) {
-                $query->where('department', $department);
+                $query->where('egate_data.department', $department);
             })
             ->select([
-                'id',
-                'student_number',
-                'lrn',
-                'rfid',
-                'name',
-                'email',
-                'contact',
-                'department',
-                'course',
-                'grade_level',
+                'egate_data.id',
+                'egate_data.student_number',
+                'egate_data.lrn',
+                'egate_data.rfid',
+                'egate_data.name',
+                'egate_data.email',
+                'egate_data.contact',
+                'egate_data.department',
+                'egate_data.course',
+                'egate_data.grade_level',
+                'egate_data.sched',
+                'schedules.name as schedule_name',
             ])
             ->paginate(10);
 
@@ -233,7 +237,7 @@ class EmployeeLogController extends Controller
             ->when($department !== '', function ($query) use ($department) {
                 $query->where('department', $department);
             })
-            ->select(['id', 'student_number', 'name', 'contact', 'email']);
+            ->select(['id', 'student_number', 'name', 'contact', 'email', 'sched']);
     }
 
     private function findEmployeeForDtr(string $studentId): ?object
@@ -245,7 +249,7 @@ class EmployeeLogController extends Controller
                     ->where('id', $studentId)
                     ->orWhere('student_number', $studentId);
             })
-            ->select(['id', 'student_number', 'name', 'contact', 'email'])
+            ->select(['id', 'student_number', 'name', 'contact', 'email', 'sched'])
             ->first();
     }
 
@@ -254,6 +258,7 @@ class EmployeeLogController extends Controller
         $start = Carbon::create($year, $month, 1)->startOfMonth();
         $end = (clone $start)->endOfMonth();
         $daysInMonth = $start->daysInMonth;
+        $employeeSchedule = $this->getEmployeeScheduleDetails($employeeId);
 
         $logsByDay = DB::table('egate_logs')
             ->where(function ($query) use ($employeeId, $studentNumber) {
@@ -288,10 +293,11 @@ class EmployeeLogController extends Controller
             $date = Carbon::create($year, $month, $day);
             $dayLogs = $logsByDay->get($day, collect());
             $times = $this->resolveDtrDayTimes($dayLogs);
-            $lateForDay = $this->calculateLateMinutes($times, $date);
-            $undertimeForDay = $this->calculateUndertimeMinutes($times, $date);
+            $scheduleForDay = $this->resolveScheduleForDate($employeeSchedule, $date);
+            $lateForDay = $this->calculateLateMinutes($times, $date, $scheduleForDay);
+            $undertimeForDay = $this->calculateUndertimeMinutes($times, $date, $scheduleForDay);
             $totalMinutes += $this->calculateWorkedMinutes($times);
-            $absent = $date->isWeekday() && $dayLogs->isEmpty();
+            $absent = $this->isScheduledDay($scheduleForDay, $date) && $dayLogs->isEmpty();
 
             if ($lateForDay > 0) {
                 $lateDays++;
@@ -357,16 +363,68 @@ class EmployeeLogController extends Controller
         return $times;
     }
 
-    private function calculateLateMinutes(array $times, Carbon $date): int
+    private function calculateLateMinutes(array $times, Carbon $date, ?object $scheduleForDay): int
     {
-        return $this->minutesAfter($times['am_in'], $date->copy()->setTime(8, 0))
-            + $this->minutesAfter($times['pm_in'], $date->copy()->setTime(13, 0));
+        $defaults = $this->defaultScheduleTimes();
+
+        return $this->minutesAfter($times['am_in'], $this->scheduledTime($date, $scheduleForDay, 'am_in', $defaults['am_in']))
+            + $this->minutesAfter($times['pm_in'], $this->scheduledTime($date, $scheduleForDay, 'pm_in', $defaults['pm_in']));
     }
 
-    private function calculateUndertimeMinutes(array $times, Carbon $date): int
+    private function calculateUndertimeMinutes(array $times, Carbon $date, ?object $scheduleForDay): int
     {
-        return $this->minutesBefore($times['am_out'], $date->copy()->setTime(12, 0))
-            + $this->minutesBefore($times['pm_out'], $date->copy()->setTime(17, 0));
+        $defaults = $this->defaultScheduleTimes();
+
+        return $this->minutesBefore($times['am_out'], $this->scheduledTime($date, $scheduleForDay, 'am_out', $defaults['am_out']))
+            + $this->minutesBefore($times['pm_out'], $this->scheduledTime($date, $scheduleForDay, 'pm_out', $defaults['pm_out']));
+    }
+
+    private function getEmployeeScheduleDetails(int $employeeId): array
+    {
+        $scheduleId = DB::table('egate_data')
+            ->where('id', $employeeId)
+            ->value('sched');
+
+        if (! $scheduleId) {
+            return [];
+        }
+
+        return DB::table('sched_details')
+            ->where('schedule_id', $scheduleId)
+            ->get(['day', 'am_in', 'am_out', 'pm_in', 'pm_out'])
+            ->keyBy('day')
+            ->all();
+    }
+
+    private function resolveScheduleForDate(array $employeeSchedule, Carbon $date): ?object
+    {
+        return $employeeSchedule[$date->dayOfWeekIso] ?? null;
+    }
+
+    private function isScheduledDay(?object $scheduleForDay, Carbon $date): bool
+    {
+        return $scheduleForDay !== null || $date->isWeekday();
+    }
+
+    private function scheduledTime(Carbon $date, ?object $scheduleForDay, string $field, string $fallbackTime): Carbon
+    {
+        $time = $scheduleForDay->{$field} ?? null;
+
+        if ($time) {
+            return $date->copy()->setTimeFromTimeString((string) $time);
+        }
+
+        return $date->copy()->setTimeFromTimeString($fallbackTime);
+    }
+
+    private function defaultScheduleTimes(): array
+    {
+        return [
+            'am_in' => '08:00:00',
+            'am_out' => '12:00:00',
+            'pm_in' => '13:00:00',
+            'pm_out' => '17:00:00',
+        ];
     }
 
     private function calculateWorkedMinutes(array $times): int

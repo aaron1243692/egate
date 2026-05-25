@@ -84,8 +84,8 @@ class GateEntryController extends Controller
             'student_id' => $student->student_number,
             'status' => $status,
             'status_label' => match ($status) {
-                1 => 'Log In',
-                0 => 'Log Out',
+                1 => 'Time In',
+                0 => 'Time Out',
                 default => 'N/A',
             },
         ]);
