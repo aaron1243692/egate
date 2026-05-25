@@ -9,8 +9,10 @@
     </h5>
 
     <nav class="flex flex-1 items-center justify-start gap-1">
+        @can('setup.view')
         <button type="button" id="setupButton" class="text-white text-lg leading-none text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
         >Setup</button>
+        @endcan
 
         @can('data.view')
         <a href="{{ route('admin.data') }}" class="text-white text-lg leading-none text-decoration-none py-1 px-2.5 hover:bg-white/20 hover:scale-105 rounded-full transition duration-200"
@@ -45,6 +47,7 @@
 
 </header>
 
+@canany(['setschedcehed.view', 'setschedem.view'])
 <div id="setup" class="hidden w-full gap-2 py-2 px-3 m-0
 flex flex-row justify-start items-center
 ">
@@ -61,6 +64,7 @@ flex flex-row justify-start items-center
 
         <div class="w-full grid grid-cols-3 gap-2">
 
+            @can('setschedcehed.view')
             <a href="{{ route('admin.setup.schedules') }}"
                 class="flex items-center justify-center
                 text-black/70 text-sm font-medium text-decoration-none
@@ -69,7 +73,9 @@ flex flex-row justify-start items-center
             >
                 Schedules
             </a>
+            @endcan
 
+            @can('setschedem.view')
             <a href="{{ route('admin.setup.employee.index') }}"
                 class="flex items-center justify-center
                 text-black/70 text-sm font-medium text-decoration-none
@@ -78,11 +84,13 @@ flex flex-row justify-start items-center
             >
                 Employees
             </a>
+            @endcan
 
         </div>
     </div>
 
 </div>
+@endcanany
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {

@@ -46,23 +46,25 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('admin/setup')->name('admin.setup.')->group(function () {
         Route::get('/', function () {
             return view('admin.Setup.index');
-        })->name('index');
+        })->name('index')->middleware('permission:setschedcehed.view|setschedem.view');
 
-        Route::get('/schedules', [SetSchScheduleController::class, 'index'])->name('schedules');
+        Route::get('/schedules', [SetSchScheduleController::class, 'index'])
+            ->name('schedules')
+            ->middleware('permission:setschedcehed.view');
         Route::prefix('schedules')->controller(SetSchScheduleController::class)->name('schedules.')->group(function () {
-            Route::get('/fetch', 'fetch')->name('fetch');
-            Route::post('/', 'store')->name('store');
-            Route::get('/{id}/details', 'details')->name('details');
-            Route::post('/{id}/details', 'saveDetails')->name('details.save');
-            Route::get('/{id}', 'show')->name('show');
-            Route::put('/{id}', 'update')->name('update');
-            Route::delete('/{id}', 'destroy')->name('destroy');
+            Route::get('/fetch', 'fetch')->name('fetch')->middleware('permission:setschedcehed.view');
+            Route::post('/', 'store')->name('store')->middleware('permission:setschedcehed.create');
+            Route::get('/{id}/details', 'details')->name('details')->middleware('permission:setschedcehed.view');
+            Route::post('/{id}/details', 'saveDetails')->name('details.save')->middleware('permission:setschedcehed.update');
+            Route::get('/{id}', 'show')->name('show')->middleware('permission:setschedcehed.view');
+            Route::put('/{id}', 'update')->name('update')->middleware('permission:setschedcehed.update');
+            Route::delete('/{id}', 'destroy')->name('destroy')->middleware('permission:setschedcehed.delete');
         });
 
         Route::prefix('employee')->controller(SetSchEmployeeController::class)->name('employee.')->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::get('/fetch', 'fetch')->name('fetch');
-            Route::put('/{id}/schedule', 'updateSchedule')->name('schedule.update');
+            Route::get('/', 'index')->name('index')->middleware('permission:setschedem.view');
+            Route::get('/fetch', 'fetch')->name('fetch')->middleware('permission:setschedem.view');
+            Route::put('/{id}/schedule', 'updateSchedule')->name('schedule.update')->middleware('permission:setschedem.update');
         });
     });
 
