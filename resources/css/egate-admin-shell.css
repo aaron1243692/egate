@@ -37,6 +37,14 @@ body.eg-admin-shell {
     color: var(--eg-rb-text);
 }
 
+.eg-rb.is-flat {
+    grid-template-rows: var(--eg-rb-top);
+}
+
+.eg-rb.is-flat .eg-rb-ribbon {
+    display: none;
+}
+
 .eg-rb-top {
     display: flex;
     align-items: stretch;
@@ -316,6 +324,17 @@ body.eg-admin-shell {
     font-weight: 800;
     letter-spacing: 0.02em;
     box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+}
+
+.eg-rb-icon--image {
+    padding: 3px;
+    background: #fff;
+}
+
+.eg-rb-icon--image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .eg-rb-tile--success .eg-rb-icon {

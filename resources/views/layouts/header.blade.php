@@ -27,7 +27,7 @@
     }
 @endphp
 
-<header class="eg-rb" data-eg-ribbon>
+<header class="eg-rb {{ $activeTab === 'dashboard' ? 'is-flat' : '' }}" data-eg-ribbon>
     <div class="eg-rb-top">
         <a class="eg-rb-brand" href="{{ route('admin.dashboard') }}" aria-label="OSMIS eGATE dashboard">
             <img src="{{ asset('images/olpcc-logo-removebg.png') }}" alt="">
@@ -35,7 +35,7 @@
         </a>
 
         <nav class="eg-rb-tabs" aria-label="Admin navigation">
-            <button class="eg-rb-tab {{ $activeTab === 'dashboard' ? 'is-active' : '' }}" type="button" data-eg-ribbon-tab="dashboard">Dashboard</button>
+            <a class="eg-rb-tab {{ $activeTab === 'dashboard' ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">Dashboard</a>
             @if ($canSetup)
                 <button class="eg-rb-tab {{ $activeTab === 'setup' ? 'is-active' : '' }}" type="button" data-eg-ribbon-tab="setup">Setup</button>
             @endif
@@ -72,18 +72,6 @@
     </div>
 
     <div class="eg-rb-ribbon">
-        <div class="eg-rb-page {{ $activeTab === 'dashboard' ? 'is-active' : '' }}" data-eg-ribbon-page="dashboard">
-            <section class="eg-rb-group">
-                <div class="eg-rb-group-title">Dashboard</div>
-                <div class="eg-rb-items">
-                    <a class="eg-rb-tile {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">
-                        <span class="eg-rb-icon">D</span>
-                        <span>Dashboard</span>
-                    </a>
-                </div>
-            </section>
-        </div>
-
         @if ($canSetup)
             <div class="eg-rb-page {{ $activeTab === 'setup' ? 'is-active' : '' }}" data-eg-ribbon-page="setup">
                 <section class="eg-rb-group">
@@ -91,13 +79,17 @@
                     <div class="eg-rb-items">
                         @if ($canSetupSchedules)
                             <a class="eg-rb-tile {{ request()->routeIs('admin.setup.schedules*') ? 'is-active' : '' }}" href="{{ route('admin.setup.schedules') }}">
-                                <span class="eg-rb-icon">S</span>
+                                <span class="eg-rb-icon eg-rb-icon--image">
+                                    <img src="{{ asset('icons/emsched.png') }}" alt="" aria-hidden="true">
+                                </span>
                                 <span>Schedules</span>
                             </a>
                         @endif
                         @if ($canSetupEmployees)
                             <a class="eg-rb-tile {{ request()->routeIs('admin.setup.employee.*') ? 'is-active' : '' }}" href="{{ route('admin.setup.employee.index') }}">
-                                <span class="eg-rb-icon">E</span>
+                                <span class="eg-rb-icon eg-rb-icon--image">
+                                    <img src="{{ asset('icons/employee.png') }}" alt="" aria-hidden="true">
+                                </span>
                                 <span>Employees</span>
                             </a>
                         @endif
@@ -113,19 +105,25 @@
                     <div class="eg-rb-items">
                         @can('data.view')
                             <a class="eg-rb-tile {{ request()->routeIs('admin.data*') ? 'is-active' : '' }}" href="{{ route('admin.data') }}">
-                                <span class="eg-rb-icon">D</span>
+                                <span class="eg-rb-icon eg-rb-icon--image">
+                                    <img src="{{ asset('icons/folder.png') }}" alt="" aria-hidden="true">
+                                </span>
                                 <span>Data</span>
                             </a>
                         @endcan
                         @can('logs.view')
                             <a class="eg-rb-tile {{ request()->routeIs('admin.logs*') ? 'is-active' : '' }}" href="{{ route('admin.logs') }}">
-                                <span class="eg-rb-icon">SL</span>
+                                <span class="eg-rb-icon eg-rb-icon--image">
+                                    <img src="{{ asset('icons/stlog.png') }}" alt="" aria-hidden="true">
+                                </span>
                                 <span>Student Logs</span>
                             </a>
                         @endcan
                         @can('emlog.view')
                             <a class="eg-rb-tile {{ request()->routeIs('admin.employee_logs*') ? 'is-active' : '' }}" href="{{ route('admin.employee_logs') }}">
-                                <span class="eg-rb-icon">EL</span>
+                                <span class="eg-rb-icon eg-rb-icon--image">
+                                    <img src="{{ asset('icons/emlog.png') }}" alt="" aria-hidden="true">
+                                </span>
                                 <span>Employee Logs</span>
                             </a>
                         @endcan
@@ -141,13 +139,17 @@
                     <div class="eg-rb-items">
                         @can('roles.view')
                             <a class="eg-rb-tile {{ request()->routeIs('admin.roles*') ? 'is-active' : '' }}" href="{{ route('admin.roles') }}">
-                                <span class="eg-rb-icon">R</span>
+                                <span class="eg-rb-icon eg-rb-icon--image">
+                                    <img src="{{ asset('icons/crown.png') }}" alt="" aria-hidden="true">
+                                </span>
                                 <span>Roles</span>
                             </a>
                         @endcan
                         @can('users.view')
                             <a class="eg-rb-tile {{ request()->routeIs('admin.users.*') ? 'is-active' : '' }}" href="{{ route('admin.users.index') }}">
-                                <span class="eg-rb-icon">U</span>
+                                <span class="eg-rb-icon eg-rb-icon--image">
+                                    <img src="{{ asset('icons/user.png') }}" alt="" aria-hidden="true">
+                                </span>
                                 <span>Users</span>
                             </a>
                         @endcan

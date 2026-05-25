@@ -1,17 +1,22 @@
 @extends('layouts.app')
 
-@section('title', 'Employee Schedules')
+@section('title', 'Employee Schedule Assignment')
 
 @section('content')
 
-<main class="w-full p-2 gap-3 flex flex-1 flex-col overflow-auto bg-slate-50">
-    <h3 class="text-lg font-semibold text-slate-800">Employee Schedules</h3>
+<main class="eg-setup-page">
+    <section class="eg-setup-hero">
+        <div>
+            <p class="eg-setup-kicker">Setup Module</p>
+            <h1 class="eg-setup-title">Employee Schedule Assignment</h1>
+            <p class="eg-setup-subtitle">Assign attendance schedules to employees and update their active schedule.</p>
+        </div>
+    </section>
 
-    <section class="w-full flex flex-1 justify-center p-2 overflow-hidden">
-        <div class="w-full bg-white rounded-md shadow-sm overflow-hidden border border-slate-200 flex flex-col min-h-0">
-            <div class="w-full px-3 py-3 border-b border-slate-200 flex flex-col gap-2">
-                <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                    <div class="w-full md:max-w-sm">
+    <section class="eg-setup-table-card">
+        <div class="eg-setup-table-inner">
+            <div class="eg-setup-toolbar">
+                <div class="eg-setup-search">
                         <label for="search-employee-schedules" class="sr-only">Search Employee</label>
                         <input
                             id="search-employee-schedules"
@@ -21,10 +26,9 @@
                         >
                     </div>
                 </div>
-            </div>
 
-            <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
-                <table class="w-full text-left">
+            <div class="eg-setup-table-wrap">
+                <table class="eg-setup-table">
                     <thead class="sticky top-0 z-10 bg-blue-600 text-black">
                         <tr>
                             <th class="px-3 py-2.5">No.</th>
@@ -42,7 +46,7 @@
                 </table>
             </div>
 
-            <div class="px-3 py-2.5 border-t border-slate-200 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div class="eg-setup-footer">
                 <p id="table-summary" class="text-sm text-slate-600">Preparing employee list...</p>
                 <div id="pagination" class="flex flex-wrap items-center justify-end gap-1.5"></div>
             </div>
@@ -50,8 +54,8 @@
     </section>
 </main>
 
-<div id="message-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div id="message-modal-panel" class="w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200">
+<div id="message-modal" class="eg-setup-modal eg-setup-message fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div id="message-modal-panel" class="eg-setup-modal-panel w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200">
         <div id="message-modal-icon" class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-500">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 21a9 9 0 100-18 9 9 0 000 18z"></path>
@@ -171,12 +175,12 @@
         }
 
         tableBody.innerHTML = employees.map((employee, index) => `
-            <tr class="border-b border-black hover:bg-gray-50 transition">
+            <tr class="eg-setup-row">
                 <td class="px-3 py-2.5">${from + index}</td>
                 <td class="px-3 py-2.5">${escapeHtml(employee.student_number || employee.id)}</td>
                 <td class="px-3 py-2.5">${escapeHtml(employee.name || 'N/A')}</td>
                 <td class="w-64 px-3 py-2.5">
-                    <select data-schedule-select="${employee.id}" class="w-full max-w-90 rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none bg-white" ${canUpdateEmployeeSchedule ? '' : 'disabled'}>
+                    <select data-schedule-select="${employee.id}" class="eg-setup-schedule-select" ${canUpdateEmployeeSchedule ? '' : 'disabled'}>
                         ${renderScheduleOptions(employee.sched)}
                     </select>
                 </td>

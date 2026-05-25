@@ -1,15 +1,21 @@
 @extends('layouts.app')
-@section('title', 'Data')
+@section('title', 'Student Data')
 @section('content')
 
-<main class="w-full p-2 gap-2 flex flex-1 flex-col overflow-hidden">
-    <h3 class="text-lg font-semibold text-slate-800">Student Data</h3>
+<main class="eg-report-page">
+    <header class="eg-report-header">
+        <div>
+            <p class="eg-report-kicker">Records Management</p>
+            <h1 class="eg-report-title">Student Data</h1>
+            <p class="eg-report-subtitle">Manage registered students, RFID records, departments, courses, and grade levels.</p>
+        </div>
+    </header>
 
-    <section class="w-full flex flex-1 justify-center p-2 overflow-hidden">
-        <div class="w-full bg-white rounded-md shadow-sm overflow-hidden border border-slate-200 flex flex-col min-h-0">
-            <div class="w-full px-3 py-3 border-b border-slate-200 flex flex-col gap-2">
-                <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                    <div class="w-full md:max-w-sm">
+    <section class="eg-report-card">
+        <div class="eg-report-card-inner">
+            <div class="eg-report-toolbar-panel">
+                <div class="eg-report-toolbar">
+                    <div class="eg-report-search">
                         <label for="search-data" class="sr-only">Search student data</label>
                         <input
                             id="search-data"
@@ -19,32 +25,34 @@
                         >
                     </div>
 
-                    <div class="flex flex-wrap items-center gap-2">
+                    <div class="eg-report-actions">
                         @can('data.print')
                         <button
                             type="button"
                             id="print-data-button"
-                            class="rounded-full border border-slate-300 p-1.5 transition duration-200 hover:bg-slate-50 hover:scale-105"
+                            class="eg-report-button eg-report-button--ghost"
                             aria-label="Print student data"
                         >
-                            <img src="{{ asset('icons/print.png') }}" class="h-7 w-7" alt="">
+                            <img src="{{ asset('icons/print.png') }}" alt="">
+                            <span>Print</span>
                         </button>
                         @endcan
                         @can('data.export')
                         <button
                             type="button"
                             id="export-data-button"
-                            class="rounded-full border border-emerald-300 p-1.5 transition duration-200 hover:bg-emerald-50 hover:scale-105"
+                            class="eg-report-button eg-report-button--success"
                             aria-label="Export student data"
                         >
-                            <img src="{{ asset('icons/export.png') }}" class="h-7 w-7" alt="">
+                            <img src="{{ asset('icons/export.png') }}" alt="">
+                            <span>Export</span>
                         </button>
                         @endcan
                         @can('data.create')
                         <button
                             type="button"
                             id="open-add-data-modal"
-                            class="rounded-full bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
+                            class="eg-report-button eg-report-button--primary"
                         >
                             Add Data
                         </button>
@@ -52,8 +60,8 @@
                     </div>
                 </div>
 
-                <div class="grid gap-2 md:grid-cols-4">
-                    <div class="flex flex-col gap-1">
+                <div class="eg-report-filters eg-report-filters--4">
+                    <div class="eg-report-field">
                         <label for="filter-name-sort" class="text-sm font-medium text-slate-700">Name Sort</label>
                         <select id="filter-name-sort" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
                             <option value="asc">Ascending</option>
@@ -61,7 +69,7 @@
                         </select>
                     </div>
 
-                    <div class="flex flex-col gap-1">
+                    <div class="eg-report-field">
                         <label for="filter-department" class="text-sm font-medium text-slate-700">Department</label>
                         <select id="filter-department" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
                             <option value="">All departments</option>
@@ -71,7 +79,7 @@
                         </select>
                     </div>
 
-                    <div class="flex flex-col gap-1">
+                    <div class="eg-report-field">
                         <label for="filter-course" class="text-sm font-medium text-slate-700">Course</label>
                         <select id="filter-course" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
                             <option value="">All courses</option>
@@ -81,7 +89,7 @@
                         </select>
                     </div>
 
-                    <div class="flex flex-col gap-1">
+                    <div class="eg-report-field">
                         <label for="filter-year-level" class="text-sm font-medium text-slate-700">Grade Level</label>
                         <select id="filter-year-level" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
                             <option value="">All grade levels</option>
@@ -93,8 +101,8 @@
                 </div>
             </div>
 
-            <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
-                <table class="w-full text-left">
+            <div class="eg-report-table-wrap">
+                <table class="eg-report-table">
                     <thead class="sticky top-0 z-10 bg-blue-600 text-black">
                         <tr>
                             <th class="px-3 py-2.5">No.</th>
@@ -114,7 +122,7 @@
                 </table>
             </div>
 
-            <div class="px-3 py-2.5 border-t border-slate-200 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div class="eg-report-footer">
                 <p id="table-summary" class="text-sm text-slate-600">Preparing data list...</p>
                 <div id="pagination" class="flex flex-wrap items-center justify-end gap-1.5"></div>
             </div>
@@ -122,8 +130,8 @@
     </section>
 </main>
 
-<div id="data-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-4xl max-h-[90vh] rounded-xl bg-white shadow-2xl flex flex-col overflow-hidden">
+<div id="data-modal" class="eg-report-modal fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div class="eg-report-modal-panel w-full max-w-4xl max-h-[90vh] rounded-xl bg-white shadow-2xl flex flex-col overflow-hidden">
         <form id="data-form" class="flex flex-col min-h-0">
             <input type="hidden" id="data-id">
 
@@ -202,8 +210,8 @@
     </div>
 </div>
 
-<div id="details-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-2xl max-h-[90vh] rounded-xl bg-white shadow-2xl flex flex-col overflow-hidden">
+<div id="details-modal" class="eg-report-modal fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div class="eg-report-modal-panel w-full max-w-2xl max-h-[90vh] rounded-xl bg-white shadow-2xl flex flex-col overflow-hidden">
         <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200">
             <h4 class="text-lg font-bold text-gray-900">Student Details</h4>
             <button type="button" data-close-modal="details-modal" class="rounded-full px-2 py-1 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-700">X</button>
@@ -271,8 +279,8 @@
     </div>
 </div>
 
-<div id="delete-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-sm rounded-xl bg-white p-4 shadow-2xl flex flex-col items-center text-center">
+<div id="delete-modal" class="eg-report-modal fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div class="eg-report-modal-panel w-full max-w-sm rounded-xl bg-white p-4 shadow-2xl flex flex-col items-center text-center">
         <div class="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-500">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
@@ -293,8 +301,8 @@
     </div>
 </div>
 
-<div id="message-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div id="message-modal-panel" class="w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200">
+<div id="message-modal" class="eg-report-modal fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div id="message-modal-panel" class="eg-report-modal-panel w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200">
         <div id="message-modal-icon" class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-500">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 21a9 9 0 100-18 9 9 0 000 18z"></path>

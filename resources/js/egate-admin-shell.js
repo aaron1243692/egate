@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             page.classList.toggle('is-active', page.dataset.egRibbonPage === key);
         });
 
+        root.classList.toggle('is-flat', !pages.some((page) => page.classList.contains('is-active')));
         setShellOffset();
     };
 

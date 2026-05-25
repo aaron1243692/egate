@@ -1,17 +1,22 @@
 @extends('layouts.app')
 
-@section('title', 'Schedules')
+@section('title', 'Schedule Management')
 
 @section('content')
 
-<main class="w-full p-2 gap-3 flex flex-1 flex-col overflow-auto bg-slate-50">
-    <h3 class="text-lg font-semibold text-slate-800">Schedule</h3>
+<main class="eg-setup-page">
+    <section class="eg-setup-hero">
+        <div>
+            <p class="eg-setup-kicker">Setup Module</p>
+            <h1 class="eg-setup-title">Schedule Management</h1>
+            <p class="eg-setup-subtitle">Create schedules and configure daily time-in/time-out rules.</p>
+        </div>
+    </section>
 
-    <section class="w-full flex flex-1 justify-center p-2 overflow-hidden">
-        <div class="w-full bg-white rounded-md shadow-sm overflow-hidden border border-slate-200 flex flex-col min-h-0">
-            <div class="w-full px-3 py-3 border-b border-slate-200 flex flex-col gap-2">
-                <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                    <div class="w-full md:max-w-sm">
+    <section class="eg-setup-table-card">
+        <div class="eg-setup-table-inner">
+            <div class="eg-setup-toolbar">
+                <div class="eg-setup-search">
                         <label for="search-data" class="sr-only">Search Schedule</label>
                         <input
                             id="search-data"
@@ -21,22 +26,21 @@
                         >
                     </div>
 
-                    <div class="flex flex-wrap items-center gap-2">
+                    <div class="eg-setup-toolbar-actions">
                         @can('setschedcehed.create')
                         <button
                             type="button"
                             id="open-add-schedule-modal"
-                            class="rounded-full bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
+                            class="eg-setup-button eg-setup-button--primary"
                         >
                             Add Schedule
                         </button>
                         @endcan
                     </div>
                 </div>
-            </div>
 
-            <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
-                <table class="w-full text-left">
+            <div class="eg-setup-table-wrap">
+                <table class="eg-setup-table">
                     <thead class="sticky top-0 z-10 bg-blue-600 text-black">
                         <tr>
                             <th class="px-3 py-2.5">No.</th>
@@ -54,7 +58,7 @@
                 </table>
             </div>
 
-            <div class="px-3 py-2.5 border-t border-slate-200 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div class="eg-setup-footer">
                 <p id="table-summary" class="text-sm text-slate-600">Preparing schedule list...</p>
                 <div id="pagination" class="flex flex-wrap items-center justify-end gap-1.5"></div>
             </div>
@@ -65,8 +69,8 @@
 
 </main>
 
-<div id="schedule-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-md rounded-xl bg-white shadow-2xl flex flex-col overflow-hidden">
+<div id="schedule-modal" class="eg-setup-modal fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div class="eg-setup-modal-panel w-full max-w-md rounded-xl bg-white shadow-2xl flex flex-col overflow-hidden">
         <form id="schedule-form">
             <input type="hidden" id="schedule-id">
 
@@ -96,8 +100,8 @@
     </div>
 </div>
 
-<div id="schedule-details-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4 py-6">
-    <div class="w-full max-w-5xl max-h-[90vh] rounded-xl bg-white shadow-2xl flex flex-col overflow-hidden">
+<div id="schedule-details-modal" class="eg-setup-modal fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4 py-6">
+    <div class="eg-setup-modal-panel w-full max-w-5xl max-h-[90vh] rounded-xl bg-white shadow-2xl flex flex-col overflow-hidden">
         <form id="schedule-details-form" class="flex min-h-0 flex-col">
             <input type="hidden" id="details-schedule-id">
 
@@ -110,21 +114,21 @@
             </div>
 
             @can('setschedcehed.update')
-            <div class="border-b border-slate-200 px-4 py-3">
-                <div class="grid gap-2 md:grid-cols-4">
-                    <div class="flex flex-col gap-1">
+            <div class="eg-setup-details-tools">
+                <div class="eg-setup-time-grid">
+                    <div class="eg-setup-field">
                         <label for="fill-am-in" class="text-sm font-medium text-slate-700">AM In</label>
                         <input id="fill-am-in" type="time" value="08:00" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none">
                     </div>
-                    <div class="flex flex-col gap-1">
+                    <div class="eg-setup-field">
                         <label for="fill-am-out" class="text-sm font-medium text-slate-700">AM Out</label>
                         <input id="fill-am-out" type="time" value="12:00" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none">
                     </div>
-                    <div class="flex flex-col gap-1">
+                    <div class="eg-setup-field">
                         <label for="fill-pm-in" class="text-sm font-medium text-slate-700">PM In</label>
                         <input id="fill-pm-in" type="time" value="13:00" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none">
                     </div>
-                    <div class="flex flex-col gap-1">
+                    <div class="eg-setup-field">
                         <label for="fill-pm-out" class="text-sm font-medium text-slate-700">PM Out</label>
                         <input id="fill-pm-out" type="time" value="17:00" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none">
                     </div>
@@ -139,18 +143,18 @@
                         <input id="fill-weekend-days" type="checkbox" class="h-4 w-4 rounded border-slate-300">
                         Weekend
                     </label>
-                    <button type="button" id="autofill-schedule-details" class="rounded-full bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105">
+                    <button type="button" id="autofill-schedule-details" class="eg-setup-button eg-setup-button--primary">
                         Auto Fill
                     </button>
-                    <button type="button" id="clear-schedule-details" class="rounded-full border border-slate-300 px-4 py-1.5 text-sm font-semibold text-slate-700 transition duration-200 hover:bg-slate-50 hover:scale-105">
+                    <button type="button" id="clear-schedule-details" class="eg-setup-button eg-setup-button--ghost">
                         Clear Schedule
                     </button>
                 </div>
             </div>
             @endcan
 
-            <div class="min-h-0 flex-1 overflow-auto">
-                <table class="w-full text-left">
+            <div class="eg-setup-table-wrap eg-setup-table-wrap--modal">
+                <table class="eg-setup-table">
                     <thead class="sticky top-0 z-10 bg-blue-600 text-black">
                         <tr>
                             <th class="px-3 py-2.5">Day</th>
@@ -179,8 +183,8 @@
     </div>
 </div>
 
-<div id="delete-schedule-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-sm rounded-xl bg-white p-4 shadow-2xl flex flex-col items-center text-center">
+<div id="delete-schedule-modal" class="eg-setup-modal fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div class="eg-setup-modal-panel w-full max-w-sm rounded-xl bg-white p-4 shadow-2xl flex flex-col items-center text-center">
         <div class="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-500">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
@@ -201,8 +205,8 @@
     </div>
 </div>
 
-<div id="message-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div id="message-modal-panel" class="w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200">
+<div id="message-modal" class="eg-setup-modal eg-setup-message fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div id="message-modal-panel" class="eg-setup-modal-panel w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200">
         <div id="message-modal-icon" class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-500">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 21a9 9 0 100-18 9 9 0 000 18z"></path>
@@ -347,29 +351,29 @@
         schedulesTableBody.innerHTML = schedules.map((schedule, index) => {
             const actionButtons = [
                 canUpdateSchedule ? `
-                        <button type="button" data-action="edit" data-id="${schedule.id}" class="transition duration-200 hover:scale-110">
+                        <button type="button" data-action="edit" data-id="${schedule.id}" class="eg-setup-icon-button">
                             <img src="{{ asset('icons/list.png') }}" class="w-7 h-7" alt="edit schedule name">
                         </button>
                 ` : '',
                 `
-                        <button type="button" data-action="details" data-id="${schedule.id}" class="transition duration-200 hover:scale-110">
+                        <button type="button" data-action="details" data-id="${schedule.id}" class="eg-setup-icon-button">
                             <img src="{{ asset('icons/schedule.png') }}" class="w-7 h-7" alt="view schedule details">
                         </button>
                 `,
                 canDeleteSchedule ? `
-                        <button type="button" data-action="delete" data-id="${schedule.id}" data-name="${escapeHtml(schedule.name || 'this schedule')}" class="transition duration-200 hover:scale-110">
+                        <button type="button" data-action="delete" data-id="${schedule.id}" data-name="${escapeHtml(schedule.name || 'this schedule')}" class="eg-setup-icon-button eg-setup-icon-button--danger">
                             <img src="{{ asset('icons/delete.png') }}" class="w-7 h-7" alt="delete schedule">
                         </button>
                 ` : '',
             ].join('');
 
             return `
-            <tr class="border-b border-black hover:bg-gray-50 transition">
+            <tr class="eg-setup-row">
                 <td class="px-3 py-2.5">${from + index}</td>
                 <td class="px-3 py-2.5">${escapeHtml(schedule.id)}</td>
                 <td class="px-3 py-2.5">${escapeHtml(schedule.name || 'N/A')}</td>
                 <td class="px-3 py-2.5">
-                    <div class="flex justify-center items-center gap-4">
+                    <div class="eg-setup-actions-cell">
                         ${actionButtons || '<span class="text-sm text-slate-400">N/A</span>'}
                     </div>
                 </td>
@@ -484,7 +488,7 @@
             const disabled = canUpdateSchedule ? '' : 'disabled';
 
             return `
-                <tr class="border-b border-black hover:bg-gray-50 transition">
+                <tr class="eg-setup-row">
                     <td class="px-3 py-2.5">${day}</td>
                     <td class="px-3 py-2.5">${name}</td>
                     <td class="px-3 py-2.5">

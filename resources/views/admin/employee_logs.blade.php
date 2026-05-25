@@ -1,15 +1,21 @@
 @extends('layouts.app')
-@section('title', 'Logs')
+@section('title', 'Employee Logs')
 @section('content')
 
-<main class="w-full p-2 gap-2 flex flex-1 flex-col overflow-hidden">
-    <h3 class="text-lg font-semibold text-slate-800">Employee Logs</h3>
+<main class="eg-report-page">
+    <header class="eg-report-header">
+        <div>
+            <p class="eg-report-kicker">Attendance Reports</p>
+            <h1 class="eg-report-title">Employee Logs</h1>
+            <p class="eg-report-subtitle">Review employee attendance records, schedules, and monthly DTR summaries.</p>
+        </div>
+    </header>
 
-    <section class="w-full flex flex-1 justify-center p-2 overflow-hidden">
-        <div class="w-full bg-white rounded-md shadow-sm overflow-hidden border border-slate-200 flex flex-col min-h-0">
-            <div class="w-full px-3 py-3 border-b border-slate-200 flex flex-col gap-2">
-                <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                    <div class="w-full md:max-w-md flex gap-2">
+    <section class="eg-report-card">
+        <div class="eg-report-card-inner">
+            <div class="eg-report-toolbar-panel">
+                <div class="eg-report-toolbar">
+                    <div class="eg-report-search eg-report-search--button">
                         <label for="search-logs" class="sr-only">Search logs</label>
                         <input
                             id="search-logs"
@@ -20,29 +26,30 @@
                         <button
                             type="button"
                             id="search-logs-button"
-                            class="rounded-full bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:scale-105"
+                            class="eg-report-button eg-report-button--primary"
                         >
                             Search
                         </button>
                     </div>
 
-                    <div class="flex flex-wrap items-center gap-2">
+                    <div class="eg-report-actions">
                         @can('emlog.print')
                         <button
                             type="button"
                             id="print-logs-button"
-                            class="rounded-full border border-slate-300 p-1.5 transition duration-200 hover:bg-slate-50 hover:scale-105"
+                            class="eg-report-button eg-report-button--ghost"
                             aria-label="Print logs"
                         >
-                            <img src="{{ asset('icons/print.png') }}" class="h-7 w-7" alt="">
+                            <img src="{{ asset('icons/print.png') }}" alt="">
+                            <span>Print</span>
                         </button>
                         @endcan
                     </div>
                 </div>
 
-                <div class="grid gap-2 md:grid-cols-3">
+                <div class="eg-report-filters eg-report-filters--3">
 
-                    <div class="flex flex-col gap-1">
+                    <div class="eg-report-field">
                         <label for="filter-department" class="text-sm font-medium text-slate-700">Department</label>
                         <select id="filter-department" class="w-full rounded-full border border-slate-300 px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
                             <option value="">All departments</option>
@@ -57,7 +64,7 @@
                         $startYear = $currentYear - 10;
                     @endphp
 
-                    <div class="flex flex-col gap-1">
+                    <div class="eg-report-field">
                         <label for="filter-year" class="text-sm font-medium text-slate-700">
                             Year
                         </label>
@@ -77,7 +84,7 @@
                         $currentMonth = date('n'); // 1 - 12
                     @endphp
 
-                    <div class="flex flex-col gap-1">
+                    <div class="eg-report-field">
                         <label for="filter-month" class="text-sm font-medium text-slate-700">
                             Month
                         </label>
@@ -111,8 +118,8 @@
                 </div>
             </div>
 
-            <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
-                <table class="w-full text-left">
+            <div class="eg-report-table-wrap">
+                <table class="eg-report-table">
                     <thead class="sticky top-0 z-10 bg-blue-600 text-black">
                         <tr>
                             <th class="px-3 py-2.5">No.</th>
@@ -131,7 +138,7 @@
                 </table>
             </div>
 
-            <div class="px-3 py-2.5 border-t border-slate-200 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div class="eg-report-footer">
                 <p id="table-summary" class="text-sm text-slate-600">Preparing log list...</p>
                 <div id="pagination" class="flex flex-wrap items-center justify-end gap-1.5"></div>
             </div>
@@ -139,8 +146,8 @@
     </section>
 </main>
 
-<div id="delete-log-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="w-full max-w-sm rounded-xl bg-white p-4 shadow-2xl flex flex-col items-center text-center">
+<div id="delete-log-modal" class="eg-report-modal fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div class="eg-report-modal-panel w-full max-w-sm rounded-xl bg-white p-4 shadow-2xl flex flex-col items-center text-center">
         <div class="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-500">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
@@ -161,8 +168,8 @@
     </div>
 </div>
 
-<div id="view-logs-modal" class="fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto bg-black/50 px-4 py-6 backdrop-blur-sm">
-    <div class="flex max-h-[90vh] w-full max-w-4xl flex-col rounded-xl bg-white p-4 shadow-2xl">
+<div id="view-logs-modal" class="eg-report-modal fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto bg-black/50 px-4 py-6 backdrop-blur-sm">
+    <div class="eg-report-modal-panel flex max-h-[90vh] w-full max-w-4xl flex-col rounded-xl bg-white p-4 shadow-2xl">
         <div class="mb-3 flex items-start justify-between gap-3">
             <div>
                 <h4 id="view-logs-title" class="text-lg font-semibold text-gray-900">Employee Logs</h4>
@@ -179,8 +186,8 @@
     </div>
 </div>
 
-<div id="message-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div id="message-modal-panel" class="w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200">
+<div id="message-modal" class="eg-report-modal fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div id="message-modal-panel" class="eg-report-modal-panel w-full max-w-sm scale-95 rounded-xl bg-white p-4 text-center opacity-0 shadow-2xl transition duration-200">
         <div id="message-modal-icon" class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-500">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 21a9 9 0 100-18 9 9 0 000 18z"></path>
