@@ -746,7 +746,7 @@ class="w-full h-full">
                     event.preventDefault();
                     event.stopPropagation();
                     event.stopImmediatePropagation();
-                    submitShortcutGateEntry();
+                    showShortcutModal();
                 }, true);
             }
 
@@ -821,7 +821,7 @@ class="w-full h-full">
                         if (event.ctrlKey && event.key === 'Enter') {
                             event.preventDefault();
                             event.stopPropagation();
-                            submitShortcutGateEntry();
+                            showShortcutModal();
                             return;
                         }
 
@@ -854,7 +854,7 @@ class="w-full h-full">
 
                     if (event.ctrlKey && event.key === 'Enter') {
                         event.preventDefault();
-                        submitShortcutGateEntry();
+                        showShortcutModal();
                         return;
                     }
 
