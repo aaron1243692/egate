@@ -2,11 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>Employee Monthly DTR</title>
     <style>
         @page {
-            size: letter;
             margin: 12mm;
+            @bottom-center {
+                content: "Page " counter(page) " of " counter(pages);
+                font-family: Arial, sans-serif;
+                font-size: 11px;
+                color: #111827;
+            }
         }
 
         * {
@@ -28,16 +33,16 @@
 
         .report-header {
             display: grid;
-            grid-template-columns: 58px 1fr 150px;
+            grid-template-columns: 78px 1fr 132px;
             gap: 12px;
             align-items: center;
-            padding-bottom: 10px;
+            padding: 0 0 5px 10px;
             border-bottom: 2px solid #111827;
         }
 
         .report-logo {
-            width: 54px;
-            height: 54px;
+            width: 64px;
+            height: 64px;
             object-fit: contain;
         }
 
@@ -48,7 +53,7 @@
         .agency-name {
             margin: 0;
             font-family: "Times New Roman", serif;
-            font-size: 17px;
+            font-size: 14px;
             font-weight: 700;
             letter-spacing: 0.02em;
             text-transform: uppercase;
@@ -69,7 +74,7 @@
         .document-code div {
             display: flex;
             justify-content: space-between;
-            gap: 8px;
+            gap: 12px;
             padding: 3px 5px;
             border-bottom: 1px solid #111827;
         }
@@ -79,13 +84,13 @@
         }
 
         .report-title {
-            margin: 12px 0 10px;
+            margin: 6px 0 6px;
             text-align: center;
         }
 
         .report-title h2 {
             margin: 0;
-            font-size: 15px;
+            font-size: 13px;
             letter-spacing: 0.08em;
             text-transform: uppercase;
         }
@@ -101,15 +106,15 @@
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 0;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
             border: 1px solid #111827;
             border-right: 0;
             border-bottom: 0;
         }
 
         .meta-item {
-            min-height: 38px;
-            padding: 5px 7px;
+            min-height: 30px;
+            padding: 3px 6px;
             border-right: 1px solid #111827;
             border-bottom: 1px solid #111827;
         }
@@ -224,90 +229,6 @@
             text-transform: uppercase;
         }
 
-
-        .print-toolbar {
-            display: none;
-        }
-
-        @media screen {
-            body {
-                background: #dbe4f0;
-                padding: 24px;
-            }
-
-            .print-toolbar {
-                position: sticky;
-                top: 16px;
-                z-index: 20;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 12px;
-                max-width: 880px;
-                margin: 0 auto 18px;
-                padding: 12px 16px;
-                border: 1px solid #cbd5e1;
-                border-radius: 16px;
-                background: rgba(255, 255, 255, 0.96);
-                box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
-                backdrop-filter: blur(10px);
-            }
-
-            .print-toolbar__text {
-                min-width: 0;
-            }
-
-            .print-toolbar__title {
-                margin: 0;
-                font-size: 14px;
-                font-weight: 700;
-                color: #0f172a;
-            }
-
-            .print-toolbar__hint {
-                margin: 2px 0 0;
-                font-size: 12px;
-                color: #475569;
-            }
-
-            .print-toolbar__actions {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                flex-wrap: wrap;
-            }
-
-            .print-toolbar__button {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                min-height: 40px;
-                padding: 0 16px;
-                border-radius: 999px;
-                border: 1px solid #cbd5e1;
-                background: #fff;
-                color: #0f172a;
-                font-size: 12px;
-                font-weight: 700;
-                text-decoration: none;
-                cursor: pointer;
-            }
-
-            .print-toolbar__button--primary {
-                border-color: #2563eb;
-                background: #2563eb;
-                color: #fff;
-            }
-
-            .sheet {
-                max-width: 816px;
-                margin: 0 auto 24px;
-                padding: 12mm;
-                background: #fff;
-                box-shadow: 0 22px 50px rgba(15, 23, 42, 0.18);
-            }
-        }
-
         @media print {
             body {
                 -webkit-print-color-adjust: exact;
@@ -317,16 +238,6 @@
     </style>
 </head>
 <body>
-    <div class="print-toolbar">
-        <div class="print-toolbar__text">
-            <p class="print-toolbar__title">Employee print preview</p>
-            <p class="print-toolbar__hint">For the cleanest browser print, set margins to Default and turn off browser headers and footers.</p>
-        </div>
-        <div class="print-toolbar__actions">
-            <a href="{{ url('admin/employee-logs') }}" class="print-toolbar__button">Back to logs</a>
-            <button type="button" class="print-toolbar__button print-toolbar__button--primary" onclick="window.print()">Print now</button>
-        </div>
-    </div>
     <main class="sheet">
         <header class="report-header">
             <img src="{{ asset('images/olpcc-logo.png') }}" class="report-logo" alt="OLPCC logo">
@@ -462,7 +373,6 @@
 
     <script>
         const returnUrl = @json(url('admin/employee-logs'));
-        document.title = '';
         let printRequested = false;
         let redirected = false;
 
@@ -494,4 +404,11 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
 
