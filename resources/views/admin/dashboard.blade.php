@@ -60,7 +60,7 @@
         </div>
     </section>
 
-    <form method="GET" action="{{ route('admin.dashboard') }}" class="eg-dash-filter">
+    <form id="dashboard-filter-form" method="GET" action="{{ route('admin.dashboard') }}" class="eg-dash-filter">
         <div class="eg-dash-section-head">
             <div>
                 <h2>Dashboard Filters</h2>
@@ -122,7 +122,7 @@
         </div>
 
         <div class="eg-dash-filter-actions">
-            <a href="{{ route('admin.dashboard') }}" class="eg-dash-button eg-dash-button--secondary">Reset</a>
+            <a id="dashboard-filter-reset" href="{{ route('admin.dashboard') }}" class="eg-dash-button eg-dash-button--secondary">Reset</a>
             <button type="submit" class="eg-dash-button eg-dash-button--primary">Apply Filter</button>
         </div>
     </form>
@@ -291,4 +291,62 @@
         </div>
     </section>
 </main>
+
+<script>
+    const dashboardFilterForm = document.getElementById('dashboard-filter-form');
+    const dashboardFilterReset = document.getElementById('dashboard-filter-reset');
+    const dashboardFilterRestoreKey = 'admin.dashboard.restore_filters';
+    const dashboardFilterKeys = ['status', 'department', 'course', 'year_level', 'date_from', 'date_to'];
+
+    function clearDashboardFilterRestore() {
+        try {
+            window.sessionStorage.removeItem(dashboardFilterRestoreKey);
+        } catch (error) {
+            // Nothing to clear when storage is unavailable.
+        }
+    }
+
+    function hasDashboardFilterQuery() {
+        const params = new URLSearchParams(window.location.search);
+
+        return dashboardFilterKeys.some((key) => params.has(key));
+    }
+
+    function shouldRestoreDashboardFilters() {
+        try {
+            return window.sessionStorage.getItem(dashboardFilterRestoreKey) === '1';
+        } catch (error) {
+            return false;
+        }
+    }
+
+    function resetDashboardOnFreshVisit() {
+        const shouldRestore = shouldRestoreDashboardFilters();
+        clearDashboardFilterRestore();
+
+        if (!shouldRestore && hasDashboardFilterQuery()) {
+            window.location.replace(window.location.pathname);
+        }
+    }
+
+    dashboardFilterForm?.addEventListener('submit', () => {
+        try {
+            window.sessionStorage.setItem(dashboardFilterRestoreKey, '1');
+        } catch (error) {
+            // Without storage, the submitted URL still shows the filtered result.
+        }
+    });
+
+    dashboardFilterReset?.addEventListener('click', () => {
+        clearDashboardFilterRestore();
+    });
+
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+            resetDashboardOnFreshVisit();
+        }
+    });
+
+    resetDashboardOnFreshVisit();
+</script>
 @endsection

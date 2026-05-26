@@ -5,8 +5,13 @@
     <title>Employee Monthly DTRs</title>
     <style>
         @page {
-            size: letter;
             margin: 12mm;
+            @bottom-center {
+                content: "Page " counter(page) " of " counter(pages);
+                font-family: Arial, sans-serif;
+                font-size: 11px;
+                color: #111827;
+            }
         }
 
         * {
@@ -41,16 +46,16 @@
 
         .report-header {
             display: grid;
-            grid-template-columns: 58px 1fr 150px;
+            grid-template-columns: 78px 1fr 132px;
             gap: 12px;
             align-items: center;
-            padding-bottom: 10px;
+            padding: 0 0 5px 10px;
             border-bottom: 2px solid #111827;
         }
 
         .report-logo {
-            width: 54px;
-            height: 54px;
+            width: 64px;
+            height: 64px;
             object-fit: contain;
         }
 
@@ -61,7 +66,7 @@
         .agency-name {
             margin: 0;
             font-family: "Times New Roman", serif;
-            font-size: 17px;
+            font-size: 14px;
             font-weight: 700;
             letter-spacing: 0.02em;
             text-transform: uppercase;
@@ -82,7 +87,7 @@
         .document-code div {
             display: flex;
             justify-content: space-between;
-            gap: 8px;
+            gap: 12px;
             padding: 3px 5px;
             border-bottom: 1px solid #111827;
         }
@@ -92,13 +97,13 @@
         }
 
         .report-title {
-            margin: 12px 0 10px;
+            margin: 6px 0 6px;
             text-align: center;
         }
 
         .report-title h2 {
             margin: 0;
-            font-size: 15px;
+            font-size: 13px;
             letter-spacing: 0.08em;
             text-transform: uppercase;
         }
@@ -114,15 +119,15 @@
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 0;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
             border: 1px solid #111827;
             border-right: 0;
             border-bottom: 0;
         }
 
         .meta-item {
-            min-height: 38px;
-            padding: 5px 7px;
+            min-height: 30px;
+            padding: 3px 6px;
             border-right: 1px solid #111827;
             border-bottom: 1px solid #111827;
         }
@@ -257,7 +262,7 @@
         @php($employee = $schedule['employee'])
         <main class="sheet">
             <header class="report-header">
-                <img src="{{ public_path('images/olpcc-logo.png') }}" class="report-logo" alt="OLPCC logo">
+                <img src="{{ asset('images/olpcc-logo.png') }}" class="report-logo" alt="OLPCC logo">
 
                 <div class="agency">
                     <h1 class="agency-name">OLPCC / OSMIS-eGATE</h1>
@@ -391,6 +396,37 @@
         <div class="empty">No employees found.</div>
     @endforelse
 
-    </body>
+    <script>
+        const returnUrl = @json(url('admin/employee-logs') . (request()->except('student_id') ? '?' . http_build_query(request()->except('student_id')) : ''));
+        let printRequested = false;
+        let redirected = false;
+
+        function redirectBackToLogs() {
+            if (redirected) {
+                return;
+            }
+
+            redirected = true;
+            window.location.replace(returnUrl);
+        }
+
+        window.addEventListener('afterprint', () => {
+            window.setTimeout(redirectBackToLogs, 100);
+        });
+
+        window.addEventListener('focus', () => {
+            if (printRequested) {
+                window.setTimeout(redirectBackToLogs, 300);
+            }
+        });
+
+        window.addEventListener('load', () => {
+            window.setTimeout(() => {
+                printRequested = true;
+                window.print();
+            }, 100);
+        });
+    </script>
+</body>
 </html>
 

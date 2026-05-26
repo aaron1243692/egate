@@ -107,30 +107,40 @@ class LogController extends Controller
                 ];
             });
 
-        $studentName = $request->filled('student_id')
-            ? ($logs->first()['name'] ?? (string) $request->get('student_id'))
-            : null;
-        $studentNumber = $request->filled('student_id')
-            ? ($logs->first()['student_id'] ?? (string) $request->get('student_id'))
-            : null;
-        $studentLrn = $request->filled('student_id')
-            ? ($logs->first()['lrn'] ?? null)
-            : null;
-        $studentContact = $request->filled('student_id')
-            ? ($logs->first()['contact'] ?? null)
-            : null;
-        $studentEmail = $request->filled('student_id')
-            ? ($logs->first()['email'] ?? null)
-            : null;
+        $reports = $logs
+            ->groupBy('student_id')
+            ->map(function ($studentLogs) {
+                $firstLog = $studentLogs->first();
+
+                return [
+                    'student' => [
+                        'name' => $firstLog['name'] ?? 'N/A',
+                        'student_id' => $firstLog['student_id'] ?? 'N/A',
+                        'lrn' => $firstLog['lrn'] ?? null,
+                        'contact' => $firstLog['contact'] ?? null,
+                        'email' => $firstLog['email'] ?? null,
+                    ],
+                    'logs' => $studentLogs->values(),
+                    'summary' => [
+                        'total' => $studentLogs->count(),
+                        'time_in' => $studentLogs->where('status', 'Time In')->count(),
+                        'time_out' => $studentLogs->where('status', 'Time Out')->count(),
+                    ],
+                ];
+            })
+            ->values();
 
         return view('admin.print-logs', [
             'logs' => $logs,
-            'studentName' => $studentName,
-            'studentNumber' => $studentNumber,
-            'studentLrn' => $studentLrn,
-            'studentContact' => $studentContact,
-            'studentEmail' => $studentEmail,
+            'reports' => $reports,
+            'isIndividual' => $request->filled('student_id'),
+            'periodLabel' => $this->formatPrintPeriod($request),
             'printedAt' => now(),
+            'summary' => [
+                'total' => $logs->count(),
+                'time_in' => $logs->where('status', 'Time In')->count(),
+                'time_out' => $logs->where('status', 'Time Out')->count(),
+            ],
         ]);
     }
 
@@ -213,6 +223,30 @@ class LogController extends Controller
             return Carbon::parse($value)->format('M j, Y g:i A');
         } catch (\Throwable) {
             return (string) $value;
+        }
+    }
+
+    private function formatPrintPeriod(Request $request): string
+    {
+        $dateFrom = trim((string) $request->get('date_from', ''));
+        $dateTo = trim((string) $request->get('date_to', ''));
+
+        if ($dateFrom === '' && $dateTo === '') {
+            return 'All available records';
+        }
+
+        $from = $dateFrom !== '' ? $this->formatPrintDateTime($dateFrom) : 'Beginning';
+        $to = $dateTo !== '' ? $this->formatPrintDateTime($dateTo) : 'Present';
+
+        return "{$from} - {$to}";
+    }
+
+    private function formatPrintDateTime(string $value): string
+    {
+        try {
+            return Carbon::parse($value)->format('M j, Y g:i A');
+        } catch (\Throwable) {
+            return str_replace('T', ' ', $value);
         }
     }
 

@@ -82,12 +82,21 @@ class GateEntryController extends Controller
             'log_id' => $logId,
             'egate_data_id' => $student->id,
             'student_id' => $student->student_number,
+            'student_number' => $student->student_number,
+            'lrn' => $student->lrn,
+            'student_name' => $student->name ?: $student->student_number,
+            'department' => $student->department,
+            'course' => $student->course,
+            'year_level' => $student->school_level ?: $student->grade_level,
+            'grade_level' => $student->grade_level,
+            'image' => $student->image,
             'status' => $status,
             'status_label' => match ($status) {
                 1 => 'Time In',
                 0 => 'Time Out',
                 default => 'N/A',
             },
+            'logged_at' => $loggedAt,
         ]);
     }
 }

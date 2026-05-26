@@ -235,6 +235,10 @@ const viewLogsModal = document.getElementById('view-logs-modal');
 const viewLogsTitle = document.getElementById('view-logs-title');
 const viewLogsPeriod = document.getElementById('view-logs-period');
 const viewLogsContent = document.getElementById('view-logs-content');
+const defaultEmployeeYear = filterYear.value;
+const defaultEmployeeMonth = filterMonth.value;
+const employeeFilterStorageKey = 'admin.employee_logs.filters';
+const employeeFilterRestoreKey = 'admin.employee_logs.restore_filters';
 
 let logsCurrentPage = 1;
 let logsSearchTimer = null;
@@ -259,6 +263,89 @@ function openModal(modal) {
 function closeModal(modal) {
     modal.classList.add('hidden');
     modal.classList.remove('flex');
+}
+
+function getEmployeeFilterFields() {
+    return {
+        search: searchLogsInput.value.trim(),
+        department: filterDepartment.value,
+        year: filterYear.value,
+        month: filterMonth.value,
+    };
+}
+
+function applyEmployeeFilterFields(filters) {
+    searchLogsInput.value = filters.search ?? '';
+    filterDepartment.value = filters.department ?? '';
+    filterYear.value = filters.year || defaultEmployeeYear;
+    filterMonth.value = filters.month || defaultEmployeeMonth;
+}
+
+function buildEmployeeFilterParams() {
+    const filters = getEmployeeFilterFields();
+    const params = new URLSearchParams();
+
+    if (filters.search !== '') {
+        params.set('search', filters.search);
+    }
+
+    if (filters.department !== '') {
+        params.set('department', filters.department);
+    }
+
+    if (filters.year !== '') {
+        params.set('year', filters.year);
+    }
+
+    if (filters.month !== '') {
+        params.set('month', filters.month);
+    }
+
+    return params;
+}
+
+function resetEmployeeFilters() {
+    applyEmployeeFilterFields({});
+}
+
+function markEmployeeFiltersForRestore() {
+    try {
+        window.sessionStorage.setItem(employeeFilterStorageKey, JSON.stringify(getEmployeeFilterFields()));
+        window.sessionStorage.setItem(employeeFilterRestoreKey, '1');
+    } catch (error) {
+        // Browser storage can be disabled; the current page state still handles AJAX actions.
+    }
+}
+
+function clearSavedEmployeeFilters() {
+    try {
+        window.sessionStorage.removeItem(employeeFilterStorageKey);
+        window.sessionStorage.removeItem(employeeFilterRestoreKey);
+    } catch (error) {
+        // Nothing to clear when storage is unavailable.
+    }
+}
+
+function initializeEmployeeFilters() {
+    let shouldRestore = false;
+    let savedFilters = {};
+
+    try {
+        shouldRestore = window.sessionStorage.getItem(employeeFilterRestoreKey) === '1';
+        savedFilters = JSON.parse(window.sessionStorage.getItem(employeeFilterStorageKey) || '{}');
+    } catch (error) {
+        shouldRestore = false;
+    }
+
+    clearSavedEmployeeFilters();
+
+    if (shouldRestore) {
+        applyEmployeeFilterFields(savedFilters);
+    } else {
+        resetEmployeeFilters();
+    }
+
+    window.history.replaceState({}, '', window.location.pathname);
 }
 
 /* ---------------- render employees ---------------- */
@@ -323,21 +410,9 @@ async function fetchLogs(page = 1) {
     const url = new URL(logsRoutes.fetch, window.location.origin);
     url.searchParams.set('page', page);
 
-    if (searchLogsInput.value.trim() !== '') {
-        url.searchParams.set('search', searchLogsInput.value.trim());
-    }
-
-    if (filterDepartment.value !== '') {
-        url.searchParams.set('department', filterDepartment.value);
-    }
-
-    if (filterYear.value !== '') {
-        url.searchParams.set('year', filterYear.value);
-    }
-
-    if (filterMonth.value !== '') {
-        url.searchParams.set('month', filterMonth.value);
-    }
+    buildEmployeeFilterParams().forEach((value, key) => {
+        url.searchParams.set(key, value);
+    });
 
     try {
         const response = await fetch(url, {
@@ -403,21 +478,10 @@ function renderLogsPagination(meta) {
 function buildEmployeeFilterUrl(baseUrl) {
     const url = new URL(baseUrl, window.location.origin);
 
-    if (searchLogsInput.value.trim() !== '') {
-        url.searchParams.set('search', searchLogsInput.value.trim());
-    }
-
-    if (filterDepartment.value !== '') {
-        url.searchParams.set('department', filterDepartment.value);
-    }
-
-    if (filterYear.value !== '') {
-        url.searchParams.set('year', filterYear.value);
-    }
-
-    if (filterMonth.value !== '') {
-        url.searchParams.set('month', filterMonth.value);
-    }
+    markEmployeeFiltersForRestore();
+    buildEmployeeFilterParams().forEach((value, key) => {
+        url.searchParams.set(key, value);
+    });
 
     return url;
 }
@@ -593,6 +657,7 @@ document.querySelectorAll('[data-close-modal]').forEach((button) => {
 
 /* ---------------- init ---------------- */
 
+initializeEmployeeFilters();
 fetchLogs();
 </script>
 

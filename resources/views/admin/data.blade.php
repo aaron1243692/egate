@@ -356,6 +356,8 @@
     const printDataButton = document.getElementById('print-data-button');
     const exportDataButton = document.getElementById('export-data-button');
     const confirmDeleteDataButton = document.getElementById('confirm-delete-data');
+    const dataFilterStorageKey = 'admin.data.filters';
+    const dataFilterRestoreKey = 'admin.data.restore_filters';
 
     let dataCurrentPage = 1;
     let searchTimer = null;
@@ -439,6 +441,82 @@
         };
 
         return roles[Number(value)] || value || '';
+    }
+
+    function getDataFilterFields() {
+        return {
+            search: searchDataInput.value.trim(),
+            name_sort: filterNameSort.value,
+            department: filterDepartment.value,
+            course: filterCourse.value,
+            year_level: filterYearLevel.value,
+        };
+    }
+
+    function applyDataFilterFields(filters) {
+        searchDataInput.value = filters.search ?? '';
+        filterNameSort.value = filters.name_sort || 'asc';
+        filterDepartment.value = filters.department ?? '';
+        filterCourse.value = filters.course ?? '';
+        filterYearLevel.value = filters.year_level ?? '';
+    }
+
+    function resetDataFilters() {
+        applyDataFilterFields({});
+    }
+
+    function buildDataFilterParams() {
+        const filters = getDataFilterFields();
+        const params = new URLSearchParams();
+
+        params.set('name_sort', filters.name_sort || 'asc');
+
+        ['search', 'department', 'course', 'year_level'].forEach((key) => {
+            if (filters[key] !== '') {
+                params.set(key, filters[key]);
+            }
+        });
+
+        return params;
+    }
+
+    function markDataFiltersForRestore() {
+        try {
+            window.sessionStorage.setItem(dataFilterStorageKey, JSON.stringify(getDataFilterFields()));
+            window.sessionStorage.setItem(dataFilterRestoreKey, '1');
+        } catch (error) {
+            // Browser storage can be disabled; the current page state still handles AJAX actions.
+        }
+    }
+
+    function clearSavedDataFilters() {
+        try {
+            window.sessionStorage.removeItem(dataFilterStorageKey);
+            window.sessionStorage.removeItem(dataFilterRestoreKey);
+        } catch (error) {
+            // Nothing to clear when storage is unavailable.
+        }
+    }
+
+    function initializeDataFilters() {
+        let shouldRestore = false;
+        let savedFilters = {};
+
+        try {
+            shouldRestore = window.sessionStorage.getItem(dataFilterRestoreKey) === '1';
+            savedFilters = JSON.parse(window.sessionStorage.getItem(dataFilterStorageKey) || '{}');
+        } catch (error) {
+            shouldRestore = false;
+        }
+
+        clearSavedDataFilters();
+
+        if (shouldRestore) {
+            applyDataFilterFields(savedFilters);
+            return;
+        }
+
+        resetDataFilters();
     }
 
     function renderRows(records, from) {
@@ -536,19 +614,9 @@
 
         const url = new URL(dataRoutes.fetch, window.location.origin);
         url.searchParams.set('page', String(page));
-        url.searchParams.set('name_sort', filterNameSort.value);
-        if (searchDataInput.value.trim() !== '') {
-            url.searchParams.set('search', searchDataInput.value.trim());
-        }
-        if (filterDepartment.value !== '') {
-            url.searchParams.set('department', filterDepartment.value);
-        }
-        if (filterCourse.value !== '') {
-            url.searchParams.set('course', filterCourse.value);
-        }
-        if (filterYearLevel.value !== '') {
-            url.searchParams.set('year_level', filterYearLevel.value);
-        }
+        buildDataFilterParams().forEach((value, key) => {
+            url.searchParams.set(key, value);
+        });
 
         try {
             const response = await fetch(url, {
@@ -575,19 +643,10 @@
     function buildDataFilterUrl(baseUrl) {
         const url = new URL(baseUrl, window.location.origin);
 
-        url.searchParams.set('name_sort', filterNameSort.value);
-        if (searchDataInput.value.trim() !== '') {
-            url.searchParams.set('search', searchDataInput.value.trim());
-        }
-        if (filterDepartment.value !== '') {
-            url.searchParams.set('department', filterDepartment.value);
-        }
-        if (filterCourse.value !== '') {
-            url.searchParams.set('course', filterCourse.value);
-        }
-        if (filterYearLevel.value !== '') {
-            url.searchParams.set('year_level', filterYearLevel.value);
-        }
+        markDataFiltersForRestore();
+        buildDataFilterParams().forEach((value, key) => {
+            url.searchParams.set(key, value);
+        });
 
         return url;
     }
@@ -784,7 +843,7 @@
             const payload = await sendRequest(`${dataRoutes.base}/${dataToDelete}`, 'POST', formData);
             closeModal(deleteModal);
             showMessage(payload.message || 'Student data deleted successfully.', 'success');
-            fetchData(1);
+            fetchData(dataCurrentPage);
         } catch (error) {
             showMessage(error.message, 'error');
         }
@@ -813,6 +872,7 @@
         hideMessage();
     });
 
+    initializeDataFilters();
     fetchData();
 </script>
 

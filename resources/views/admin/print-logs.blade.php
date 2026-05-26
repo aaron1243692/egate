@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Logs Print</title>
+    <title>Student Logs Print</title>
     <style>
         @page {
             margin: 12mm;
@@ -13,62 +13,422 @@
                 color: #111827;
             }
         }
-        body { font-family: Arial, sans-serif; margin: 24px; color: #111827; }
-        h1 { margin: 0 0 4px; font-size: 24px; }
-        .student-info { margin: 0 0 12px; color: #000; font-size: 14px; line-height: 1.5; }
-        .student-info div { font-weight: 700; }
-        p { margin: 0 0 16px; color: #4b5563; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #d1d5db; padding: 8px 10px; text-align: left; font-size: 13px; }
-        th { background: #2563eb; color: #000; }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: #111827;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            line-height: 1.35;
+            background: #fff;
+        }
+
+        .sheet {
+            width: 100%;
+            break-after: page;
+            page-break-after: always;
+        }
+
+        @media screen {
+            .sheet {
+                margin-bottom: 28px;
+            }
+        }
+
+        .sheet:last-child {
+            break-after: auto;
+            page-break-after: auto;
+        }
+
+        .report-header {
+            display: grid;
+            grid-template-columns: 78px 1fr 132px;
+            gap: 12px;
+            align-items: center;
+            padding: 0 0 8px 10px;
+            border-bottom: 2px solid #111827;
+        }
+
+        .report-logo {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+        }
+
+        .agency {
+            text-align: center;
+        }
+
+        .agency-name {
+            margin: 0;
+            font-family: "Times New Roman", serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        .agency-subtitle,
+        .agency-system {
+            margin: 2px 0 0;
+            font-size: 10px;
+            color: #374151;
+        }
+
+        .document-code {
+            border: 1px solid #111827;
+            font-size: 9px;
+        }
+
+        .document-code div {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 3px 5px;
+            border-bottom: 1px solid #111827;
+        }
+
+        .document-code div:last-child {
+            border-bottom: 0;
+        }
+
+        .report-title {
+            margin: 8px 0 8px;
+            text-align: center;
+        }
+
+        .report-title h2 {
+            margin: 0;
+            font-size: 13px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .report-title p {
+            margin: 3px 0 0;
+            color: #374151;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            margin-bottom: 8px;
+            border: 1px solid #111827;
+            border-right: 0;
+            border-bottom: 0;
+        }
+
+        .meta-item {
+            min-height: 30px;
+            padding: 3px 6px;
+            border-right: 1px solid #111827;
+            border-bottom: 1px solid #111827;
+        }
+
+        .meta-item--wide {
+            grid-column: span 2;
+        }
+
+        .meta-label {
+            display: block;
+            color: #4b5563;
+            font-size: 8px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .meta-value {
+            display: block;
+            margin-top: 3px;
+            color: #111827;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            margin-bottom: 8px;
+            border: 1px solid #111827;
+            border-right: 0;
+        }
+
+        .summary-item {
+            padding: 5px 8px;
+            border-right: 1px solid #111827;
+            text-align: center;
+        }
+
+        .summary-label {
+            display: block;
+            color: #4b5563;
+            font-size: 8px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .summary-value {
+            display: block;
+            margin-top: 2px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .logs-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 10px;
+        }
+
+        .logs-table th,
+        .logs-table td {
+            border: 1px solid #111827;
+            padding: 4px 5px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .logs-table th {
+            background: #f3f4f6;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .logs-table tbody tr:nth-child(even) td {
+            background: #fbfbfb;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .empty {
+            padding: 18mm;
+            color: #111827;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Logs</h1>
-    @if ($studentName)
-        <div class="student-info">
-            <div>Name: {{ $studentName }}</div>
-            <div>St No.: {{ $studentNumber ?: 'N/A' }}</div>
-            <div>LRN: {{ $studentLrn ?: 'N/A' }}</div>
-            <div>Contact: {{ $studentContact ?: 'N/A' }}</div>
-            <div>Email: {{ $studentEmail ?: 'N/A' }}</div>
-        </div>
-    @endif
-    <p>Printed at {{ $printedAt->format('F j, Y g:i A') }}</p>
+    @if ($isIndividual)
+        @forelse ($reports as $report)
+            @php($student = $report['student'])
+            <main class="sheet">
+                <header class="report-header">
+                    <img src="{{ asset('images/olpcc-logo.png') }}" class="report-logo" alt="OLPCC logo">
 
-    <table>
-        <thead>
-            <tr>
-                <th>No.</th>
-                <th>Student ID</th>
-                @if (! $studentName)
-                <th>Name</th>
-                @endif
-                <th>Status</th>
-                <th>DateTime</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($logs as $index => $log)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $log['student_id'] }}</td>
-                    @if (! $studentName)
-                    <td>{{ $log['name'] }}</td>
-                    @endif
-                    <td>{{ $log['status'] }}</td>
-                    <td>{{ $log['time'] }}</td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="{{ $studentName ? 4 : 5 }}">No logs found.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+                    <div class="agency">
+                        <h1 class="agency-name">OLPCC / OSMIS-eGATE</h1>
+                        <p class="agency-subtitle">Student Attendance Monitoring System</p>
+                        <p class="agency-system">Official Student Gate Log Report</p>
+                    </div>
+
+                    <div class="document-code" aria-label="Document details">
+                        <div><span>Report</span><strong>LOGS</strong></div>
+                        <div><span>Mode</span><strong>Single</strong></div>
+                        <div><span>Printed</span><strong>{{ $printedAt->format('m/d/Y') }}</strong></div>
+                    </div>
+                </header>
+
+                <section class="report-title">
+                    <h2>Student Attendance Logs</h2>
+                    <p>{{ $periodLabel }}</p>
+                </section>
+
+                <section class="meta-grid" aria-label="Student information">
+                    <div class="meta-item meta-item--wide">
+                        <span class="meta-label">Student Name</span>
+                        <span class="meta-value">{{ $student['name'] ?: 'N/A' }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Student ID</span>
+                        <span class="meta-value">{{ $student['student_id'] ?: 'N/A' }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">LRN</span>
+                        <span class="meta-value">{{ $student['lrn'] ?: 'N/A' }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Contact No.</span>
+                        <span class="meta-value">{{ $student['contact'] ?: 'N/A' }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Email Address</span>
+                        <span class="meta-value">{{ $student['email'] ?: 'N/A' }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Generated By</span>
+                        <span class="meta-value">{{ auth()->user()->username ?? auth()->user()->email ?? 'System' }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Generated At</span>
+                        <span class="meta-value">{{ $printedAt->format('F j, Y g:i A') }}</span>
+                    </div>
+                </section>
+
+                <section class="summary-grid" aria-label="Log summary">
+                    <div class="summary-item">
+                        <span class="summary-label">Total Logs</span>
+                        <span class="summary-value">{{ $report['summary']['total'] }}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Time In</span>
+                        <span class="summary-value">{{ $report['summary']['time_in'] }}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Time Out</span>
+                        <span class="summary-value">{{ $report['summary']['time_out'] }}</span>
+                    </div>
+                </section>
+
+                <table class="logs-table">
+                    <colgroup>
+                        <col style="width: 10%">
+                        <col style="width: 24%">
+                        <col style="width: 22%">
+                        <col style="width: 44%">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th class="text-center">No.</th>
+                            <th>Status</th>
+                            <th>Student ID</th>
+                            <th>DateTime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($report['logs'] as $index => $log)
+                            <tr>
+                                <td class="text-center">{{ $index + 1 }}</td>
+                                <td>{{ $log['status'] }}</td>
+                                <td>{{ $log['student_id'] }}</td>
+                                <td>{{ $log['time'] }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center">No logs found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </main>
+        @empty
+            <div class="empty">No logs found.</div>
+        @endforelse
+    @else
+        <main class="sheet">
+            <header class="report-header">
+                <img src="{{ asset('images/olpcc-logo.png') }}" class="report-logo" alt="OLPCC logo">
+
+                <div class="agency">
+                    <h1 class="agency-name">OLPCC / OSMIS-eGATE</h1>
+                    <p class="agency-subtitle">Student Attendance Monitoring System</p>
+                    <p class="agency-system">Official Student Gate Log Report</p>
+                </div>
+
+                <div class="document-code" aria-label="Document details">
+                    <div><span>Report</span><strong>LOGS</strong></div>
+                    <div><span>Mode</span><strong>Bulk</strong></div>
+                    <div><span>Printed</span><strong>{{ $printedAt->format('m/d/Y') }}</strong></div>
+                </div>
+            </header>
+
+            <section class="report-title">
+                <h2>Student Attendance Logs</h2>
+                <p>{{ $periodLabel }}</p>
+            </section>
+
+            <section class="meta-grid" aria-label="Report information">
+                <div class="meta-item meta-item--wide">
+                    <span class="meta-label">Report Scope</span>
+                    <span class="meta-value">All matching student logs</span>
+                </div>
+                <div class="meta-item meta-item--wide">
+                    <span class="meta-label">Period</span>
+                    <span class="meta-value">{{ $periodLabel }}</span>
+                </div>
+                <div class="meta-item meta-item--wide">
+                    <span class="meta-label">Generated By</span>
+                    <span class="meta-value">{{ auth()->user()->username ?? auth()->user()->email ?? 'System' }}</span>
+                </div>
+                <div class="meta-item meta-item--wide">
+                    <span class="meta-label">Generated At</span>
+                    <span class="meta-value">{{ $printedAt->format('F j, Y g:i A') }}</span>
+                </div>
+            </section>
+
+            <section class="summary-grid" aria-label="Log summary">
+                <div class="summary-item">
+                    <span class="summary-label">Total Logs</span>
+                    <span class="summary-value">{{ $summary['total'] }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Time In</span>
+                    <span class="summary-value">{{ $summary['time_in'] }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Time Out</span>
+                    <span class="summary-value">{{ $summary['time_out'] }}</span>
+                </div>
+            </section>
+
+            <table class="logs-table">
+                <colgroup>
+                    <col style="width: 8%">
+                    <col style="width: 18%">
+                    <col style="width: 28%">
+                    <col style="width: 18%">
+                    <col style="width: 28%">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th class="text-center">No.</th>
+                        <th>ID No.</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>DateTime</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($logs as $index => $log)
+                        <tr>
+                            <td class="text-center">{{ $index + 1 }}</td>
+                            <td>{{ $log['student_id'] }}</td>
+                            <td>{{ $log['name'] }}</td>
+                            <td>{{ $log['status'] }}</td>
+                            <td>{{ $log['time'] }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center">No logs found.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </main>
+    @endif
 
     <script>
-        const returnUrl = @json(url('admin/logs'));
+        const returnUrl = @json(url('admin/logs') . (request()->except('student_id') ? '?' . http_build_query(request()->except('student_id')) : ''));
         let printRequested = false;
         let redirected = false;
 

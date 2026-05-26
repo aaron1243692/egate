@@ -220,7 +220,8 @@
     const messageModalIcon = document.getElementById('message-modal-icon');
     const messageModalTitle = document.getElementById('message-modal-title');
     const messageModalText = document.getElementById('message-modal-text');
-
+    const logsFilterStorageKey = 'admin.logs.filters';
+    const logsFilterRestoreKey = 'admin.logs.restore_filters';
     let logsCurrentPage = 1;
     let logsSearchTimer = null;
     let messageHideTimer = null;
@@ -327,10 +328,91 @@
         filterDateTo.value = formatDateTimeFilterValue(now);
     }
 
+    function resetLogFilters() {
+        applyLogFilterFields({});
+        setDefaultDateFilters();
+    }
+
+    function getLogFilterFields() {
+        return {
+            search: searchLogsInput.value.trim(),
+            time_sort: filterTimeSort.value,
+            status: filterStatus.value,
+            department: filterDepartment.value,
+            course: filterCourse.value,
+            grade_level: filterGradeLevel.value,
+            date_from: filterDateFrom.value,
+            date_to: filterDateTo.value,
+        };
+    }
+
+    function applyLogFilterFields(filters) {
+        searchLogsInput.value = filters.search ?? '';
+        filterTimeSort.value = filters.time_sort || 'desc';
+        filterStatus.value = filters.status ?? '';
+        filterDepartment.value = filters.department ?? '';
+        filterCourse.value = filters.course ?? '';
+        filterGradeLevel.value = filters.grade_level ?? '';
+        filterDateFrom.value = filters.date_from ?? '';
+        filterDateTo.value = filters.date_to ?? '';
+    }
+
+    function buildLogsFilterParams() {
+        const filters = getLogFilterFields();
+        const params = new URLSearchParams();
+
+        params.set('time_sort', filters.time_sort || 'desc');
+
+        ['search', 'status', 'department', 'course', 'grade_level', 'date_from', 'date_to'].forEach((key) => {
+            if (filters[key] !== '') {
+                params.set(key, filters[key]);
+            }
+        });
+
+        return params;
+    }
+
+    function markLogFiltersForRestore() {
+        try {
+            window.sessionStorage.setItem(logsFilterStorageKey, JSON.stringify(getLogFilterFields()));
+            window.sessionStorage.setItem(logsFilterRestoreKey, '1');
+        } catch (error) {
+            // Browser storage can be disabled; the current page state still handles AJAX actions.
+        }
+    }
+
+    function clearSavedLogFilters() {
+        try {
+            window.sessionStorage.removeItem(logsFilterStorageKey);
+            window.sessionStorage.removeItem(logsFilterRestoreKey);
+        } catch (error) {
+            // Nothing to clear when storage is unavailable.
+        }
+    }
+
+    function initializeLogFilters() {
+        let shouldRestore = false;
+        let savedFilters = {};
+
+        try {
+            shouldRestore = window.sessionStorage.getItem(logsFilterRestoreKey) === '1';
+            savedFilters = JSON.parse(window.sessionStorage.getItem(logsFilterStorageKey) || '{}');
+        } catch (error) {
+            shouldRestore = false;
+        }
+
+        clearSavedLogFilters();
+
+        if (shouldRestore) {
+            applyLogFilterFields(savedFilters);
+        } else {
+            resetLogFilters();
+        }
+
+        window.history.replaceState({}, '', window.location.pathname);
+    }
+
     function renderLogRows(logs, from) {
-
-        console.log(logs);
-
         if (!logs.length) {
             logsTableBody.innerHTML = `
                 <tr>
@@ -413,6 +495,7 @@
 
     async function fetchLogs(page = 1) {
         logsCurrentPage = page;
+
         logsTableBody.innerHTML = `
             <tr>
                 <td colspan="6" class="px-3 py-5 text-center text-slate-500">Loading logs...</td>
@@ -421,28 +504,9 @@
 
         const url = new URL(logsRoutes.fetch, window.location.origin);
         url.searchParams.set('page', String(page));
-        url.searchParams.set('time_sort', filterTimeSort.value);
-        if (searchLogsInput.value.trim() !== '') {
-            url.searchParams.set('search', searchLogsInput.value.trim());
-        }
-        if (filterStatus.value !== '') {
-            url.searchParams.set('status', filterStatus.value);
-        }
-        if (filterDepartment.value !== '') {
-            url.searchParams.set('department', filterDepartment.value);
-        }
-        if (filterCourse.value !== '') {
-            url.searchParams.set('course', filterCourse.value);
-        }
-        if (filterGradeLevel.value !== '') {
-            url.searchParams.set('grade_level', filterGradeLevel.value);
-        }
-        if (filterDateFrom.value !== '') {
-            url.searchParams.set('date_from', filterDateFrom.value);
-        }
-        if (filterDateTo.value !== '') {
-            url.searchParams.set('date_to', filterDateTo.value);
-        }
+        buildLogsFilterParams().forEach((value, key) => {
+            url.searchParams.set(key, value);
+        });
 
         try {
             const response = await fetch(url, {
@@ -471,28 +535,10 @@
     function buildLogsFilterUrl(baseUrl) {
         const url = new URL(baseUrl, window.location.origin);
 
-        url.searchParams.set('time_sort', filterTimeSort.value);
-        if (searchLogsInput.value.trim() !== '') {
-            url.searchParams.set('search', searchLogsInput.value.trim());
-        }
-        if (filterStatus.value !== '') {
-            url.searchParams.set('status', filterStatus.value);
-        }
-        if (filterDepartment.value !== '') {
-            url.searchParams.set('department', filterDepartment.value);
-        }
-        if (filterCourse.value !== '') {
-            url.searchParams.set('course', filterCourse.value);
-        }
-        if (filterGradeLevel.value !== '') {
-            url.searchParams.set('grade_level', filterGradeLevel.value);
-        }
-        if (filterDateFrom.value !== '') {
-            url.searchParams.set('date_from', filterDateFrom.value);
-        }
-        if (filterDateTo.value !== '') {
-            url.searchParams.set('date_to', filterDateTo.value);
-        }
+        markLogFiltersForRestore();
+        buildLogsFilterParams().forEach((value, key) => {
+            url.searchParams.set(key, value);
+        });
 
         return url;
     }
@@ -605,7 +651,7 @@
             const payload = await sendRequest(`${logsRoutes.base}/${logToDelete}`, 'POST', formData);
             closeModal(deleteLogModal);
             showMessage(payload.message || 'Log deleted successfully.', 'success');
-            fetchLogs(1);
+            fetchLogs(logsCurrentPage);
         } catch (error) {
             showMessage(error.message, 'error');
         }
@@ -634,7 +680,7 @@
         hideMessage();
     });
 
-    setDefaultDateFilters();
+    initializeLogFilters();
     fetchLogs();
 </script>
 

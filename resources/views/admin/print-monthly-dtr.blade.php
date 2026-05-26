@@ -372,7 +372,7 @@
     </main>
 
     <script>
-        const returnUrl = @json(url('admin/employee-logs'));
+        const returnUrl = @json(url('admin/employee-logs') . (request()->except('student_id') ? '?' . http_build_query(request()->except('student_id')) : ''));
         let printRequested = false;
         let redirected = false;
 
@@ -404,7 +404,6 @@
     </script>
 </body>
 </html>
-
 
 
 
