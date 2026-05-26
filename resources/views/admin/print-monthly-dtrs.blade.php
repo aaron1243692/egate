@@ -45,11 +45,11 @@
         }
 
         .report-header {
-            display: grid;
-            grid-template-columns: 78px 1fr 132px;
+            display: flex;
+            justify-content: center;
             gap: 12px;
             align-items: center;
-            padding: 0 0 5px 10px;
+            padding: 0 0 5px;
             border-bottom: 2px solid #111827;
         }
 
@@ -77,23 +77,6 @@
             margin: 2px 0 0;
             font-size: 10px;
             color: #374151;
-        }
-
-        .document-code {
-            border: 1px solid #111827;
-            font-size: 9px;
-        }
-
-        .document-code div {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 3px 5px;
-            border-bottom: 1px solid #111827;
-        }
-
-        .document-code div:last-child {
-            border-bottom: 0;
         }
 
         .report-title {
@@ -268,12 +251,6 @@
                     <h1 class="agency-name">OLPCC / OSMIS-eGATE</h1>
                     <p class="agency-subtitle">Employee Attendance Monitoring System</p>
                     <p class="agency-system">Official Monthly Daily Time Record</p>
-                </div>
-
-                <div class="document-code" aria-label="Document details">
-                    <div><span>Report</span><strong>DTR</strong></div>
-                    <div><span>Period</span><strong>{{ $schedule['monthName'] }}</strong></div>
-                    <div><span>Printed</span><strong>{{ $printedAt->format('m/d/Y') }}</strong></div>
                 </div>
             </header>
 

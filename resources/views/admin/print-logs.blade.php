@@ -45,11 +45,11 @@
         }
 
         .report-header {
-            display: grid;
-            grid-template-columns: 78px 1fr 132px;
+            display: flex;
+            justify-content: center;
             gap: 12px;
             align-items: center;
-            padding: 0 0 8px 10px;
+            padding: 0 0 8px;
             border-bottom: 2px solid #111827;
         }
 
@@ -77,23 +77,6 @@
             margin: 2px 0 0;
             font-size: 10px;
             color: #374151;
-        }
-
-        .document-code {
-            border: 1px solid #111827;
-            font-size: 9px;
-        }
-
-        .document-code div {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 3px 5px;
-            border-bottom: 1px solid #111827;
-        }
-
-        .document-code div:last-child {
-            border-bottom: 0;
         }
 
         .report-title {
@@ -241,12 +224,6 @@
                         <p class="agency-subtitle">Student Attendance Monitoring System</p>
                         <p class="agency-system">Official Student Gate Log Report</p>
                     </div>
-
-                    <div class="document-code" aria-label="Document details">
-                        <div><span>Report</span><strong>LOGS</strong></div>
-                        <div><span>Mode</span><strong>Single</strong></div>
-                        <div><span>Printed</span><strong>{{ $printedAt->format('m/d/Y') }}</strong></div>
-                    </div>
                 </header>
 
                 <section class="report-title">
@@ -343,12 +320,6 @@
                     <h1 class="agency-name">OLPCC / OSMIS-eGATE</h1>
                     <p class="agency-subtitle">Student Attendance Monitoring System</p>
                     <p class="agency-system">Official Student Gate Log Report</p>
-                </div>
-
-                <div class="document-code" aria-label="Document details">
-                    <div><span>Report</span><strong>LOGS</strong></div>
-                    <div><span>Mode</span><strong>Bulk</strong></div>
-                    <div><span>Printed</span><strong>{{ $printedAt->format('m/d/Y') }}</strong></div>
                 </div>
             </header>
 
