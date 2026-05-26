@@ -45,12 +45,20 @@
         }
 
         .report-header {
-            display: flex;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             gap: 12px;
             align-items: center;
             padding: 0 0 8px;
             border-bottom: 2px solid #111827;
+        }
+
+        .report-brand {
+            display: flex;
+            grid-column: 2;
+            justify-self: center;
+            gap: 12px;
+            align-items: center;
         }
 
         .report-logo {
@@ -77,6 +85,21 @@
             margin: 2px 0 0;
             font-size: 10px;
             color: #374151;
+        }
+
+        .document-code {
+            display: grid;
+            grid-column: 3;
+            justify-self: end;
+            gap: 2px;
+            font-size: 9px;
+        }
+
+        .document-code div {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            white-space: nowrap;
         }
 
         .report-title {
@@ -217,12 +240,20 @@
             @php($student = $report['student'])
             <main class="sheet">
                 <header class="report-header">
-                    <img src="{{ asset('images/olpcc-logo.png') }}" class="report-logo" alt="OLPCC logo">
+                    <div class="report-brand">
+                        <img src="{{ asset('images/olpcc-logo.png') }}" class="report-logo" alt="OLPCC logo">
 
-                    <div class="agency">
-                        <h1 class="agency-name">OLPCC / OSMIS-eGATE</h1>
-                        <p class="agency-subtitle">Student Attendance Monitoring System</p>
-                        <p class="agency-system">Official Student Gate Log Report</p>
+                        <div class="agency">
+                            <h1 class="agency-name">OLPCC / OSMIS-eGATE</h1>
+                            <p class="agency-subtitle">Student Attendance Monitoring System</p>
+                            <p class="agency-system">Official Student Gate Log Report</p>
+                        </div>
+                    </div>
+
+                    <div class="document-code" aria-label="Document details">
+                        <div><span>Report</span><strong>LOGS</strong></div>
+                        <div><span>Mode</span><strong>Single</strong></div>
+                        <div><span>Printed</span><strong>{{ $printedAt->format('m/d/Y') }}</strong></div>
                     </div>
                 </header>
 
@@ -314,12 +345,20 @@
     @else
         <main class="sheet">
             <header class="report-header">
-                <img src="{{ asset('images/olpcc-logo.png') }}" class="report-logo" alt="OLPCC logo">
+                <div class="report-brand">
+                    <img src="{{ asset('images/olpcc-logo.png') }}" class="report-logo" alt="OLPCC logo">
 
-                <div class="agency">
-                    <h1 class="agency-name">OLPCC / OSMIS-eGATE</h1>
-                    <p class="agency-subtitle">Student Attendance Monitoring System</p>
-                    <p class="agency-system">Official Student Gate Log Report</p>
+                    <div class="agency">
+                        <h1 class="agency-name">OLPCC / OSMIS-eGATE</h1>
+                        <p class="agency-subtitle">Student Attendance Monitoring System</p>
+                        <p class="agency-system">Official Student Gate Log Report</p>
+                    </div>
+                </div>
+
+                <div class="document-code" aria-label="Document details">
+                    <div><span>Report</span><strong>LOGS</strong></div>
+                    <div><span>Mode</span><strong>Bulk</strong></div>
+                    <div><span>Printed</span><strong>{{ $printedAt->format('m/d/Y') }}</strong></div>
                 </div>
             </header>
 
