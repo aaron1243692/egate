@@ -30,16 +30,16 @@ Route::redirect('/login', '/signin')->name('login');
 Route::get('/csrf-token', [CsrfTokenController::class, 'show'])->name('csrf.token');
 
 Route::post('/signin', [SinginController::class, 'submit'])->name('signin.submit');
+Route::get('/get-students', [EgateDashboardController::class, 'getStudents'])->name('get-students');
 Route::get('/get-students/in', [EgateLoginController::class, 'getStudents'])->name('get-students.in');
 Route::get('/get-students/out', [EgateLogoutController::class, 'getStudents'])->name('get-students.out');
 Route::post('/gate-entries', [GateEntryController::class, 'store'])->name('gate-entries.store');
+Route::get('/welcome', EgateDashboardController::class)->name('welcome');
 Route::get('/in', EgateLoginController::class)->name('in');
 Route::get('/out', EgateLogoutController::class)->name('out');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'no_store'])->group(function () {
     Route::get('/admin/signin', [EgateDashboardController::class, 'forceSignin'])->name('admin.reauth');
-    Route::get('/get-students', [EgateDashboardController::class, 'getStudents'])->name('get-students');
-    Route::get('/welcome', EgateDashboardController::class)->name('welcome');
 
     Route::get('admin/dashboard', AdminDashboardController::class)->name('admin.dashboard');
 

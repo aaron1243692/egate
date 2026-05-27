@@ -11,8 +11,10 @@ use Illuminate\Support\Facades\DB;
 
 class EgateLogoutController extends Controller
 {
-    public function __invoke(): View
+    public function __invoke(Request $request): View
     {
+        $this->logoutCurrentAdmin($request);
+
         return view('pages.out', [
             'manualEntryEnabled' => SettingController::isEnabled(1),
             'rfidLoginEnabled' => SettingController::isEnabled(2),
@@ -32,5 +34,16 @@ class EgateLogoutController extends Controller
     public function getStudents(Request $request): JsonResponse
     {
         return response()->json(app(EgateDashboardController::class)->buildStudentPayload('0'));
+    }
+
+    private function logoutCurrentAdmin(Request $request): void
+    {
+        if (! Auth::check()) {
+            return;
+        }
+
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
     }
 }
