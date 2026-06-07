@@ -16,107 +16,59 @@
         body { font-family: Arial, sans-serif; margin: 24px; color: #111827; }
         h1 { margin: 0 0 8px; font-size: 24px; }
         p { margin: 0 0 16px; color: #4b5563; }
-        .student-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 18px; max-width: 520px; }
+        .student-record { page-break-inside: avoid; break-inside: avoid; margin-top: 18px; }
+        .student-record + .student-record { border-top: 1px solid #d1d5db; padding-top: 18px; }
+        .student-record h2 { margin: 0 0 12px; font-size: 16px; color: #111827; }
+        .student-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 18px; max-width: 720px; }
         .field { display: flex; flex-direction: column; gap: 5px; }
         .field label { font-size: 12px; font-weight: 700; color: #374151; }
         .field .value { min-height: 18px; border-bottom: 1px solid #111827; padding: 4px 0 5px; font-size: 13px; color: #111827; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #d1d5db; padding: 8px 10px; text-align: left; font-size: 13px; }
-        th { background: #2563eb; color: #000; }
+        .empty-state { margin-top: 18px; font-size: 13px; color: #4b5563; }
     </style>
 </head>
 <body>
     <h1>Student Data</h1>
     <p>Printed at {{ $printedAt->format('F j, Y g:i A') }}</p>
 
-    @if ($individualPrint && $records->isNotEmpty())
-        @php
-            $record = $records->first();
-            $value = fn ($field) => filled($field) ? $field : 'N/A';
-        @endphp
+    @php
+        $value = fn ($field) => filled($field) ? $field : 'N/A';
+        $roleLabel = fn ($role) => match ((string) $role) {
+            '1' => 'Student',
+            '2' => 'Employee',
+            default => $value($role),
+        };
+        $printFields = function ($record) use ($value, $roleLabel) {
+            return [
+                'ST No / LRN' => $value($record->student_number ?: $record->lrn),
+                'Name (FN MN, LN)' => $value($record->name),
+                'Role' => $roleLabel($record->role),
+                'Email' => $value($record->email),
+                'Contact' => $value($record->contact),
+                'Department' => $value($record->department),
+                'Course' => $value($record->course),
+                'School Level' => $value($record->school_level),
+                'Grade Level' => $value($record->grade_level),
+            ];
+        };
+    @endphp
 
-        <div class="student-form">
-            <div class="field">
-                <label>Student ID</label>
-                <div class="value">{{ $value($record->student_number) }}</div>
+    @forelse ($records as $index => $record)
+        <section class="student-record">
+            @unless ($individualPrint)
+                <h2>Record {{ $index + 1 }}</h2>
+            @endunless
+            <div class="student-form">
+                @foreach ($printFields($record) as $label => $fieldValue)
+                    <div class="field">
+                        <label>{{ $label }}</label>
+                        <div class="value">{{ $fieldValue }}</div>
+                    </div>
+                @endforeach
             </div>
-            <div class="field">
-                <label>LRN</label>
-                <div class="value">{{ $value($record->lrn) }}</div>
-            </div>
-            <div class="field">
-                <label>RFID</label>
-                <div class="value">{{ $value($record->rfid) }}</div>
-            </div>
-            <div class="field">
-                <label>Name</label>
-                <div class="value">{{ $value($record->name) }}</div>
-            </div>
-            <div class="field">
-                <label>Role</label>
-                <div class="value">{{ $value($record->role) }}</div>
-            </div>
-            <div class="field">
-                <label>Email</label>
-                <div class="value">{{ $value($record->email) }}</div>
-            </div>
-            <div class="field">
-                <label>Contact</label>
-                <div class="value">{{ $value($record->contact) }}</div>
-            </div>
-            <div class="field">
-                <label>Sex</label>
-                <div class="value">{{ $value($record->sex) }}</div>
-            </div>
-            <div class="field">
-                <label>Department</label>
-                <div class="value">{{ $value($record->department) }}</div>
-            </div>
-            <div class="field">
-                <label>Course</label>
-                <div class="value">{{ $value($record->course) }}</div>
-            </div>
-            <div class="field">
-                <label>School Level</label>
-                <div class="value">{{ $value($record->school_level) }}</div>
-            </div>
-            <div class="field">
-                <label>Grade Level</label>
-                <div class="value">{{ $value($record->grade_level) }}</div>
-            </div>
-        </div>
-    @else
-    <table>
-        <thead>
-            <tr>
-                <th>No.</th>
-                <th>Student ID</th>
-                <th>Name</th>
-                <th>RFID</th>
-                <th>Department</th>
-                <th>Course</th>
-                <th>Grade Level</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($records as $index => $record)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $record->student_number }}</td>
-                    <td>{{ $record->name ?: 'N/A' }}</td>
-                    <td>{{ $record->rfid ?: 'N/A' }}</td>
-                    <td>{{ $record->department ?: 'N/A' }}</td>
-                    <td>{{ $record->course ?: 'N/A' }}</td>
-                    <td>{{ $record->grade_level ?: 'N/A' }}</td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="7">No records found.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
-    @endif
+        </section>
+    @empty
+        <div class="empty-state">No records found.</div>
+    @endforelse
 
     <script>
         const returnUrl = @json(url('admin/data'));

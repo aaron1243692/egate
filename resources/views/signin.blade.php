@@ -30,7 +30,7 @@
                 <div class="eg-auth-field">
                     <label for="login">Email or username</label>
                     <input type="text" name="login" id="login" value="{{ old('login') }}"
-                        class="eg-auth-input" autocomplete="username" required>
+                        class="eg-auth-input" autocomplete="username" required autofocus>
                 </div>
 
                 <div class="eg-auth-field">
